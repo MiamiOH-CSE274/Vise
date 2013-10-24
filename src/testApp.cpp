@@ -243,6 +243,7 @@ bool canPlaceOldPiece(int x, int y){
  * (1 or 2)
  */
 int pieceAt(int x,int y){
+    //TODO
     return 0;
 }
 
