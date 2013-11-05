@@ -3,6 +3,30 @@
 #include <set>
 
 //////////////////
+/* Function declarations
+ *
+ * These are all functions that are defined and used in this file, so we don't 
+ * need to put them in the .h file. You can ignore this: The comments about what
+ * each function does is down in the body of the code.
+ */
+//Functions you might want to use, game logic
+bool inVise(int x, int y);
+void doVise();
+void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
+bool canPlaceNewPiece(int x, int y);
+bool isNeighboringSpace(int x, int y);
+bool isJumpSpace(int x, int y);
+bool isConnected();
+bool canPlaceOldPiece(int x, int y);
+int pieceAt(int x,int y);
+void putPieceAt(int x, int y, int whichPiece);
+
+//Drawing functions
+void drawHex(float x, float y, float sideLen);
+void drawBoard();
+void drawSpares();
+
+//////////////////
 /*
  * Model variables
  *
@@ -92,22 +116,6 @@ bool inVise(int x, int y){
     //TODO
     return false;
 }
-
-struct component {
-public:
-    int x;
-    int y;
-    std::set<std::pair<int, int> > members;
-    int num1;
-    int num2;
-    
-    component(){
-        x=1000;
-        y=1000;
-        num1=0;
-        num2=0;
-    }
-};
 
 /*
  * This is the method that updates the board if a player is caught in a vise at the end of the turn.
