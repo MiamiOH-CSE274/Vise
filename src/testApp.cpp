@@ -1,4 +1,5 @@
 #include "testApp.h"
+#include "GameBoard.h"
 
 #include <set>
 
@@ -25,6 +26,7 @@ void putPieceAt(int x, int y, int whichPiece);
 void drawHex(float x, float y, float sideLen);
 void drawBoard();
 void drawSpares();
+
 
 //////////////////
 /*
@@ -92,8 +94,7 @@ float sideLen = 20.0;
 float hexW = sideLen*2.0*0.86602540378444;
 float hexH = 1.5*sideLen;
 
-
-
+GameBoard myBoard;
 
 
 //--------------------------------------------------------------
@@ -103,7 +104,8 @@ void testApp::setup(){
     ofSetFrameRate(60);
     
     //TODO: Initialize your "board" data structure here
-
+	//GameBoard myBoard;
+	myBoard.makeGameBoard();
     //TODO: Put 1 piece for each player in the middle of hte board, side by side
     
     startTime = ofGetElapsedTimef();
@@ -177,7 +179,7 @@ void drawHex(float x, float y, float sideLen){
  * under consideration.
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
-    //TODO
+    myBoard.checkNbrs(x,y,okayNbrs,badNbrs);
 }
 
 /*
@@ -190,8 +192,8 @@ void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
 bool canPlaceNewPiece(int x, int y){
     int okayNbrs=0;
     int badNbrs=0;
-    checkNbrs(x,y,okayNbrs,badNbrs);
-    return(okayNbrs > 0 && badNbrs == 0);
+    //checkNbrs(x,y,okayNbrs,badNbrs);
+	return myBoard.canMove(x,y);
 }
 
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
@@ -233,7 +235,7 @@ bool isConnected(){
  * 1b) Moving to an unoccupied space that is one jump over a neighbor
  * AND
  * 2) The move does not result in disconnected board
- * AND
+ * AN-D
  * 3) Target space is still adjacent to an existing piece (could be our own
  *    piece or an enemy piece, doesn't matter)
  *
@@ -251,8 +253,8 @@ bool canPlaceOldPiece(int x, int y){
  * (1 or 2)
  */
 int pieceAt(int x,int y){
-    //TODO
-    return 0;
+	int piece = myBoard.getPiece(x,y);
+    return piece;
 }
 
 void drawBoard(){
@@ -266,7 +268,7 @@ void drawBoard(){
             ofSetColor(0, 0, 0);
             drawHex(boardXOffset+x*hexW+offset,boardYOffset+y*hexH,sideLen);
             
-            if(pieceAt(x,y) != 0){
+            if(pieceAt(x,y) != -1){
                 //If there is a playing piece in the current hex,
                 // draw it
                 if(pieceAt(x,y) == 1){
@@ -357,7 +359,7 @@ void testApp::draw(){
  * If whichPieces is 0, then it clears that board position.
  */
 void putPieceAt(int x, int y, int whichPiece){
-    //TODO
+    myBoard.addPiece(x,y,whichPiece);
 }
 
 //--------------------------------------------------------------
@@ -419,4 +421,3 @@ void testApp::mousePressed(int x, int y, int button){
         }
     }
 }
-
