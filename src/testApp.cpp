@@ -93,6 +93,9 @@ float hexW = sideLen*2.0*0.86602540378444;
 float hexH = 1.5*sideLen;
 
 
+ofColor player1, player2;
+ofColor start, end;
+
 
 
 
@@ -101,6 +104,13 @@ void testApp::setup(){
     //This is the *maximum* rate. Your program might go slower if your
     // updates or draws are too time conusming.
     ofSetFrameRate(60);
+    player1.set(33,133,197);
+    player2.set(255,89,89);
+    start.set(255, 246, 229);
+
+    music.loadSound("ViseMusic.mp3");
+    music.setLoop(true);
+    music.play();
     
     //TODO: Initialize your "board" data structure here
 
@@ -145,6 +155,9 @@ void testApp::update(){
     
     //Check for vised pieces on every update
     doVise();
+    if(whoseTurn==1)
+        end.set(126, 206, 253);
+    else end.set(255,143,143);
 }
 
 //Draw a single hexagon centered at (x,y).
@@ -259,20 +272,22 @@ void drawBoard(){
     //NOTE: This will need to be adapted to your board
     // data structure!
     //For each board hex...
+
+
     for(int y=0;y<boardH;y++){
         for(int x=0;x<boardW;x++){
             //Calculate the center, and draw the border
             float offset = (hexW/2) * (y%2);
-            ofSetColor(0, 0, 0);
+            ofSetColor(0,0,0);
             drawHex(boardXOffset+x*hexW+offset,boardYOffset+y*hexH,sideLen);
             
             if(pieceAt(x,y) != 0){
                 //If there is a playing piece in the current hex,
                 // draw it
                 if(pieceAt(x,y) == 1){
-                    ofSetColor(255,255,255);
+                    ofSetColor(player1);
                 } else {
-                    ofSetColor(0,0,0);
+                    ofSetColor(player2);
                 }
                 ofCircle(boardXOffset+x*hexW+offset,boardYOffset+y*hexH,sideLen/2);
             } else {
@@ -303,9 +318,9 @@ void drawBoard(){
         //If placing a new piece, draw the piece that the user is placing
         // at the mouse location
         if(whoseTurn == 1){
-            ofSetColor(255,255,255);
+            ofSetColor(player1);
         } else {
-            ofSetColor(0,0,0);
+            ofSetColor(player2);
         }
         
         ofCircle(ofGetMouseX(),ofGetMouseY(),sideLen/2);
@@ -319,9 +334,9 @@ void drawBoard(){
         
         //...and also show the piece in the player's "hand" being moved
         if(whoseTurn == 1){
-            ofSetColor(255,255,255);
+            ofSetColor(player1);
         } else {
-            ofSetColor(0,0,0);
+            ofSetColor(player2);
         }
         ofCircle(ofGetMouseX(),ofGetMouseY(),sideLen/2);
     }
@@ -334,12 +349,12 @@ void drawBoard(){
 void drawSpares(){
     float xOffset = boardXOffset + (1+boardW)*hexW;
     
-    ofSetColor(255, 255, 255);
+    ofSetColor(player1);
     for(int i=0;i<pl1spares;i++){
         ofCircle(xOffset + i*2*sideLen,2*sideLen,sideLen/2);
     }
     
-    ofSetColor(0, 0, 0);
+    ofSetColor(player2);
     for(int i=0;i<pl2spares;i++){
         ofCircle(xOffset + i*2*sideLen,3.5*sideLen,sideLen/2);
     }
@@ -347,7 +362,10 @@ void drawSpares(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofBackground(128,128,128); //gray
+
+    ofBackgroundGradient(start,end,OF_GRADIENT_BAR); //gray
+    //ofBackgroundGradient(end,start,OF_GRADIENT_BAR); //gray
+    //ofBackground(255, 246, 229);
     drawBoard();
     drawSpares();
 }
