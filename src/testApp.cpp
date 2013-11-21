@@ -94,6 +94,8 @@ float hexH = 1.5*sideLen;
 
 
 ofColor player1, player2;
+ofColor start, end;
+
 
 
 
@@ -104,10 +106,11 @@ void testApp::setup(){
     ofSetFrameRate(60);
     player1.set(33,133,197);
     player2.set(255,89,89);
+    start.set(255, 246, 229);
 
-    music.loadSound("Firepit.mp3");
+    music.loadSound("ViseMusic.mp3");
     music.setLoop(true);
-    //music.play();
+    music.play();
     
     //TODO: Initialize your "board" data structure here
 
@@ -152,6 +155,9 @@ void testApp::update(){
     
     //Check for vised pieces on every update
     doVise();
+    if(whoseTurn==1)
+        end.set(126, 206, 253);
+    else end.set(255,143,143);
 }
 
 //Draw a single hexagon centered at (x,y).
@@ -356,10 +362,9 @@ void drawSpares(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofColor start, end;
-    start.set(255, 246, 229);
-    end.set(126, 206, 253);
+
     ofBackgroundGradient(start,end,OF_GRADIENT_BAR); //gray
+    //ofBackgroundGradient(end,start,OF_GRADIENT_BAR); //gray
     //ofBackground(255, 246, 229);
     drawBoard();
     drawSpares();
