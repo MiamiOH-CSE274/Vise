@@ -111,9 +111,9 @@ void testApp::setup(){
     player2.set(255,89,89);
     start.set(255, 246, 229);
 
-    music2.loadSound("ViseMusic.mp3");
-    music2.setLoop(true);
-    music2.play();
+   // music2.loadSound("ViseMusic.mp3");
+    //music2.setLoop(true);
+    //music2.play();
     
     //TODO: Initialize your "board" data structure here
 	//GameBoard myBoard;

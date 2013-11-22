@@ -20,12 +20,12 @@ public:
 	};
 
 public:   
-	std::vector<std::vector<GameNode>> board;
+	std::vector<std::vector<GameNode> > board;
 	void addPiece(int row, int column, int player);
 	void removePiece();
 	int getPiece(int row, int column);
 	void makeGameBoard();
-	bool GameBoard::canMove(int row, int column);
+	bool canMove(int row, int column);
 	void checkNbrs(int x, int y,int& okayNbrs,int& badNbrs);
 
 private:
