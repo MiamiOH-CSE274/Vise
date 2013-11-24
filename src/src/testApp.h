@@ -18,3 +18,10 @@ class testApp : public ofBaseApp{
                 //void dragEvent(ofDragInfo dragInfo);
                 //void gotMessage(ofMessage msg);
 };
+
+class Hex {
+	public:
+		int xIndex;
+		int yIndex;
+		int piece;
+};
