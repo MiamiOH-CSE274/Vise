@@ -1,6 +1,7 @@
 #include "testApp.h"
-
+#include "Graph.h"
 #include <set>
+
 
 //////////////////
 /* Function declarations
@@ -102,10 +103,11 @@ void testApp::setup(){
     // updates or draws are too time conusming.
     ofSetFrameRate(60);
     
-    //TODO: Initialize your "board" data structure here
-
-    //TODO: Put 1 piece for each player in the middle of hte board, side by side
-    
+    //TODO: Initialize your "board" data structure here'
+	Graph board(400);
+	
+    //TODO: Put 1 piece for each player in the middle of the board, side by side
+    board.Setup();
     startTime = ofGetElapsedTimef();
 }
 

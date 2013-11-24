@@ -39,7 +39,8 @@ public:
   // the given cost. If the cost is < 0, throw a string exception.
   // If the edge already exists, just update the cost
   void addEdge(int node1, int node2);
-
+  //sets up the board for the vise, 400 spots
+  void Setup();
 
 private:
   std::vector<Node> adjList;	
