@@ -41,6 +41,10 @@ public:
   void addEdge(int node1, int node2);
   //sets up the board for the vise, 400 spots
   void Setup();
+  //gets the piece number at that position
+  int getPiece(int x, int y);
+  void placePiece(int x, int y, int given);
+  int getClose(int x, int y, int hex);
 
 private:
   std::vector<Node> adjList;	

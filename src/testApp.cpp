@@ -92,7 +92,7 @@ float sideLen = 20.0;
 // change these, just change sideLen
 float hexW = sideLen*2.0*0.86602540378444;
 float hexH = 1.5*sideLen;
-
+Graph board(400);
 
 
 
@@ -104,7 +104,7 @@ void testApp::setup(){
     ofSetFrameRate(60);
     
     //TODO: Initialize your "board" data structure here'
-	Graph board(400);
+	//Graph board(400);
 	
     //TODO: Put 1 piece for each player in the middle of the board, side by side
     board.Setup();
@@ -179,6 +179,9 @@ void drawHex(float x, float y, float sideLen){
  * under consideration.
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
+	for(int i=0;i<6;i++)
+		Board.getClose(x,y);
+		
     //TODO
 }
 
@@ -253,8 +256,7 @@ bool canPlaceOldPiece(int x, int y){
  * (1 or 2)
  */
 int pieceAt(int x,int y){
-    //TODO
-    return 0;
+    return board.getPiece(x,y);
 }
 
 void drawBoard(){
@@ -349,7 +351,7 @@ void drawSpares(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofBackground(128,128,128); //gray
+    ofBackground(39,129,20); //gray
     drawBoard();
     drawSpares();
 }
@@ -359,7 +361,7 @@ void testApp::draw(){
  * If whichPieces is 0, then it clears that board position.
  */
 void putPieceAt(int x, int y, int whichPiece){
-    //TODO
+    board.placePiece(x,y,whichPiece);
 }
 
 //--------------------------------------------------------------

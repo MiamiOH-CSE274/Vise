@@ -51,3 +51,14 @@ void Graph::Setup(){
 			addEdge(i,i+21);
 	}
 }
+int Graph::getPiece(int x, int y){
+	return adjList.at((y*20)+x).piece;
+}
+void Graph::placePiece(int x, int y, int given){
+	adjList.at((y*20)+x).piece=given;
+}
+int Graph::getClose(int x, int y, int hex){
+	return adjList.at( adjList.at((y*20)+x).edgeList.at(hex).dest).piece;
+
+
+}
