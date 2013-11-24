@@ -103,6 +103,24 @@ void testApp::setup(){
     ofSetFrameRate(60);
     
     //TODO: Initialize your "board" data structure here
+	class Hex {
+	private:
+		int xIndex;
+		int yIndex;
+	public:
+		int getXIndex() {
+			return xIndex;
+		}
+		int getYIndex() {
+			return yIndex;
+		}
+	};
+
+	Hex* board = new Hex[400];
+	for (int i = 0; i < 400; i++) {
+		board[i].getXIndex = i % 20;
+		board[i].getYIndex = i / 20 + 1;
+	}
 
     //TODO: Put 1 piece for each player in the middle of hte board, side by side
     
