@@ -4,14 +4,14 @@
 4. may need extra variables for representing the board
 5. initialize board data structure
 6. place starting pieces at beginning
-7. inVise
-8. doVise
-9. checkNbrs
-10. isNeighboringSpace
-11. isJumpSpace
-12. isConnected
-13. canPlaceOldPiece
-14. pieceAt
-15. adapt drawBoard
+7. adapt drawBoard
+8. inVise
+9. doVise
+10. checkNbrs
+11. isNeighboringSpace
+12. isJumpSpace
+13. isConnected
+14. canPlaceOldPiece
+15. pieceAt
 16. putPieceAt
 17. extra "fluff" (music, animations, better looking interface, starting menu, etc.)
