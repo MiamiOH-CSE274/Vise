@@ -1,14 +1,14 @@
-1. get openFrameworks to work
-2. Board data structure class - row-major order 1D array of Hexes
-3. Hex class
+---1. get openFrameworks to work
+---2. Board data structure class - row-major order 1D array of Hexes
+---3. Hex class
 4. may need extra variables for representing the board
-5. initialize board data structure
-6. place starting pieces at beginning
-7. adapt drawBoard
-8. inVise
-9. doVise
+---5. initialize board data structure
+-Y-6. place starting pieces at beginning
+-Y-7. adapt drawBoard
+-K-8. inVise
+-K-9. doVise
 10. checkNbrs
-11. isNeighboringSpace
+---11. isNeighboringSpace
 12. isJumpSpace
 13. isConnected
 14. canPlaceOldPiece
