@@ -57,8 +57,12 @@ int Graph::getPiece(int x, int y){
 void Graph::placePiece(int x, int y, int given){
 	adjList.at((y*20)+x).piece=given;
 }
-int Graph::getClose(int x, int y, int hex){
-	return adjList.at( adjList.at((y*20)+x).edgeList.at(hex).dest).piece;
-
-
+//int Graph::getClose(int x, int y, int hex){
+bool Graph::isClose(int x1, int y1, int x2, int y2){
+	//return adjList.at( adjList.at((y*20)+x).edgeList.at(hex).dest).piece;
+	for (int edgeCount = 0; edgeCount < edgeList.size(); edgeCount++){
+		if (adjList.at((y1*20)+x1).edgeList.at(edgeCount) == adjList.at((y2*20)+x2))
+			return true;
+	}
+	return false;
 }

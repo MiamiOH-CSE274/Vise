@@ -180,9 +180,8 @@ void drawHex(float x, float y, float sideLen){
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
 	for(int i=0;i<6;i++)
-		Board.getClose(x,y);
-		
-    //TODO
+		board.getClose(x,y);
+
 }
 
 /*
@@ -202,8 +201,7 @@ bool canPlaceNewPiece(int x, int y){
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isNeighboringSpace(int x, int y){
-    //TODO
-    return false;
+    return board.isClose(selectedPieceX, selectedPieceY, x, y);
 }
 
 //Return true iff (x,y) is one jump to (selectedPieceX,selectedPieceY)
