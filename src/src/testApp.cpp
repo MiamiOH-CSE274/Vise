@@ -197,8 +197,10 @@ bool canPlaceNewPiece(int x, int y){
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isNeighboringSpace(int x, int y){
-    //TODO
-    return false;
+    if ((abs(selectedPieceX - x) > 1) || (abs(selectedPieceY - y) > 1)) {
+		return false;
+	}
+	return true;
 }
 
 //Return true iff (x,y) is one jump to (selectedPieceX,selectedPieceY)
