@@ -37,16 +37,18 @@ void Graph::addEdge(int node1, int node2){
 void Graph::Setup(){
 	for( int i=0;i<400;i++){
 		//adjList.at(i).edgeList.
-		if(i-1>0)
-			addEdge(i,i-1);
-		if(i+1<20)             ///This one wont work correctly, it will just loop around. Going to need something like i%20 maybe
-			addEdge(i,i+1);
 		if(i-20>0)
 			addEdge(i,i-20);
-		if(i+20<400)
-			addEdge(i,i+20);
 		if(i-21>0)
 			addEdge(i,i-21);
+
+		if(i-1>0)
+			addEdge(i,i-1);
+		if(i+1<i%20)
+			addEdge(i,i+1);
+		
+		if(i+20<400)
+			addEdge(i,i+20);
 		if(i+21<400)
 			addEdge(i,i+21);
 	}
@@ -59,6 +61,15 @@ void Graph::placePiece(int x, int y, int given){
 }
 int Graph::getClose(int x, int y, int hex){
 	return adjList.at( adjList.at((y*20)+x).edgeList.at(hex).dest).piece;
+}
+int Graph::getPiece(int i){
+	return adjList.at(i).piece;
+}
+int Graph::getConnected(int i){
+	std::vector<int> list;
+	list.push_back(i);
+	for(int j=0;j<6;j++)
+		getConnected(adjList.at(i).edgeList()
 
-
+	return list.size();
 }

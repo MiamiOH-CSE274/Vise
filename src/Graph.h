@@ -43,8 +43,10 @@ public:
   void Setup();
   //gets the piece number at that position
   int getPiece(int x, int y);
+  int getPiece(int i);
   void placePiece(int x, int y, int given);
   int getClose(int x, int y, int hex);
+  int getConnected(int i);
 
 private:
   std::vector<Node> adjList;	

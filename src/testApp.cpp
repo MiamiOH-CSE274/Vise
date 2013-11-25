@@ -179,10 +179,14 @@ void drawHex(float x, float y, float sideLen){
  * under consideration.
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
-	for(int i=0;i<6;i++)
-		Board.getClose(x,y);
-		
-    //TODO
+	for(int i=0;i<6;i++){
+		int t=board.getClose(x,y, i);
+		if(t!=0)
+			if(t==whoseTurn)
+				okayNbrs++;
+			else 
+				badNbrs++;
+	}
 }
 
 /*
@@ -221,6 +225,15 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(){
+	int i=0;
+	for(;i<400;i++)
+		if(board.getPiece(i)!=0)
+			break;
+
+	int nums=1;
+	
+
+
     //TODO
     return false;
 }
