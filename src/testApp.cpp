@@ -127,8 +127,7 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-    //TODO
-    return false;
+    return myBoard.isVise(x,y);
 }
 
 /*
@@ -215,7 +214,8 @@ bool canPlaceNewPiece(int x, int y){
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isNeighboringSpace(int x, int y){
-    //TODO
+    if (playerOneConnected(x,y) || playerTwoConnected(x,y))
+		return true;
     return false;
 }
 
@@ -234,8 +234,7 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(){
-    //TODO
-    return false;
+	return myBoard.isConnected();
 }
 
 /* This is used when the player is moving one of her pieces that is
@@ -259,8 +258,8 @@ bool isConnected(){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-    //TODO
-    return false;
+	
+    return true;
 }
 
 /*
@@ -277,8 +276,6 @@ void drawBoard(){
     //NOTE: This will need to be adapted to your board
     // data structure!
     //For each board hex...
-
-
     for(int y=0;y<boardH;y++){
         for(int x=0;x<boardW;x++){
             //Calculate the center, and draw the border

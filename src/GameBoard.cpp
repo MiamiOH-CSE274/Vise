@@ -8,13 +8,14 @@ GameBoard::GameBoard() {
 }
 
 void GameBoard::makeGameBoard() {
-	playerOneTurn = true;
+	playerOneTurn = false;
 		 board.resize(20);
 	 for (int i = 0; i < 20; i++) {
 		 board[i].resize(20);
 	 }
 	 assignPointers();
-	 addPiece(19,0,1);
+	 addPiece(10,10,1);
+	 addPiece(11,10,2);
 
 
 	
@@ -28,85 +29,103 @@ void GameBoard::assignPointers() {
 //	Fix i == 0 pointers and i== 19 for odd and even rows
 //	Fix k ==0 && k == 19 pointers for opposite reason
 //	Double check all pointers
+	int idNum = 0;
 	for (int k = 0; k < 20; k++) {
 		for (int i = 0; i < 20; i++) {
 			if (i != 0 && i != 19 &&  k != 0 && k!= 19) {
 				GameNode* edit = &board[i][k];
 				
 				if (k%2 == 0) {
+					edit->numIdentifier = idNum;
 					edit->east = &board[i+1][k];
 					edit->west = &board[i-1][k];
 					edit->northEast = &board[i-1][k-1];
 					edit->northWest = &board[i][k-1];
 					edit->southEast = &board[i][k+1];
 					edit->southWest = &board[i-1][k+1];
+					idNum++;
 					
 				} else {
+					edit->numIdentifier = idNum;
 					edit->east = &board[i+1][k];
 					edit->west = &board[i-1][k];
 					edit->northEast = &board[i+1][k-1];
 					edit->northWest = &board[i][k-1];
 					edit->southEast = &board[i+1][k+1];
 					edit->southWest = &board[i][k+1];
+					idNum++;
 
 				}
 				
 			} else if (i == 0 && k == 0) {
 					GameNode* edit = &board[i][k];
+					edit->numIdentifier = idNum;
 					edit->east = &board[1][0];
 					edit->west = &board[19][0];
 					edit->northEast = &board[1][19];
 					edit->northWest = &board[19][19];
 					edit->southEast = &board[1][1]; 
 					edit->southWest = &board[1][0];
+					idNum++;
 					
 			} else if (i == 0 && k == 19) {
 				GameNode* edit = &board[i][k];
+				edit->numIdentifier = idNum;
 					edit->east = &board[1][19];
 					edit->west = &board[19][19];
 					edit->northEast = &board[0][18];
 					edit->northWest = &board[19][18];
 					edit->southEast = &board[0][1];
 					edit->southWest = &board[0][0];
+					idNum++;
 					
 			} else if (i == 19 && k == 0) {
 				GameNode* edit = &board[i][k];
+				edit->numIdentifier = idNum;
 					edit->east = &board[0][0];
 					edit->west = &board[18][0];
 					edit->northEast = &board[19][0];
 					edit->northWest = &board[18][19];
 					edit->southEast = &board[0][1];
 					edit->southWest = &board[0][19];
+					idNum++;
 					
 			} else if (i == 19 && k == 19) {
 				GameNode* edit = &board[i][k];
+				edit->numIdentifier = idNum;
 					edit->east = &board[19][0];
 					edit->west = &board[19][18];
 					edit->northEast = &board[18][0];
 					edit->northWest = &board[19][19];
 					edit->southEast = &board[19][1];
 					edit->southWest = &board[18][1];
+					idNum++;
 					
 			} else if (i == 0) {
 				GameNode* edit = &board[i][k];
+				edit->numIdentifier = idNum;
 					edit->east = &board[i][k];
 					edit->west = &board[i][k-1];
 					edit->northEast = &board[i][19];
 					edit->northWest = &board[i][19];
 					edit->southEast = &board[i+1][1];
 					edit->southWest = &board[i][1];
+					idNum++;
 					
 			} else if (i == 19) {
 				   GameNode* edit = &board[i][k];
+				   edit->numIdentifier = idNum;
 					edit->east = &board[19][k+1];
 					edit->west = &board[19][k-1];
 					edit->northEast = &board[18][k+1];
 					edit->northWest = &board[18][k];
 					edit->southEast = &board[0][k+1];
 					edit->southWest = &board[0][k];
+					idNum++;
 					
 			} else if (k == 0) {
 				GameNode* edit = &board[i][k];
+				edit->numIdentifier = idNum;
 				edit->east = &board[i][1];
 				edit->west = &board[i][19];
 				if (i%2 == 0) {
@@ -114,17 +133,18 @@ void GameBoard::assignPointers() {
 					edit->northWest = &board[i-1][19];
 					edit->southEast = &board[i+1][0];
 					edit->southWest = &board[i+1][19];
-					
+					idNum++;
 				} else {
 					edit->northEast = &board[i-1][k+1];
 					edit->northWest = &board[i-1][k];
 					edit->southEast = &board[i+1][k+1];
 					edit->southWest = &board[i+1][k];
-					
+					idNum++;
 				}
 
 			}else if (k == 19) {
 				GameNode* edit = &board[i][k];
+				edit->numIdentifier = idNum;
 				edit->east = &board[i][0];
 				edit->west = &board[i][18];
 				if (i%2 == 0) {
@@ -132,11 +152,13 @@ void GameBoard::assignPointers() {
 					edit->northWest = &board[i-1][18];
 					edit->southEast = &board[i+1][0];
 					edit->southWest = &board[i+1][18];
+					idNum++;
 				} else {
 					edit->northEast = &board[i-1][k];
 					edit->northWest = &board[i-1][k-1];
 					edit->southEast = &board[i+1][k];
 					edit->southWest = &board[i+1][k-1];
+					idNum++;
 				}
 
 			}
@@ -169,17 +191,60 @@ void GameBoard::checkNbrs(int x, int y,int& okayNbrs,int& badNbrs) {
 	badNbrs = 6-countGood;
 	}
 
+bool GameBoard::inVise(int x, int y) {
+	int numAdj = 0;
+	GameNode* check = &board[x][y];
+	//if (playerOneTurn) {
+		if (check->northWest->pieceOn == 1)
+			numAdj++;
+		if (check->northEast->pieceOn == 1)
+			numAdj++;
+		if (check->east->pieceOn == 1)
+			numAdj++;
+		if (check->west->pieceOn == 1)
+			numAdj++;
+		if (check->southEast->pieceOn == 1)
+			numAdj++;
+		if (check->southWest->pieceOn == 1)
+			numAdj++;
+		std::cout<<numAdj;
+		return numAdj >= 2;
+	/*} else {
+		if (check->pieceOn != -1)
+			return false;
+		if (check->northWest->pieceOn == 2)
+			return false;
+		if (check->northEast->pieceOn == 2)
+			return false;
+		if (check->east->pieceOn == 2)
+			return false;
+		if (check->west->pieceOn == 2)
+			return false;
+		if (check->southEast->pieceOn == 2)
+			return false;
+		if (check->southWest->pieceOn == 2)
+			return false;
+		if (check->northWest->pieceOn == 1)
+			return true;
+		if (check->northEast->pieceOn == 1)
+			return true;
+		if (check->east->pieceOn == 1)
+			return true;
+		if (check->west->pieceOn == 1)
+			return true;
+		if (check->southEast->pieceOn == 1)
+			return true;
+		if (check->southWest->pieceOn == 1)
+			return true;
+		return false;*/
+	//}
 
+
+}
 
 void GameBoard::addPiece(int row, int column,int player) {
 	GameNode* toAdd = &board[row][column];
 	toAdd->pieceOn = player;
-	//toAdd->east->canMove = true;
-	//toAdd->northEast->canMove = true;
-	//toAdd->northWest->canMove = true;
-	//toAdd->west->canMove = true;
-	//toAdd->southEast->canMove = true;
-	//toAdd->southWest->canMove = true;
 	playerOneTurn = !playerOneTurn;
 	return;
 }
@@ -189,21 +254,115 @@ int GameBoard::getPiece(int row, int column) {
 	return get.pieceOn;
 }
 
-bool GameBoard::canMove(int row, int column) {
-	GameNode* check = &board[row][column];
-	if (check->northWest->pieceOn == 1)
+bool GameBoard::isAdjacent(int x,int y) {
+	if(isPlayerOneConnected(x,y) || isPlayerTwoConnected(x,y))
+		return true;
+	else
 		return false;
-	if (check->northEast->pieceOn == 1)
-		return false;
-	if (check->east->pieceOn == 1)
-		return false;
-	if (check->west->pieceOn == 1)
-		return false;
-	if (check->southEast->pieceOn == 1)
-		return false;
-	if (check->southWest->pieceOn == 1)
-		return false;
-	return true;
 }
 
+bool GameBoard::isContigious() {
+	int totalPieces = 0;
+    for (int x = 0; x < 20; x++) {
+		for (int y = 0; y < 20; y++) {
+			if (getPiece(x,y) != -1) 
+				totalPieces++;
+		}
+	}
+	int contiguous = 0;
+	for (int i = 0; i < 20; i++) {
+		for (int j = 0; j < 20; j++) {
+			if  (getPiece(i,j) != -1)  {
+			 contiguous = dijkstraTotal(i,j);
+			if (contiguous == totalPieces)
+				return true;
+			else
+				return false;
+			}
+		}
+	}
+    return false;
 
+}
+
+int GameBoard::dijkstraTotal(int x, int y) {
+	int count = 0;
+	int* visited = new int[10];
+	GameNode* check = &board[x][y];
+	return dijkstraRecursive(check,visited,0);
+
+
+}
+
+int GameBoard::dijkstraRecursive(GameNode* cur, int* visited, int arrSize) {
+	int curCount = 0;
+	if (cur->pieceOn == -1)
+		return 0;
+	for (int i = 0; i < 10; i++) {
+		if (cur->numIdentifier == visited[i])
+			return 0;
+	}
+	visited[arrSize] = cur->numIdentifier;
+	arrSize++;
+	curCount++;
+	
+	curCount = curCount + dijkstraRecursive(cur->west,visited,arrSize);
+	curCount = curCount + dijkstraRecursive(cur->east,visited,arrSize);
+	curCount = curCount + dijkstraRecursive(cur->northEast,visited,arrSize);
+	curCount = curCount + dijkstraRecursive(cur->northWest,visited,arrSize);
+	curCount = curCount + dijkstraRecursive(cur->southEast,visited,arrSize);
+	curCount = curCount + dijkstraRecursive(cur->southWest,visited,arrSize);
+
+	return curCount;
+	
+	
+
+}
+
+bool GameBoard::isPlayerOneConnected(int x, int y) {
+	GameNode* check = &board[x][y];
+		if (check->northWest->pieceOn == 2)
+			return true;
+		if (check->northEast->pieceOn == 2)
+			return true;
+		if (check->east->pieceOn == 2)
+			return true;
+		if (check->west->pieceOn == 2)
+			return true;
+		if (check->southEast->pieceOn == 2)
+			return true;
+		if (check->southWest->pieceOn == 2)
+			return true;
+		return false;
+}
+
+bool GameBoard::isPlayerTwoConnected(int x, int y) {
+	GameNode* check = &board[x][y];
+		if (check->northWest->pieceOn == 1)
+			return true;
+		if (check->northEast->pieceOn == 1)
+			return true;
+		if (check->east->pieceOn == 1)
+			return true;
+		if (check->west->pieceOn == 1)
+			return true;
+		if (check->southEast->pieceOn == 1)
+			return true;
+		if (check->southWest->pieceOn == 1)
+			return true;
+		return false;
+}
+
+bool GameBoard::canMove(int x, int y) {
+	if (playerOneTurn) {
+		if (isPlayerOneConnected(x,y) && !isPlayerTwoConnected(x,y))
+			return true;
+		else
+			return false;
+	} else {
+		if(isPlayerTwoConnected(x,y)&&!isPlayerOneConnected(x,y))
+			return true;
+		else
+			return false;
+	}
+}
