@@ -120,8 +120,29 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-    //TODO
-    return false;
+    if (board[20*(y-1)+x].piece == 0) {
+		return false;
+	}
+	else if (board[20*(y-1)+x].piece == 1) {
+		if ((board[20*(y-1)+(x-1)].piece == 2) && (board[20*(y-1)+(x+1)].piece == 2)) {
+			return true;
+		} else if ((board[20*(y-2)+x].piece == 2) && (board[20*(y)+(x-1)].piece == 2)) {
+			return true;
+		} else if ((board[20*(y-2)+(x-1)].piece == 2) && (board[20*(y)+x].piece == 2)) {
+			return true;
+		}
+	}
+	else if (board[20*(y-1)+x].piece == 2) {
+		if ((board[20*(y-1)+(x-1)].piece == 1) && (board[20*(y-1)+(x+1)].piece == 1)) {
+			return true;
+		} else if ((board[20*(y-2)+x].piece == 1) && (board[20*(y)+(x-1)].piece == 1)) {
+			return true;
+		} else if ((board[20*(y-2)+(x-1)].piece == 1) && (board[20*(y)+x].piece == 1)) {
+			return true;
+		}
+	}
+    else
+		return false;
 }
 
 /*
