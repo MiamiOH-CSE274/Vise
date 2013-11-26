@@ -112,7 +112,9 @@ void testApp::setup(){
 	}
 
     //TODO: Put 1 piece for each player in the middle of hte board, side by side
-    
+    board[10*20 + 10].piece = 1;
+    board[10*10 + 11].piece = 2;
+
     startTime = ofGetElapsedTimef();
 }
 
