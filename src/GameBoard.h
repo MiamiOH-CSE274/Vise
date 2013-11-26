@@ -28,17 +28,17 @@ public:
 	void makeGameBoard();
 	bool canMove(int row, int column);
 	void checkNbrs(int x, int y,int& okayNbrs,int& badNbrs);
-	bool GameBoard::inVise(int x, int y);
-	bool GameBoard::isContigious();
-	bool GameBoard::isAdjacent(int x,int y);
-	bool GameBoard::isPlayerOneConnected(int x, int y);
-	bool GameBoard::isPlayerTwoConnected(int x, int y);
-	int GameBoard::dijkstraRecursive(GameNode* cur, int* visited, int arrSize);
+	bool inVise(int x, int y);
+	bool isContigious();
+	bool isAdjacent(int x,int y);
+	bool isPlayerOneConnected(int x, int y);
+	bool isPlayerTwoConnected(int x, int y);
+	int dijkstraRecursive(GameNode* cur, int* visited, int arrSize);
 
 private:
 	void assignPointers();
 	bool playerOneTurn;
-	int GameBoard::dijkstraTotal(int x, int y);
+	int dijkstraTotal(int x, int y);
 	
 
 	

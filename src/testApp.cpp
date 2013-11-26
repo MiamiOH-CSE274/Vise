@@ -133,7 +133,7 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-    return myBoard.isVise(x,y);
+    return myBoard.inVise(x,y);
 }
 
 /*
@@ -220,7 +220,7 @@ bool canPlaceNewPiece(int x, int y){
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isNeighboringSpace(int x, int y){
-    if (playerOneConnected(x,y) || playerTwoConnected(x,y))
+    if (myBoard.isPlayerOneConnected(x,y) || myBoard.isPlayerTwoConnected(x,y))
 		return true;
     return false;
 }
@@ -240,7 +240,7 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(){
-	return myBoard.isConnected();
+	return myBoard.isContigious();
 }
 
 /* This is used when the player is moving one of her pieces that is
