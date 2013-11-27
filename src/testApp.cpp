@@ -96,8 +96,10 @@ float hexH = 1.5*sideLen;
 
 
 GameBoard myBoard;
-ofColor player1, player2;
-ofColor start, end2;
+ofColor player1, player2, player1Turn, player2Turn;
+ofColor start, end2, customBlack;
+
+bool colorDirection;
 
 
 
@@ -108,8 +110,12 @@ void testApp::setup(){
     // updates or draws are too time conusming.
     ofSetFrameRate(60);
     player1.set(33,133,197);
+    player1Turn.set(126, 206, 253);
     player2.set(255,89,89);
+    player2Turn.set(255,143,143);
     start.set(255, 246, 229);
+    customBlack.set(1, 1, 1);
+    colorDirection = true;
 
    // music2.loadSound("ViseMusic.mp3");
     //music2.setLoop(true);
@@ -127,7 +133,7 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-    return myBoard.isVise(x,y);
+    return myBoard.inVise(x,y);
 }
 
 /*
@@ -159,8 +165,8 @@ void testApp::update(){
     //Check for vised pieces on every update
     doVise();
     if(whoseTurn==1)
-        end2.set(126, 206, 253);
-    else end2.set(255,143,143);
+        end2.set(player1Turn);
+    else end2.set(player2Turn);
 }
 
 //Draw a single hexagon centered at (x,y).
@@ -214,7 +220,7 @@ bool canPlaceNewPiece(int x, int y){
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isNeighboringSpace(int x, int y){
-    if (playerOneConnected(x,y) || playerTwoConnected(x,y))
+    if (myBoard.isPlayerOneConnected(x,y) || myBoard.isPlayerTwoConnected(x,y))
 		return true;
     return false;
 }
@@ -234,7 +240,7 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(){
-	return myBoard.isConnected();
+	return myBoard.isContigious();
 }
 
 /* This is used when the player is moving one of her pieces that is
@@ -364,8 +370,28 @@ void drawSpares(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-
-    ofBackgroundGradient(start,end2,OF_GRADIENT_BAR); //gray
+    if (currentFrame%1 ==0) {
+        if (customBlack==ofColor(1,1,1)) {
+            colorDirection = true;
+        }
+        else if(customBlack==ofColor(255,255,255)){
+            colorDirection = false;
+        }
+        if (colorDirection)
+        customBlack += ofColor(1,1,1);
+        else customBlack -= ofColor(1,1,1);
+    }
+    
+    end2.set(end2 -=customBlack);
+    ofBackgroundGradient(start,end2,OF_GRADIENT_BAR);
+//    for (double i=0.; i<384; i +=.1) {
+//        ofSetColor(player1Turn.lerp(end2, 1));
+//        ofFill();
+//        ofRect(0, i, 1024, 1);
+//    }
+    
+    
+    
     //ofBackgroundGradient(end2,start,OF_GRADIENT_BAR); //gray
     //ofBackground(255, 246, 229);
     drawBoard();
