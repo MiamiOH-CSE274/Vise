@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 
+//Okay, you can actually commit this. SEE DOUG IM MAKING SURE IM COMMITING THE RIGHT THING.
 
 GameBoard::GameBoard() {
 
@@ -207,7 +208,7 @@ bool GameBoard::inVise(int x, int y) {
 			numAdj++;
 		if (check->southWest->pieceOn == 1)
 			numAdj++;
-		std::cout<<numAdj;
+		std::cout<<"Nums Around" << numAdj<<std::endl;
 		return numAdj >= 2;
 	/*} else {
 		if (check->pieceOn != -1)
@@ -246,6 +247,7 @@ void GameBoard::addPiece(int row, int column,int player) {
 	GameNode* toAdd = &board[row][column];
 	toAdd->pieceOn = player;
 	playerOneTurn = !playerOneTurn;
+	std::cout<<"Vise Status" << inVise(row,column)<<std::endl;
 	return;
 }
 
@@ -353,7 +355,94 @@ bool GameBoard::isPlayerTwoConnected(int x, int y) {
 		return false;
 }
 
+
+bool GameBoard::moveOld(int x, int y) {
+	GameNode* checking = &board[x][y];
+	if (playerOneTurn) {
+		if(checking->pieceOn != -1)
+			return false;
+		if(checking->east->pieceOn != -1) {
+			if (checking->east->east->pieceOn == -1)
+				return true;
+		}
+		if(checking->northEast->pieceOn != -1) {
+			if (checking->northEast->northEast->pieceOn == -1)
+				return true;
+		}
+		if(checking->northWest->pieceOn != -1) {
+			if (checking->northWest->northWest->pieceOn == -1)
+				return true;
+		}
+		if(checking->west->pieceOn != -1) {
+			if (checking->west->west->pieceOn == -1)
+				return true;
+		}
+		if(checking->southEast->pieceOn != -1) {
+			if (checking->southEast->southEast->pieceOn == -1)
+				return true;
+		}
+		if(checking->southWest->pieceOn != -1) {
+			if (checking->southWest->southWest->pieceOn == -1)
+				return true;
+		}
+		if (isPlayerOneConnected(x,y))
+			return true;
+		return false;
+	} else {
+		if(checking->pieceOn != -1)
+			return false;
+		if(checking->east->pieceOn != -1) {
+			if (checking->east->east->pieceOn == -1)
+				return true;
+		}
+		if(checking->northEast->pieceOn != -1) {
+			if (checking->northEast->northEast->pieceOn == -1)
+				return true;
+		}
+		if(checking->northWest->pieceOn != -1) {
+			if (checking->northWest->northWest->pieceOn == -1)
+				return true;
+		}
+		if(checking->west->pieceOn != -1) {
+			if (checking->west->west->pieceOn == -1)
+				return true;
+		}
+		if(checking->southEast->pieceOn != -1) {
+			if (checking->southEast->southEast->pieceOn == -1)
+				return true;
+		}
+		if(checking->southWest->pieceOn != -1) {
+			if (checking->southWest->southWest->pieceOn == -1)
+				return true;
+		}
+		if (isPlayerTwoConnected(x,y))
+			return true;
+		return false;
+
+
+	}
+	return false;
+}
+bool GameBoard::dijkstraMove(int x, int y) {
+	//Arr size 18
+	int* looked = new int[18];
+	int arrSize = 0;
+	int moveSize = 2;
+	return true;
+
+}
+
+bool GameBoard::dijkstraMoveRecursive (GameNode* cur, int* visited, int arrSize, int movesLeft) {
+	return false;
+
+
+}
+
 bool GameBoard::canMove(int x, int y) {
+	int pieceNum = getPiece(x,y);
+	if (pieceNum == 1 || pieceNum == 0) {
+		return false;
+	}
 	if (playerOneTurn) {
 		if (isPlayerOneConnected(x,y) && !isPlayerTwoConnected(x,y))
 			return true;

@@ -34,13 +34,14 @@ public:
 	bool isPlayerOneConnected(int x, int y);
 	bool isPlayerTwoConnected(int x, int y);
 	int dijkstraRecursive(GameNode* cur, int* visited, int arrSize);
+	bool GameBoard::moveOld(int x, int y);
 
 private:
 	void assignPointers();
 	bool playerOneTurn;
 	int dijkstraTotal(int x, int y);
-	
-
+	bool dijkstraMove(int x, int y);
+	bool dijkstraMoveRecursive (GameNode* cur, int* visited, int arrSize, int movesLeft);
 	
 
 	
