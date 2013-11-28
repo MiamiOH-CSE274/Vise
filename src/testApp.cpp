@@ -117,9 +117,9 @@ void testApp::setup(){
     customBlack.set(1, 1, 1);
     colorDirection = true;
 
-   // music2.loadSound("ViseMusic.mp3");
-    //music2.setLoop(true);
-    //music2.play();
+    music2.loadSound("ViseMusic.mp3");
+    music2.setLoop(true);
+    music2.play();
     
     //TODO: Initialize your "board" data structure here
 	//GameBoard myBoard;
@@ -265,7 +265,7 @@ bool isConnected(){
  */
 bool canPlaceOldPiece(int x, int y){
 	
-    return true;
+    return myBoard.canMoveOld(x, y)&& isNeighboringSpace(x, y);
 }
 
 /*
@@ -336,7 +336,7 @@ void drawBoard(){
         //If moving an old piece...
         
         //...show where it is being moved FROM
-        ofSetColor(64,64,192); //blue
+        ofSetColor(192,64,192); //PURPLE, due to color scheme
         float offset = (hexW/2) * (selectedPieceY%2);
         ofCircle(boardXOffset+selectedPieceX*hexW+offset,boardYOffset+selectedPieceY*hexH,sideLen/2);
         
@@ -446,7 +446,7 @@ void testApp::mousePressed(int x, int y, int button){
                 selectedPieceX = whichCol;
                 selectedPieceY  = whichRow;
                 currentAction = 2;
-                putPieceAt(whichCol,whichRow,0);
+                putPieceAt(whichCol,whichRow,-1);
             }
         } else if(currentAction == 2){
             //...placing an old piece back on the board

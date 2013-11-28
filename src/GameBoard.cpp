@@ -366,3 +366,18 @@ bool GameBoard::canMove(int x, int y) {
 			return false;
 	}
 }
+
+bool GameBoard::canMoveOld(int x, int y){
+    if (!playerOneTurn) {
+		if (isPlayerOneConnected(x,y) && isContigious())
+			return true;
+		else
+			return false;
+	} else {
+		if(isPlayerTwoConnected(x,y)&&isContigious())
+			return true;
+		else
+			return false;
+	}
+    
+}

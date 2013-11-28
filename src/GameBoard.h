@@ -34,6 +34,7 @@ public:
 	bool isPlayerOneConnected(int x, int y);
 	bool isPlayerTwoConnected(int x, int y);
 	int dijkstraRecursive(GameNode* cur, int* visited, int arrSize);
+    bool canMoveOld(int row, int column);
 
 private:
 	void assignPointers();
