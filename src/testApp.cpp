@@ -40,6 +40,8 @@ int boardH = 20;
 
 //TODO: Make any variables you need for representing your board here
 
+
+
 //Number of spare playing pieces left, for each player
 int pl1spares=4;
 int pl2spares=4;
@@ -104,7 +106,8 @@ void testApp::setup(){
     
     //TODO: Initialize your "board" data structure here
 
-    //TODO: Put 1 piece for each player in the middle of hte board, side by side
+    //TODO: Put 1 piece for each player in the middle of the board, side by side
+
     
     startTime = ofGetElapsedTimef();
 }
