@@ -174,6 +174,22 @@ void testApp::setup(){
 				board->hexList[i]->downleft = board->hexList[i-380];
 				board->hexList[i]->downright = board->hexList[i-379];
 		}
+		else if(y%2=0){
+				board->hexList[i]->upleft = board->hexList[i-21];
+				board->hexList[i]->upright = board->hexList[i-20];
+				board->hexList[i]->left = board->hexList[i-1];
+				board->hexList[i]->right = board->hexList[i+1];
+				board->hexList[i]->downleft = board->hexList[i+19];
+				board->hexList[i]->downright = board->hexList[i+20];
+		}
+		else{
+				board->hexList[i]->upleft = board->hexList[i-20];
+				board->hexList[i]->upright = board->hexList[i-19];
+				board->hexList[i]->left = board->hexList[i-1];
+				board->hexList[i]->right = board->hexList[i+1];
+				board->hexList[i]->downleft = board->hexList[i+20];
+				board->hexList[i]->downright = board->hexList[i+21];
+		}
 		board->hexList[i]->type=0;
 	}
 	board->hexList[0]->upleft = board->hexList[399];
