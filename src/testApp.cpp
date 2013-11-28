@@ -1,4 +1,5 @@
 #include "testApp.h"
+#include "gameBoard.h"
 
 #include <set>
 
@@ -23,7 +24,7 @@ void putPieceAt(int x, int y, int whichPiece);
 
 //Drawing functions
 void drawHex(float x, float y, float sideLen);
-void drawBoard();
+void drawboard();
 void drawSpares();
 
 //////////////////
@@ -39,6 +40,12 @@ int boardW = 20;
 int boardH = 20;
 
 //TODO: Make any variables you need for representing your board here
+
+gameBoard* board;
+int numBlack;
+int numWhite;
+int bankBlack;
+int bankWhite;
 
 //Number of spare playing pieces left, for each player
 int pl1spares=4;
@@ -56,7 +63,7 @@ int whoseTurn=1;
  */
 int currentAction=0;
 
-//The coordinates of the selected piece, if the player is moving an existing piece. This is in Board coordinates, not screen coordinates.
+//The coordinates of the selected piece, if the player is moving an existing piece. This is in board coordinates, not screen coordinates.
 int selectedPieceX=0;
 int selectedPieceY=0;
 
@@ -102,23 +109,137 @@ void testApp::setup(){
     // updates or draws are too time conusming.
     ofSetFrameRate(60);
     
-    //TODO: Initialize your "board" data structure here
+    //TODO: Initialize your "gameBoard" data structure here
+	board = new gameBoard(400);
+	numBlack = 4;
+	numWhite = 4;
+	bankBlack = 3;
+	bankWhite = 3;
 
-    //TODO: Put 1 piece for each player in the middle of hte board, side by side
-    
+    //TODO: Put 1 piece for each player in the middle of hte gameBoard, side by side
+	for(int i = 0; i < 400; i++){
+		if(i<19 && i>0){
+				board->hexList[i]->upleft = board->hexList[i+379];
+				board->hexList[i]->upright = board->hexList[i+380];
+				board->hexList[i]->left = board->hexList[i-1];
+				board->hexList[i]->right = board->hexList[i+1];
+				board->hexList[i]->downleft = board->hexList[i+19];
+				board->hexList[i]->downright = board->hexList[i+20];
+		}
+		else if(i<399 && i>380){
+				board->hexList[i]->upleft = board->hexList[i+359];
+				board->hexList[i]->upright = board->hexList[i+360];
+				board->hexList[i]->left = board->hexList[i-1];
+				board->hexList[i]->right = board->hexList[i+1];
+				board->hexList[i]->downleft = board->hexList[i+19];
+				board->hexList[i]->downright = board->hexList[i+20];
+		}
+		else if(i%40==0){
+				board->hexList[i]->upleft = board->hexList[i-1];
+				board->hexList[i]->upright = board->hexList[i-20];
+				board->hexList[i]->left = board->hexList[i+19];
+				board->hexList[i]->right = board->hexList[i+1];
+				board->hexList[i]->downleft = board->hexList[i+39];
+				board->hexList[i]->downright = board->hexList[i+20];
+		}
+		else if((i+20)%40==0){
+				board->hexList[i]->upleft = board->hexList[i-20];
+				board->hexList[i]->upright = board->hexList[i-19];
+				board->hexList[i]->left = board->hexList[i+19];
+				board->hexList[i]->right = board->hexList[i+1];
+				board->hexList[i]->downleft = board->hexList[i+20];
+				board->hexList[i]->downright = board->hexList[i+21];
+		}
+		else if((i+1)%40==0){
+				board->hexList[i]->upleft = board->hexList[i-20];
+				board->hexList[i]->upright = board->hexList[i-39];
+				board->hexList[i]->left = board->hexList[i-1];
+				board->hexList[i]->right = board->hexList[i-19];
+				board->hexList[i]->downleft = board->hexList[i+20];
+				board->hexList[i]->downright = board->hexList[i+1];
+		}
+		else if((i+21)%40==0){
+				board->hexList[i]->upleft = board->hexList[i-21];
+				board->hexList[i]->upright = board->hexList[i-20];
+				board->hexList[i]->left = board->hexList[i-1];
+				board->hexList[i]->right = board->hexList[i-19];
+				board->hexList[i]->downleft = board->hexList[i+19];
+				board->hexList[i]->downright = board->hexList[i+20];
+		}
+		else if(i>380 && i<399){
+				board->hexList[i]->upleft = board->hexList[i-20];
+				board->hexList[i]->upright = board->hexList[i-19];
+				board->hexList[i]->left = board->hexList[i-1];
+				board->hexList[i]->right = board->hexList[i+1];
+				board->hexList[i]->downleft = board->hexList[i-380];
+				board->hexList[i]->downright = board->hexList[i-379];
+		}
+		else if(y%2=0){
+				board->hexList[i]->upleft = board->hexList[i-21];
+				board->hexList[i]->upright = board->hexList[i-20];
+				board->hexList[i]->left = board->hexList[i-1];
+				board->hexList[i]->right = board->hexList[i+1];
+				board->hexList[i]->downleft = board->hexList[i+19];
+				board->hexList[i]->downright = board->hexList[i+20];
+		}
+		else{
+				board->hexList[i]->upleft = board->hexList[i-20];
+				board->hexList[i]->upright = board->hexList[i-19];
+				board->hexList[i]->left = board->hexList[i-1];
+				board->hexList[i]->right = board->hexList[i+1];
+				board->hexList[i]->downleft = board->hexList[i+20];
+				board->hexList[i]->downright = board->hexList[i+21];
+		}
+		board->hexList[i]->type=0;
+	}
+	board->hexList[0]->upleft = board->hexList[399];
+	board->hexList[0]->upright = board->hexList[380];
+	board->hexList[0]->left = board->hexList[19];
+	board->hexList[0]->right = board->hexList[1];
+	board->hexList[0]->downleft = board->hexList[39];
+	board->hexList[0]->downright = board->hexList[20];
+
+	board->hexList[19]->upleft = board->hexList[398];
+	board->hexList[19]->upright = board->hexList[399];
+	board->hexList[19]->left = board->hexList[18];
+	board->hexList[19]->right = board->hexList[0];
+	board->hexList[19]->downleft = board->hexList[38];
+	board->hexList[19]->downright = board->hexList[39];
+
+	board->hexList[380]->upleft = board->hexList[360];
+	board->hexList[380]->upright = board->hexList[361];
+	board->hexList[380]->left = board->hexList[399];
+	board->hexList[380]->right = board->hexList[381];
+	board->hexList[380]->downleft = board->hexList[0];
+	board->hexList[380]->downright = board->hexList[1];
+
+	board->hexList[399]->upleft = board->hexList[379];
+	board->hexList[399]->upright = board->hexList[360];
+	board->hexList[399]->left = board->hexList[398];
+	board->hexList[399]->right = board->hexList[380];
+	board->hexList[399]->downleft = board->hexList[19];
+	board->hexList[399]->downright = board->hexList[0];
+
+	board->hexList[209]->type=1;
+	board->hexList[210]->type=2;
+
     startTime = ofGetElapsedTimef();
 }
 
-//Return true iff there is a piece in board space (x,y), and that piece
-// is caught in a vise. Note that x and y are in board coordinates,
+//Return true iff there is a piece in gameBoard space (x,y), and that piece
+// is caught in a vise. Note that x and y are in gameBoard coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-    //TODO
-    return false;
+	int target = y*20+x;
+	if((board->hexList[target]->left->type != board->hexList[target]->type && board->hexList[target]->right->type != board->hexList[target]->type && board->hexList[target]->left->type != 0 && board->hexList[target]->right->type != 0) ||
+		(board->hexList[target]->upleft->type != board->hexList[target]->type && board->hexList[target]->downright->type != board->hexList[target]->type && board->hexList[target]->upleft->type != 0 && board->hexList[target]->downright->type != 0) ||
+		(board->hexList[target]->downleft->type != board->hexList[target]->type && board->hexList[target]->upright->type != board->hexList[target]->type && board->hexList[target]->downleft->type != 0 && board->hexList[target]->upright->type != 0))
+		return true;
+	return false;
 }
 
 /*
- * This is the method that updates the board if a player is caught in a vise at the end of the turn.
+ * This is the method that updates the gameBoard if a player is caught in a vise at the end of the turn.
  * You may want to break this method up into several sub-methods.
  *
  * 1) FIRST, identify all pieces that are caught in a vise Note: If you have 0101, then
@@ -178,6 +299,36 @@ void drawHex(float x, float y, float sideLen){
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
     //TODO
+	int target = y*20+x;
+	if(board->hexList[target]->upleft->type!=whoseTurn && board->hexList[target]->upleft->type!=0)
+		badNbrs++;
+	else if(board->hexList[target]->upleft->type!=0)
+		okayNbrs++;
+
+	if(board->hexList[target]->upright->type!=whoseTurn && board->hexList[target]->upright->type!=0)
+		badNbrs++;
+	else if(board->hexList[target]->upright->type!=0)
+		okayNbrs++;
+
+	if(board->hexList[target]->left->type!=whoseTurn && board->hexList[target]->left->type!=0)
+		badNbrs++;
+	else if(board->hexList[target]->left->type!=0)
+		okayNbrs++;
+
+	if(board->hexList[target]->right->type!=whoseTurn && board->hexList[target]->right->type!=0)
+		badNbrs++;
+	else if(board->hexList[target]->right->type!=0)
+		okayNbrs++;
+
+	if(board->hexList[target]->downleft->type!=whoseTurn && board->hexList[target]->downleft->type!=0)
+		badNbrs++;
+	else if(board->hexList[target]->downleft->type!=0)
+		okayNbrs++;
+
+	if(board->hexList[target]->downright->type!=whoseTurn && board->hexList[target]->downright->type!=0)
+		badNbrs++;
+	else if(board->hexList[target]->downleft->type!=0)
+		okayNbrs++;
 }
 
 /*
@@ -198,13 +349,31 @@ bool canPlaceNewPiece(int x, int y){
 //These inputs are in board coordinates, not screen coordinates
 bool isNeighboringSpace(int x, int y){
     //TODO
-    return false;
+	int selected = selectedPieceY*20+selectedPieceX;
+	int target = y*20+x;
+	if((board->hexList[selected]->upleft == board->hexList[target]) ||
+		(board->hexList[selected]->upright == board->hexList[target]) ||
+		(board->hexList[selected]->left == board->hexList[target]) ||
+		(board->hexList[selected]->right == board->hexList[target]) ||
+		(board->hexList[selected]->downleft == board->hexList[target]) ||
+		(board->hexList[selected]->downright == board->hexList[target]))
+		return true;
+	return false;
 }
 
 //Return true iff (x,y) is one jump to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isJumpSpace(int x, int y){
     //TODO
+	int selected = selectedPieceY*20+selectedPieceX;
+	int target = y*20+x;
+	if((board->hexList[selected]->upleft->upleft == board->hexList[target]) ||
+		(board->hexList[selected]->upright->upright == board->hexList[target]) ||
+		(board->hexList[selected]->left->left == board->hexList[target]) ||
+		(board->hexList[selected]->right->right == board->hexList[target]) ||
+		(board->hexList[selected]->downleft->downleft == board->hexList[target]) ||
+		(board->hexList[selected]->downright->downright == board->hexList[target]))
+		return true;
     return false;
 }
 
@@ -252,10 +421,11 @@ bool canPlaceOldPiece(int x, int y){
  */
 int pieceAt(int x,int y){
     //TODO
-    return 0;
+	int target = 20*y+x;
+	return board->hexList[target]->type;
 }
 
-void drawBoard(){
+void drawboard(){
     //NOTE: This will need to be adapted to your board
     // data structure!
     //For each board hex...
@@ -348,7 +518,7 @@ void drawSpares(){
 //--------------------------------------------------------------
 void testApp::draw(){
     ofBackground(128,128,128); //gray
-    drawBoard();
+    drawboard();
     drawSpares();
 }
 
@@ -358,6 +528,8 @@ void testApp::draw(){
  */
 void putPieceAt(int x, int y, int whichPiece){
     //TODO
+	int target = 20*y+x;
+	board->hexList[target]->type=whichPiece;
 }
 
 //--------------------------------------------------------------
