@@ -13,6 +13,7 @@ public:
 		GameNode* southEast;
 		GameNode* southWest;
 		int numIdentifier;
+		bool curLookAt;
 		int pieceOn;
 		bool canMove;
 		GameNode() {pieceOn = -1; canMove = false;};

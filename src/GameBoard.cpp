@@ -2,7 +2,11 @@
 #include <vector>
 #include <iostream>
 
-//Okay, you can actually commit this. SEE DOUG IM MAKING SURE IM COMMITING THE RIGHT THING.
+#define NO_PLAYER_PIECE -1
+#define PLAYER_ONE_PIECE  1
+#define PLAYER_TWO_PIECE  2
+
+//Okay, you can actually commit this. 
 
 GameBoard::GameBoard() {
 
@@ -358,37 +362,53 @@ bool GameBoard::isPlayerTwoConnected(int x, int y) {
 
 bool GameBoard::moveOld(int x, int y) {
 	GameNode* checking = &board[x][y];
-	if (playerOneTurn) {
-		if(checking->pieceOn != -1)
+	checking->curLookAt = true;
+	//if (playerOneTurn) {
+
+		if(checking->pieceOn != -1) {
+			checking->curLookAt = false;
 			return false;
-		if(checking->east->pieceOn != -1) {
-			if (checking->east->east->pieceOn == -1)
-				return true;
 		}
-		if(checking->northEast->pieceOn != -1) {
-			if (checking->northEast->northEast->pieceOn == -1)
+		if(checking->east->pieceOn == PLAYER_ONE_PIECE || checking->east->pieceOn == PLAYER_TWO_PIECE ) {
+			if (checking->east->east->pieceOn == -1 && checking->east->east->curLookAt == true) {
+				checking->curLookAt = false;
 				return true;
+			}
 		}
-		if(checking->northWest->pieceOn != -1) {
-			if (checking->northWest->northWest->pieceOn == -1)
+		if(checking->northEast->pieceOn == PLAYER_ONE_PIECE || checking->northEast->pieceOn == PLAYER_TWO_PIECE ) {
+			if (checking->northEast->northEast->pieceOn == -1 && checking->northEast->northEast->curLookAt == true) {
+				checking->curLookAt = false;
 				return true;
+			}
 		}
-		if(checking->west->pieceOn != -1) {
-			if (checking->west->west->pieceOn == -1)
+		if(checking->northWest->pieceOn == PLAYER_ONE_PIECE || checking->northWest->pieceOn == PLAYER_TWO_PIECE) {
+			if (checking->northWest->northWest->pieceOn == -1 && checking->northWest->northWest->curLookAt == true) {
+				checking->curLookAt = false;
 				return true;
+			}
 		}
-		if(checking->southEast->pieceOn != -1) {
-			if (checking->southEast->southEast->pieceOn == -1)
+		if(checking->west->pieceOn == PLAYER_ONE_PIECE || checking->west->pieceOn == PLAYER_TWO_PIECE) {
+			if (checking->west->west->pieceOn == -1 && checking->west->west->curLookAt == true) {
+				checking->curLookAt = false;
 				return true;
+			}
 		}
-		if(checking->southWest->pieceOn != -1) {
-			if (checking->southWest->southWest->pieceOn == -1)
+		if(checking->southEast->pieceOn == PLAYER_ONE_PIECE || checking->southEast->pieceOn == PLAYER_TWO_PIECE) {
+			if (checking->southEast->southEast->pieceOn == -1 && checking->southEast->southEast->curLookAt == true) {
+				checking->curLookAt = false;
 				return true;
+			}
 		}
-		if (isPlayerOneConnected(x,y))
-			return true;
+		if(checking->southWest->pieceOn == PLAYER_ONE_PIECE || checking->southWest->pieceOn == PLAYER_TWO_PIECE) {
+			if (checking->southWest->southWest->pieceOn == -1 && checking->southWest->southWest->curLookAt == true) {
+				checking->curLookAt = false;
+				return true;
+			}
+		}
+		checking->curLookAt = false;
 		return false;
-	} else {
+}
+	/*} else {
 		if(checking->pieceOn != -1)
 			return false;
 		if(checking->east->pieceOn != -1) {
@@ -417,12 +437,13 @@ bool GameBoard::moveOld(int x, int y) {
 		}
 		if (isPlayerTwoConnected(x,y))
 			return true;
+		checking->curLookAt = false;
 		return false;
 
 
 	}
-	return false;
-}
+	return false;*/
+
 bool GameBoard::dijkstraMove(int x, int y) {
 	//Arr size 18
 	int* looked = new int[18];

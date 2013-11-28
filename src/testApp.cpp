@@ -266,8 +266,7 @@ bool isConnected(){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-       
-    return myBoard.moveOld(x,y);
+	return myBoard.moveOld(x,y);
 }
 
 /*
