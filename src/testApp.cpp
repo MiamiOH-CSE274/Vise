@@ -117,6 +117,8 @@ void testApp::setup(){
 	bankWhite = 3;
 
     //TODO: Put 1 piece for each player in the middle of hte gameBoard, side by side
+	for(int i=0; i<400; i++)
+		board[i] = new hexSpace();
 	for(int i = 0; i < 400; i++){
 		if(i<19 && i>0){
 				board[i]->upleft = board[i+379];
@@ -127,12 +129,12 @@ void testApp::setup(){
 				board[i]->downright = board[i+20];
 		}
 		else if(i<399 && i>380){
-				board[i]->upleft = board[i+359];
-				board[i]->upright = board[i+360];
+				board[i]->upleft = board[i-20];
+				board[i]->upright = board[i-19];
 				board[i]->left = board[i-1];
 				board[i]->right = board[i+1];
-				board[i]->downleft = board[i+19];
-				board[i]->downright = board[i+20];
+				board[i]->downleft = board[i-380];
+				board[i]->downright = board[i-379];
 		}
 		else if(i%40==0 && i!=0){
 				board[i]->upleft = board[i-1];
@@ -142,7 +144,7 @@ void testApp::setup(){
 				board[i]->downleft = board[i+39];
 				board[i]->downright = board[i+20];
 		}
-		else if((i+20)%40==0){
+		else if((i+20)%40==0 && i!=380){
 				board[i]->upleft = board[i-20];
 				board[i]->upright = board[i-19];
 				board[i]->left = board[i+19];
@@ -150,7 +152,7 @@ void testApp::setup(){
 				board[i]->downleft = board[i+20];
 				board[i]->downright = board[i+21];
 		}
-		else if((i+1)%40==0){
+		else if((i+1)%40==0 && i!=399){
 				board[i]->upleft = board[i-20];
 				board[i]->upright = board[i-39];
 				board[i]->left = board[i-1];
@@ -158,7 +160,7 @@ void testApp::setup(){
 				board[i]->downleft = board[i+20];
 				board[i]->downright = board[i+1];
 		}
-		else if((i+21)%40==0){
+		else if((i+21)%40==0 && i!=19){
 				board[i]->upleft = board[i-21];
 				board[i]->upright = board[i-20];
 				board[i]->left = board[i-1];
@@ -182,7 +184,7 @@ void testApp::setup(){
 				board[i]->downleft = board[i+19];
 				board[i]->downright = board[i+20];
 		}
-		else if (i!=0){
+		else if (i!=0 && i!=19 && i!=380 && i!=399){
 				board[i]->upleft = board[i-20];
 				board[i]->upright = board[i-19];
 				board[i]->left = board[i-1];
@@ -190,7 +192,6 @@ void testApp::setup(){
 				board[i]->downleft = board[i+20];
 				board[i]->downright = board[i+21];
 		}
-		board[i]->type=0;
 	}
 	board[0]->upleft = board[399];
 	board[0]->upright = board[380];
