@@ -196,7 +196,18 @@ void GameBoard::checkNbrs(int x, int y,int& okayNbrs,int& badNbrs) {
 	badNbrs = 6-countGood;
 	}
 
+void GameBoard::resetVise() {
+	GameNode* cur;
+	for (int x= 0; x < 20; x++) {
+		for (int y = 0; y < 20; y++) {
+			cur = &board[x][y];
+			cur->inVise = false;
 
+		}
+
+	}
+
+}
 void GameBoard::inVise(int x, int y) {
 	GameNode* check = &board[x][y];
 	if (check->pieceOn == -1)
