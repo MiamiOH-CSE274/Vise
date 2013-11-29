@@ -196,54 +196,27 @@ void GameBoard::checkNbrs(int x, int y,int& okayNbrs,int& badNbrs) {
 	badNbrs = 6-countGood;
 	}
 
-bool GameBoard::inVise(int x, int y) {
-	int numAdj = 0;
+
+void GameBoard::inVise(int x, int y) {
 	GameNode* check = &board[x][y];
-	//if (playerOneTurn) {
-		if (check->northWest->pieceOn == 1)
-			numAdj++;
-		if (check->northEast->pieceOn == 1)
-			numAdj++;
-		if (check->east->pieceOn == 1)
-			numAdj++;
-		if (check->west->pieceOn == 1)
-			numAdj++;
-		if (check->southEast->pieceOn == 1)
-			numAdj++;
-		if (check->southWest->pieceOn == 1)
-			numAdj++;
-		return numAdj >= 2;
-	/*} else {
-		if (check->pieceOn != -1)
-			return false;
-		if (check->northWest->pieceOn == 2)
-			return false;
-		if (check->northEast->pieceOn == 2)
-			return false;
-		if (check->east->pieceOn == 2)
-			return false;
-		if (check->west->pieceOn == 2)
-			return false;
-		if (check->southEast->pieceOn == 2)
-			return false;
-		if (check->southWest->pieceOn == 2)
-			return false;
-		if (check->northWest->pieceOn == 1)
-			return true;
-		if (check->northEast->pieceOn == 1)
-			return true;
-		if (check->east->pieceOn == 1)
-			return true;
-		if (check->west->pieceOn == 1)
-			return true;
-		if (check->southEast->pieceOn == 1)
-			return true;
-		if (check->southWest->pieceOn == 1)
-			return true;
-		return false;*/
-	//}
-
-
+	if (check->pieceOn == -1)
+		return;
+	if (check->pieceOn == PLAYER_ONE_PIECE) {
+			if (check->west->pieceOn == PLAYER_TWO_PIECE && check -> east -> pieceOn == PLAYER_TWO_PIECE)
+				check->inVise = true;
+			if (check -> northEast -> pieceOn == PLAYER_TWO_PIECE && check->southWest -> pieceOn == PLAYER_TWO_PIECE)
+				check->inVise = true;
+			if (check -> northWest -> pieceOn == PLAYER_TWO_PIECE && check -> southEast -> pieceOn == PLAYER_TWO_PIECE)
+				check->inVise = true;
+	}
+	if (check->pieceOn == PLAYER_TWO_PIECE) {
+			if (check->west->pieceOn == PLAYER_ONE_PIECE && check -> east -> pieceOn == PLAYER_ONE_PIECE)
+				check->inVise = true;
+			if (check -> northEast -> pieceOn == PLAYER_ONE_PIECE && check->southWest -> pieceOn == PLAYER_ONE_PIECE)
+				check->inVise = true;
+			if (check -> northWest -> pieceOn == PLAYER_ONE_PIECE && check -> southEast -> pieceOn == PLAYER_ONE_PIECE)
+				check->inVise = true;
+	}
 }
 
 void GameBoard::addPiece(int row, int column,int player) {
@@ -357,7 +330,6 @@ bool GameBoard::isPlayerTwoConnected(int x, int y) {
 		return false;
 }
 
-
 bool GameBoard::moveOld(int x, int y) {
 	GameNode* checking = &board[x][y];
 	checking->curLookAt = true;
@@ -405,6 +377,7 @@ bool GameBoard::moveOld(int x, int y) {
 		}
 		checking->curLookAt = false;
 		return false;
+
 }
 
 bool GameBoard::dijkstraMove(int x, int y) {
@@ -423,7 +396,7 @@ bool GameBoard::dijkstraMoveRecursive (GameNode* cur, int* visited, int arrSize,
 }
 
 bool GameBoard::canMove(int x, int y) {
-	return true;
+	//return true;
 	int pieceNum = getPiece(x,y);
 	if (pieceNum == 1 || pieceNum == 0) {
 		return false;
@@ -467,6 +440,22 @@ bool GameBoard::isAdjTo(int x1, int y1, int x2, int y2) {
 	if (node1->southWest == node2)
 		return true;
 	return false;
+}
+
+void GameBoard::removeVises() {
+	GameNode* toCheck;
+	for (int i = 0; i < 20; i++) {
+		for (int y = 0; y < 20; y++) {
+			toCheck = &board[i][y];
+			if(toCheck->inVise == true)
+				removePiece(i,y);
+		}
+	}
+
+}
+void GameBoard::removePiece(int x, int y) {
+	GameNode* piece = &board[x][y];
+	piece->pieceOn = -1;
 }
 
 int GameBoard::wouldBeCont(int x, int y) {

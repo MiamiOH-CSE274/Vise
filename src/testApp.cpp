@@ -133,8 +133,8 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-    std::cout<<myBoard.inVise(x,y)<<std::endl;
-	return true;
+	myBoard.inVise(x,y);
+	return false;
 }
 
 /*
@@ -155,7 +155,12 @@ bool inVise(int x, int y){
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
  */
 void doVise(){
-    //TODO
+    for (int i = 0; i < 20; i++) {
+		for (int j = 0; j < 20; j++) {
+			myBoard.inVise(i,j);
+		}
+	}
+	myBoard.removeVises();
 }
 
 //--------------------------------------------------------------
@@ -215,7 +220,7 @@ bool canPlaceNewPiece(int x, int y){
     int badNbrs=0;
     //checkNbrs(x,y,okayNbrs,badNbrs);
 
-        return myBoard.canMove(x,y);
+    return myBoard.canMove(x,y);
 }
 
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
@@ -241,7 +246,7 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(){
-			return myBoard.isContigious();
+	return myBoard.isContigious();
 }
 
 /* This is used when the player is moving one of her pieces that is
@@ -275,7 +280,7 @@ bool canPlaceOldPiece(int x, int y){
  * (1 or 2)
  */
 int pieceAt(int x,int y){
-        int piece = myBoard.getPiece(x,y);
+    int piece = myBoard.getPiece(x,y);
     return piece;
 }
 
