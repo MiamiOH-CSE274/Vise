@@ -134,7 +134,7 @@ void testApp::setup(){
 				board[i]->downleft = board[i+19];
 				board[i]->downright = board[i+20];
 		}
-		else if(i%40==0){
+		else if(i%40==0 && i!=0){
 				board[i]->upleft = board[i-1];
 				board[i]->upright = board[i-20];
 				board[i]->left = board[i+19];
@@ -182,7 +182,7 @@ void testApp::setup(){
 				board[i]->downleft = board[i+19];
 				board[i]->downright = board[i+20];
 		}
-		else{
+		else if (i!=0){
 				board[i]->upleft = board[i-20];
 				board[i]->upright = board[i-19];
 				board[i]->left = board[i-1];
