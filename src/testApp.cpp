@@ -447,7 +447,7 @@ void testApp::mousePressed(int x, int y, int button){
                 selectedPieceX = whichCol;
                 selectedPieceY  = whichRow;
                 currentAction = 2;
-                putPieceAt(whichCol,whichRow,0);
+                putPieceAt(whichCol,whichRow,-1);
             }
         } else if(currentAction == 2){
             //...placing an old piece back on the board
