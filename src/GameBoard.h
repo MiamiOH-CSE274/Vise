@@ -38,11 +38,11 @@ public:
 	int dijkstraRecursive(GameNode* cur, int* visited, int arrSize);
     bool canMoveOld(int row, int column);
 	void setPieceToMove(int x, int y);
-	bool GameBoard::moveOld(int x, int y);
-	bool GameBoard::isAdjTo(int x1, int y1, int x2, int y2);
-	int GameBoard::wouldBeCont(int x, int y);
+	bool moveOld(int x, int y);
+	bool isAdjTo(int x1, int y1, int x2, int y2);
+	int wouldBeCont(int x, int y);
 	void removePiece(int x, int y);
-	void GameBoard::removeVises();
+	void removeVises();
 
 
 private:
