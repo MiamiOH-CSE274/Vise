@@ -241,8 +241,7 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(){
-        std::cout<< myBoard.isContigious();
-			return true;
+			return myBoard.isContigious();
 }
 
 /* This is used when the player is moving one of her pieces that is
@@ -266,7 +265,7 @@ bool isConnected(){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-    return myBoard.canMoveOld(x,y)&&myBoard.isContigious();
+    return myBoard.canMoveOld(x,y);
 
 }
 
