@@ -2,6 +2,11 @@
 #include <vector>
 #include <iostream>
 
+#define NO_PLAYER_PIECE -1
+#define PLAYER_ONE_PIECE  1
+#define PLAYER_TWO_PIECE  2
+
+//Okay, you can actually commit this. 
 
 GameBoard::GameBoard() {
 
@@ -22,7 +27,7 @@ void GameBoard::makeGameBoard() {
  }
 
 void GameBoard::assignPointers() {
-	/*NOTE TO SELF:
+	/*NOTE TO SELF
 	Ues X and Y coordinates instead of row and column*/
 
 //TODO:
@@ -39,8 +44,8 @@ void GameBoard::assignPointers() {
 					edit->numIdentifier = idNum;
 					edit->east = &board[i+1][k];
 					edit->west = &board[i-1][k];
-					edit->northEast = &board[i-1][k-1];
-					edit->northWest = &board[i][k-1];
+					edit->northEast = &board[i][k-1];
+					edit->northWest = &board[i-1][k-1];
 					edit->southEast = &board[i][k+1];
 					edit->southWest = &board[i-1][k+1];
 					idNum++;
@@ -207,7 +212,7 @@ bool GameBoard::inVise(int x, int y) {
 			numAdj++;
 		if (check->southWest->pieceOn == 1)
 			numAdj++;
-		std::cout<<numAdj;
+		std::cout<<"Nums Around" << numAdj<<std::endl;
 		return numAdj >= 2;
 	/*} else {
 		if (check->pieceOn != -1)
@@ -246,6 +251,7 @@ void GameBoard::addPiece(int row, int column,int player) {
 	GameNode* toAdd = &board[row][column];
 	toAdd->pieceOn = player;
 	playerOneTurn = !playerOneTurn;
+	std::cout<<"Vise Status" << inVise(row,column)<<std::endl;
 	return;
 }
 
@@ -353,7 +359,76 @@ bool GameBoard::isPlayerTwoConnected(int x, int y) {
 		return false;
 }
 
+
+bool GameBoard::moveOld(int x, int y) {
+	GameNode* checking = &board[x][y];
+	checking->curLookAt = true;
+
+		if(checking->pieceOn != -1) {
+			checking->curLookAt = false;
+			return false;
+		}
+		if(checking->east->pieceOn == PLAYER_ONE_PIECE || checking->east->pieceOn == PLAYER_TWO_PIECE ) {
+			if (checking->east->east->pieceOn == -1 && checking->east->east == oldPieceToMove) {
+				checking->curLookAt = false;
+				return true;
+			}
+		}
+		if(checking->northEast->pieceOn == PLAYER_ONE_PIECE || checking->northEast->pieceOn == PLAYER_TWO_PIECE ) {
+			if (checking->northEast->northEast->pieceOn == -1 && checking->northEast->northEast == oldPieceToMove) {
+				checking->curLookAt = false;
+				return true;
+			}
+		}
+		if(checking->northWest->pieceOn == PLAYER_ONE_PIECE || checking->northWest->pieceOn == PLAYER_TWO_PIECE) {
+			if (checking->northWest->northWest->pieceOn == -1 && checking->northWest->northWest == oldPieceToMove) {
+				checking->curLookAt = false;
+				return true;
+			}
+		}
+		if(checking->west->pieceOn == PLAYER_ONE_PIECE || checking->west->pieceOn == PLAYER_TWO_PIECE) {
+			if (checking->west->west->pieceOn == -1 && checking->west->west == oldPieceToMove) {
+				checking->curLookAt = false;
+				return true;
+			}
+		}
+		if(checking->southEast->pieceOn == PLAYER_ONE_PIECE || checking->southEast->pieceOn == PLAYER_TWO_PIECE) {
+			if (checking->southEast->southEast->pieceOn == -1 && checking->southEast->southEast == oldPieceToMove) {
+				checking->curLookAt = false;
+				return true;
+			}
+		}
+		if(checking->southWest->pieceOn == PLAYER_ONE_PIECE || checking->southWest->pieceOn == PLAYER_TWO_PIECE) {
+			if (checking->southWest->southWest->pieceOn == -1 && checking->southWest->southWest == oldPieceToMove) {
+				checking->curLookAt = false;
+				return true;
+			}
+		}
+		checking->curLookAt = false;
+		return false;
+}
+
+bool GameBoard::dijkstraMove(int x, int y) {
+	//Arr size 18
+	int* looked = new int[18];
+	int arrSize = 0;
+	int moveSize = 2;
+	return true;
+
+}
+
+bool GameBoard::dijkstraMoveRecursive (GameNode* cur, int* visited, int arrSize, int movesLeft) {
+	return false;
+
+
+}
+
 bool GameBoard::canMove(int x, int y) {
+	return true;
+	int pieceNum = getPiece(x,y);
+	if (pieceNum == 1 || pieceNum == 0) {
+		return false;
+	}
 	if (playerOneTurn) {
 		if (isPlayerOneConnected(x,y) && !isPlayerTwoConnected(x,y))
 			return true;
@@ -367,7 +442,18 @@ bool GameBoard::canMove(int x, int y) {
 	}
 }
 
+void GameBoard::setPieceToMove(int x, int y) {
+	if (x == -1 && y == -1) {
+		oldPieceToMove= NULL;
+	} else {
+	oldPieceToMove = &board[x][y];
+	}
+}
+
 bool GameBoard::canMoveOld(int x, int y){
+	GameNode* moving = &board[x][y];
+	if(moveOld(x,y))
+		return true;
     if (!playerOneTurn) {
 		if (isPlayerOneConnected(x,y) && isContigious())
 			return true;

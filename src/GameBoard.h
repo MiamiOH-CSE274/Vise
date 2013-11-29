@@ -13,6 +13,7 @@ public:
 		GameNode* southEast;
 		GameNode* southWest;
 		int numIdentifier;
+		bool curLookAt;
 		int pieceOn;
 		bool canMove;
 		GameNode() {pieceOn = -1; canMove = false;};
@@ -35,13 +36,17 @@ public:
 	bool isPlayerTwoConnected(int x, int y);
 	int dijkstraRecursive(GameNode* cur, int* visited, int arrSize);
     bool canMoveOld(int row, int column);
+	void setPieceToMove(int x, int y);
+	bool GameBoard::moveOld(int x, int y);
+
 
 private:
 	void assignPointers();
 	bool playerOneTurn;
 	int dijkstraTotal(int x, int y);
-	
-
+	bool dijkstraMove(int x, int y);
+	bool dijkstraMoveRecursive (GameNode* cur, int* visited, int arrSize, int movesLeft);
+	GameNode* oldPieceToMove;
 	
 
 	

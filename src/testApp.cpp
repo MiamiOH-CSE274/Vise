@@ -122,8 +122,8 @@ void testApp::setup(){
     music2.play();
     
     //TODO: Initialize your "board" data structure here
-	//GameBoard myBoard;
-	myBoard.makeGameBoard();
+        //GameBoard myBoard;
+        myBoard.makeGameBoard();
     //TODO: Put 1 piece for each player in the middle of hte board, side by side
     
     startTime = ofGetElapsedTimef();
@@ -133,7 +133,8 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-    return myBoard.inVise(x,y);
+    std::cout<<myBoard.inVise(x,y)<<std::endl;
+	return true;
 }
 
 /*
@@ -214,14 +215,14 @@ bool canPlaceNewPiece(int x, int y){
     int badNbrs=0;
     //checkNbrs(x,y,okayNbrs,badNbrs);
 
-	return myBoard.canMove(x,y);
+        return myBoard.canMove(x,y);
 }
 
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isNeighboringSpace(int x, int y){
     if (myBoard.isPlayerOneConnected(x,y) || myBoard.isPlayerTwoConnected(x,y))
-		return true;
+         return true;
     return false;
 }
 
@@ -240,7 +241,8 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(){
-	return myBoard.isContigious();
+        std::cout<< myBoard.isContigious();
+			return true;
 }
 
 /* This is used when the player is moving one of her pieces that is
@@ -264,8 +266,8 @@ bool isConnected(){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-	
-    return myBoard.canMoveOld(x, y)&& isNeighboringSpace(x, y);
+    return myBoard.canMoveOld(x,y)&&myBoard.isContigious();
+
 }
 
 /*
@@ -274,7 +276,7 @@ bool canPlaceOldPiece(int x, int y){
  * (1 or 2)
  */
 int pieceAt(int x,int y){
-	int piece = myBoard.getPiece(x,y);
+        int piece = myBoard.getPiece(x,y);
     return piece;
 }
 
@@ -441,7 +443,7 @@ void testApp::mousePressed(int x, int y, int button){
             //...picking up and old piece
             int whichRow = (y-boardYOffset+hexH/2)/hexH;
             int whichCol = (x-(boardXOffset+(whichRow%2)*(hexW/2))+hexW/2)/hexW;
-            
+            myBoard.setPieceToMove(whichCol,whichRow);
             if(pieceAt(whichCol,whichRow) == whoseTurn){
                 selectedPieceX = whichCol;
                 selectedPieceY  = whichRow;
