@@ -266,7 +266,7 @@ bool isConnected(){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-    return myBoard.canMoveOld(x, y)&& isNeighboringSpace(x, y);
+    return myBoard.canMoveOld(x,y)&&myBoard.isContigious();
 
 }
 
@@ -443,7 +443,7 @@ void testApp::mousePressed(int x, int y, int button){
             //...picking up and old piece
             int whichRow = (y-boardYOffset+hexH/2)/hexH;
             int whichCol = (x-(boardXOffset+(whichRow%2)*(hexW/2))+hexW/2)/hexW;
-            
+            myBoard.setPieceToMove(whichCol,whichRow);
             if(pieceAt(whichCol,whichRow) == whoseTurn){
                 selectedPieceX = whichCol;
                 selectedPieceY  = whichRow;
