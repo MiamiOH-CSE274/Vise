@@ -41,7 +41,7 @@ int boardH = 20;
 
 //TODO: Make any variables you need for representing your board here
 
-gameBoard* board;
+std::vector<hexSpace*> board;
 int numBlack;
 int numWhite;
 int bankBlack;
@@ -110,7 +110,7 @@ void testApp::setup(){
     ofSetFrameRate(60);
     
     //TODO: Initialize your "gameBoard" data structure here
-	board = new gameBoard(400);
+	board.resize(400);
 	numBlack = 4;
 	numWhite = 4;
 	bankBlack = 3;
@@ -119,109 +119,109 @@ void testApp::setup(){
     //TODO: Put 1 piece for each player in the middle of hte gameBoard, side by side
 	for(int i = 0; i < 400; i++){
 		if(i<19 && i>0){
-				board->hexList[i]->upleft = board->hexList[i+379];
-				board->hexList[i]->upright = board->hexList[i+380];
-				board->hexList[i]->left = board->hexList[i-1];
-				board->hexList[i]->right = board->hexList[i+1];
-				board->hexList[i]->downleft = board->hexList[i+19];
-				board->hexList[i]->downright = board->hexList[i+20];
+				board[i]->upleft = board[i+379];
+				board[i]->upright = board[i+380];
+				board[i]->left = board[i-1];
+				board[i]->right = board[i+1];
+				board[i]->downleft = board[i+19];
+				board[i]->downright = board[i+20];
 		}
 		else if(i<399 && i>380){
-				board->hexList[i]->upleft = board->hexList[i+359];
-				board->hexList[i]->upright = board->hexList[i+360];
-				board->hexList[i]->left = board->hexList[i-1];
-				board->hexList[i]->right = board->hexList[i+1];
-				board->hexList[i]->downleft = board->hexList[i+19];
-				board->hexList[i]->downright = board->hexList[i+20];
+				board[i]->upleft = board[i+359];
+				board[i]->upright = board[i+360];
+				board[i]->left = board[i-1];
+				board[i]->right = board[i+1];
+				board[i]->downleft = board[i+19];
+				board[i]->downright = board[i+20];
 		}
 		else if(i%40==0){
-				board->hexList[i]->upleft = board->hexList[i-1];
-				board->hexList[i]->upright = board->hexList[i-20];
-				board->hexList[i]->left = board->hexList[i+19];
-				board->hexList[i]->right = board->hexList[i+1];
-				board->hexList[i]->downleft = board->hexList[i+39];
-				board->hexList[i]->downright = board->hexList[i+20];
+				board[i]->upleft = board[i-1];
+				board[i]->upright = board[i-20];
+				board[i]->left = board[i+19];
+				board[i]->right = board[i+1];
+				board[i]->downleft = board[i+39];
+				board[i]->downright = board[i+20];
 		}
 		else if((i+20)%40==0){
-				board->hexList[i]->upleft = board->hexList[i-20];
-				board->hexList[i]->upright = board->hexList[i-19];
-				board->hexList[i]->left = board->hexList[i+19];
-				board->hexList[i]->right = board->hexList[i+1];
-				board->hexList[i]->downleft = board->hexList[i+20];
-				board->hexList[i]->downright = board->hexList[i+21];
+				board[i]->upleft = board[i-20];
+				board[i]->upright = board[i-19];
+				board[i]->left = board[i+19];
+				board[i]->right = board[i+1];
+				board[i]->downleft = board[i+20];
+				board[i]->downright = board[i+21];
 		}
 		else if((i+1)%40==0){
-				board->hexList[i]->upleft = board->hexList[i-20];
-				board->hexList[i]->upright = board->hexList[i-39];
-				board->hexList[i]->left = board->hexList[i-1];
-				board->hexList[i]->right = board->hexList[i-19];
-				board->hexList[i]->downleft = board->hexList[i+20];
-				board->hexList[i]->downright = board->hexList[i+1];
+				board[i]->upleft = board[i-20];
+				board[i]->upright = board[i-39];
+				board[i]->left = board[i-1];
+				board[i]->right = board[i-19];
+				board[i]->downleft = board[i+20];
+				board[i]->downright = board[i+1];
 		}
 		else if((i+21)%40==0){
-				board->hexList[i]->upleft = board->hexList[i-21];
-				board->hexList[i]->upright = board->hexList[i-20];
-				board->hexList[i]->left = board->hexList[i-1];
-				board->hexList[i]->right = board->hexList[i-19];
-				board->hexList[i]->downleft = board->hexList[i+19];
-				board->hexList[i]->downright = board->hexList[i+20];
+				board[i]->upleft = board[i-21];
+				board[i]->upright = board[i-20];
+				board[i]->left = board[i-1];
+				board[i]->right = board[i-19];
+				board[i]->downleft = board[i+19];
+				board[i]->downright = board[i+20];
 		}
 		else if(i>380 && i<399){
-				board->hexList[i]->upleft = board->hexList[i-20];
-				board->hexList[i]->upright = board->hexList[i-19];
-				board->hexList[i]->left = board->hexList[i-1];
-				board->hexList[i]->right = board->hexList[i+1];
-				board->hexList[i]->downleft = board->hexList[i-380];
-				board->hexList[i]->downright = board->hexList[i-379];
+				board[i]->upleft = board[i-20];
+				board[i]->upright = board[i-19];
+				board[i]->left = board[i-1];
+				board[i]->right = board[i+1];
+				board[i]->downleft = board[i-380];
+				board[i]->downright = board[i-379];
 		}
-		else if(y%2=0){
-				board->hexList[i]->upleft = board->hexList[i-21];
-				board->hexList[i]->upright = board->hexList[i-20];
-				board->hexList[i]->left = board->hexList[i-1];
-				board->hexList[i]->right = board->hexList[i+1];
-				board->hexList[i]->downleft = board->hexList[i+19];
-				board->hexList[i]->downright = board->hexList[i+20];
+		else if((i>40 && i<59)||(i>80 && i<99)||(i>120 && i<139)||(i>160 && i<179)||(i>200 && i<219)||(i>240 && i<259)||(i>280 && i<299)||(i>320 && i<339)||(i>360 && i<379)){
+				board[i]->upleft = board[i-21];
+				board[i]->upright = board[i-20];
+				board[i]->left = board[i-1];
+				board[i]->right = board[i+1];
+				board[i]->downleft = board[i+19];
+				board[i]->downright = board[i+20];
 		}
 		else{
-				board->hexList[i]->upleft = board->hexList[i-20];
-				board->hexList[i]->upright = board->hexList[i-19];
-				board->hexList[i]->left = board->hexList[i-1];
-				board->hexList[i]->right = board->hexList[i+1];
-				board->hexList[i]->downleft = board->hexList[i+20];
-				board->hexList[i]->downright = board->hexList[i+21];
+				board[i]->upleft = board[i-20];
+				board[i]->upright = board[i-19];
+				board[i]->left = board[i-1];
+				board[i]->right = board[i+1];
+				board[i]->downleft = board[i+20];
+				board[i]->downright = board[i+21];
 		}
-		board->hexList[i]->type=0;
+		board[i]->type=0;
 	}
-	board->hexList[0]->upleft = board->hexList[399];
-	board->hexList[0]->upright = board->hexList[380];
-	board->hexList[0]->left = board->hexList[19];
-	board->hexList[0]->right = board->hexList[1];
-	board->hexList[0]->downleft = board->hexList[39];
-	board->hexList[0]->downright = board->hexList[20];
+	board[0]->upleft = board[399];
+	board[0]->upright = board[380];
+	board[0]->left = board[19];
+	board[0]->right = board[1];
+	board[0]->downleft = board[39];
+	board[0]->downright = board[20];
 
-	board->hexList[19]->upleft = board->hexList[398];
-	board->hexList[19]->upright = board->hexList[399];
-	board->hexList[19]->left = board->hexList[18];
-	board->hexList[19]->right = board->hexList[0];
-	board->hexList[19]->downleft = board->hexList[38];
-	board->hexList[19]->downright = board->hexList[39];
+	board[19]->upleft = board[398];
+	board[19]->upright = board[399];
+	board[19]->left = board[18];
+	board[19]->right = board[0];
+	board[19]->downleft = board[38];
+	board[19]->downright = board[39];
 
-	board->hexList[380]->upleft = board->hexList[360];
-	board->hexList[380]->upright = board->hexList[361];
-	board->hexList[380]->left = board->hexList[399];
-	board->hexList[380]->right = board->hexList[381];
-	board->hexList[380]->downleft = board->hexList[0];
-	board->hexList[380]->downright = board->hexList[1];
+	board[380]->upleft = board[360];
+	board[380]->upright = board[361];
+	board[380]->left = board[399];
+	board[380]->right = board[381];
+	board[380]->downleft = board[0];
+	board[380]->downright = board[1];
 
-	board->hexList[399]->upleft = board->hexList[379];
-	board->hexList[399]->upright = board->hexList[360];
-	board->hexList[399]->left = board->hexList[398];
-	board->hexList[399]->right = board->hexList[380];
-	board->hexList[399]->downleft = board->hexList[19];
-	board->hexList[399]->downright = board->hexList[0];
+	board[399]->upleft = board[379];
+	board[399]->upright = board[360];
+	board[399]->left = board[398];
+	board[399]->right = board[380];
+	board[399]->downleft = board[19];
+	board[399]->downright = board[0];
 
-	board->hexList[209]->type=1;
-	board->hexList[210]->type=2;
+	board[209]->type=1;
+	board[210]->type=2;
 
     startTime = ofGetElapsedTimef();
 }
@@ -231,9 +231,9 @@ void testApp::setup(){
 // not screen coordinates
 bool inVise(int x, int y){
 	int target = y*20+x;
-	if((board->hexList[target]->left->type != board->hexList[target]->type && board->hexList[target]->right->type != board->hexList[target]->type && board->hexList[target]->left->type != 0 && board->hexList[target]->right->type != 0) ||
-		(board->hexList[target]->upleft->type != board->hexList[target]->type && board->hexList[target]->downright->type != board->hexList[target]->type && board->hexList[target]->upleft->type != 0 && board->hexList[target]->downright->type != 0) ||
-		(board->hexList[target]->downleft->type != board->hexList[target]->type && board->hexList[target]->upright->type != board->hexList[target]->type && board->hexList[target]->downleft->type != 0 && board->hexList[target]->upright->type != 0))
+	if((board[target]->left->type != board[target]->type && board[target]->right->type != board[target]->type && board[target]->left->type != 0 && board[target]->right->type != 0) ||
+		(board[target]->upleft->type != board[target]->type && board[target]->downright->type != board[target]->type && board[target]->upleft->type != 0 && board[target]->downright->type != 0) ||
+		(board[target]->downleft->type != board[target]->type && board[target]->upright->type != board[target]->type && board[target]->downleft->type != 0 && board[target]->upright->type != 0))
 		return true;
 	return false;
 }
@@ -300,34 +300,34 @@ void drawHex(float x, float y, float sideLen){
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
     //TODO
 	int target = y*20+x;
-	if(board->hexList[target]->upleft->type!=whoseTurn && board->hexList[target]->upleft->type!=0)
+	if(board[target]->upleft->type!=whoseTurn && board[target]->upleft->type!=0)
 		badNbrs++;
-	else if(board->hexList[target]->upleft->type!=0)
+	else if(board[target]->upleft->type!=0)
 		okayNbrs++;
 
-	if(board->hexList[target]->upright->type!=whoseTurn && board->hexList[target]->upright->type!=0)
+	if(board[target]->upright->type!=whoseTurn && board[target]->upright->type!=0)
 		badNbrs++;
-	else if(board->hexList[target]->upright->type!=0)
+	else if(board[target]->upright->type!=0)
 		okayNbrs++;
 
-	if(board->hexList[target]->left->type!=whoseTurn && board->hexList[target]->left->type!=0)
+	if(board[target]->left->type!=whoseTurn && board[target]->left->type!=0)
 		badNbrs++;
-	else if(board->hexList[target]->left->type!=0)
+	else if(board[target]->left->type!=0)
 		okayNbrs++;
 
-	if(board->hexList[target]->right->type!=whoseTurn && board->hexList[target]->right->type!=0)
+	if(board[target]->right->type!=whoseTurn && board[target]->right->type!=0)
 		badNbrs++;
-	else if(board->hexList[target]->right->type!=0)
+	else if(board[target]->right->type!=0)
 		okayNbrs++;
 
-	if(board->hexList[target]->downleft->type!=whoseTurn && board->hexList[target]->downleft->type!=0)
+	if(board[target]->downleft->type!=whoseTurn && board[target]->downleft->type!=0)
 		badNbrs++;
-	else if(board->hexList[target]->downleft->type!=0)
+	else if(board[target]->downleft->type!=0)
 		okayNbrs++;
 
-	if(board->hexList[target]->downright->type!=whoseTurn && board->hexList[target]->downright->type!=0)
+	if(board[target]->downright->type!=whoseTurn && board[target]->downright->type!=0)
 		badNbrs++;
-	else if(board->hexList[target]->downleft->type!=0)
+	else if(board[target]->downleft->type!=0)
 		okayNbrs++;
 }
 
@@ -351,12 +351,12 @@ bool isNeighboringSpace(int x, int y){
     //TODO
 	int selected = selectedPieceY*20+selectedPieceX;
 	int target = y*20+x;
-	if((board->hexList[selected]->upleft == board->hexList[target]) ||
-		(board->hexList[selected]->upright == board->hexList[target]) ||
-		(board->hexList[selected]->left == board->hexList[target]) ||
-		(board->hexList[selected]->right == board->hexList[target]) ||
-		(board->hexList[selected]->downleft == board->hexList[target]) ||
-		(board->hexList[selected]->downright == board->hexList[target]))
+	if((board[selected]->upleft == board[target]) ||
+		(board[selected]->upright == board[target]) ||
+		(board[selected]->left == board[target]) ||
+		(board[selected]->right == board[target]) ||
+		(board[selected]->downleft == board[target]) ||
+		(board[selected]->downright == board[target]))
 		return true;
 	return false;
 }
@@ -367,12 +367,12 @@ bool isJumpSpace(int x, int y){
     //TODO
 	int selected = selectedPieceY*20+selectedPieceX;
 	int target = y*20+x;
-	if((board->hexList[selected]->upleft->upleft == board->hexList[target]) ||
-		(board->hexList[selected]->upright->upright == board->hexList[target]) ||
-		(board->hexList[selected]->left->left == board->hexList[target]) ||
-		(board->hexList[selected]->right->right == board->hexList[target]) ||
-		(board->hexList[selected]->downleft->downleft == board->hexList[target]) ||
-		(board->hexList[selected]->downright->downright == board->hexList[target]))
+	if((board[selected]->upleft->upleft == board[target]) ||
+		(board[selected]->upright->upright == board[target]) ||
+		(board[selected]->left->left == board[target]) ||
+		(board[selected]->right->right == board[target]) ||
+		(board[selected]->downleft->downleft == board[target]) ||
+		(board[selected]->downright->downright == board[target]))
 		return true;
     return false;
 }
@@ -422,7 +422,7 @@ bool canPlaceOldPiece(int x, int y){
 int pieceAt(int x,int y){
     //TODO
 	int target = 20*y+x;
-	return board->hexList[target]->type;
+	return board[target]->type;
 }
 
 void drawboard(){
@@ -529,7 +529,7 @@ void testApp::draw(){
 void putPieceAt(int x, int y, int whichPiece){
     //TODO
 	int target = 20*y+x;
-	board->hexList[target]->type=whichPiece;
+	board[target]->type=whichPiece;
 }
 
 //--------------------------------------------------------------
