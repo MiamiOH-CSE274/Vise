@@ -27,7 +27,7 @@ void GameBoard::makeGameBoard() {
  }
 
 void GameBoard::assignPointers() {
-	/*NOTE TO SELF:
+	/*NOTE TO SELF
 	Ues X and Y coordinates instead of row and column*/
 
 //TODO:
@@ -475,4 +475,20 @@ bool GameBoard::canMove(int x, int y) {
 		else
 			return false;
 	}
+}
+
+
+bool GameBoard::canMoveOld(int x, int y){
+    if (!playerOneTurn) {
+		if (isPlayerOneConnected(x,y) && isContigious())
+			return true;
+		else
+			return false;
+	} else {
+		if(isPlayerTwoConnected(x,y)&&isContigious())
+			return true;
+		else
+			return false;
+	}
+    
 }
