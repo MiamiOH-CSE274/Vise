@@ -212,7 +212,6 @@ bool GameBoard::inVise(int x, int y) {
 			numAdj++;
 		if (check->southWest->pieceOn == 1)
 			numAdj++;
-		std::cout<<"Nums Around" << numAdj<<std::endl;
 		return numAdj >= 2;
 	/*} else {
 		if (check->pieceOn != -1)
@@ -251,7 +250,6 @@ void GameBoard::addPiece(int row, int column,int player) {
 	GameNode* toAdd = &board[row][column];
 	toAdd->pieceOn = player;
 	playerOneTurn = !playerOneTurn;
-	std::cout<<"Vise Status" << inVise(row,column)<<std::endl;
 	return;
 }
 
@@ -380,6 +378,7 @@ bool GameBoard::moveOld(int x, int y) {
 				return true;
 			}
 		}
+
 		if(checking->northWest->pieceOn == PLAYER_ONE_PIECE || checking->northWest->pieceOn == PLAYER_TWO_PIECE) {
 			if (checking->northWest->northWest->pieceOn == -1 && checking->northWest->northWest == oldPieceToMove) {
 				checking->curLookAt = false;
@@ -446,24 +445,64 @@ void GameBoard::setPieceToMove(int x, int y) {
 	if (x == -1 && y == -1) {
 		oldPieceToMove= NULL;
 	} else {
+	oldPieceToMoveX=x;
+	oldPieceToMoveY=y;
 	oldPieceToMove = &board[x][y];
 	}
 }
 
+bool GameBoard::isAdjTo(int x1, int y1, int x2, int y2) {
+	GameNode* node1 = &board[x1][y1];
+	GameNode* node2 = &board[x2][y2];
+	if (node1->east == node2)
+		return true;
+	if (node1->west == node2)
+		return true;
+	if (node1->northEast == node2)
+		return true;
+	if (node1->northWest == node2)
+		return true;
+	if (node1->southEast == node2)
+		return true;
+	if (node1->southWest == node2)
+		return true;
+	return false;
+}
+
+int GameBoard::wouldBeCont(int x, int y) {
+	int numAdj = 0;
+	GameNode* check = &board[x][y];
+	//if (playerOneTurn) {
+		if (check->northWest->pieceOn != -1) 
+			numAdj++;
+		if (check->northEast->pieceOn != -1)
+			numAdj++;
+		if (check->east->pieceOn != -1)
+			numAdj++;
+		if (check->west->pieceOn != -1)
+			numAdj++;
+		if (check->southEast->pieceOn != -1)
+			numAdj++;
+		if (check->southWest->pieceOn != -1)
+			numAdj++;
+		return numAdj;
+}
+
 bool GameBoard::canMoveOld(int x, int y){
 	GameNode* moving = &board[x][y];
-	if(moveOld(x,y))
-		return true;
+	if (!isContigious())
+		return false;
     if (!playerOneTurn) {
-		if (isPlayerOneConnected(x,y) && isContigious())
+		if ((isAdjTo(x,y,oldPieceToMoveX,oldPieceToMoveY) && isPlayerOneConnected(x,y)))
 			return true;
 		else
 			return false;
 	} else {
-		if(isPlayerTwoConnected(x,y)&&isContigious())
+		if(isAdjTo(x,y,oldPieceToMoveX,oldPieceToMoveY))
 			return true;
 		else
 			return false;
 	}
     
 }
+
