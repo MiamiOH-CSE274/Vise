@@ -231,7 +231,7 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in gameBoard coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-	int target = y*20+x;
+	int target = 20*y+x;
 	if((board[target]->left->type != board[target]->type && board[target]->right->type != board[target]->type && board[target]->left->type != 0 && board[target]->right->type != 0) ||
 		(board[target]->upleft->type != board[target]->type && board[target]->downright->type != board[target]->type && board[target]->upleft->type != 0 && board[target]->downright->type != 0) ||
 		(board[target]->downleft->type != board[target]->type && board[target]->upright->type != board[target]->type && board[target]->downleft->type != 0 && board[target]->upright->type != 0))
@@ -300,7 +300,7 @@ void drawHex(float x, float y, float sideLen){
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
     //TODO
-	int target = y*20+x;
+	int target = 20*y+x;
 	if(board[target]->upleft->type!=whoseTurn && board[target]->upleft->type!=0)
 		badNbrs++;
 	else if(board[target]->upleft->type!=0)
@@ -328,7 +328,7 @@ void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
 
 	if(board[target]->downright->type!=whoseTurn && board[target]->downright->type!=0)
 		badNbrs++;
-	else if(board[target]->downleft->type!=0)
+	else if(board[target]->downright->type!=0)
 		okayNbrs++;
 }
 
@@ -351,7 +351,7 @@ bool canPlaceNewPiece(int x, int y){
 bool isNeighboringSpace(int x, int y){
     //TODO
 	int selected = selectedPieceY*20+selectedPieceX;
-	int target = y*20+x;
+	int target = 20*y+x;
 	if((board[selected]->upleft == board[target]) ||
 		(board[selected]->upright == board[target]) ||
 		(board[selected]->left == board[target]) ||
@@ -367,7 +367,7 @@ bool isNeighboringSpace(int x, int y){
 bool isJumpSpace(int x, int y){
     //TODO
 	int selected = selectedPieceY*20+selectedPieceX;
-	int target = y*20+x;
+	int target = 20*y+x;
 	if((board[selected]->upleft->upleft == board[target]) ||
 		(board[selected]->upright->upright == board[target]) ||
 		(board[selected]->left->left == board[target]) ||
