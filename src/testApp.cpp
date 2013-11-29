@@ -161,6 +161,7 @@ void doVise(){
 		}
 	}
 	myBoard.removeVises();
+	myBoard.resetVise();
 }
 
 //--------------------------------------------------------------

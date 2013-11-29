@@ -31,6 +31,7 @@ public:
 	bool canMove(int row, int column);
 	void checkNbrs(int x, int y,int& okayNbrs,int& badNbrs);
 	void inVise(int x, int y);
+	void GameBoard::resetVise();
 	bool isContigious();
 	bool isAdjacent(int x,int y);
 	bool isPlayerOneConnected(int x, int y);
