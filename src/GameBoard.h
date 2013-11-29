@@ -13,6 +13,7 @@ public:
 		GameNode* southEast;
 		GameNode* southWest;
 		int numIdentifier;
+		bool inVise;
 		bool curLookAt;
 		int pieceOn;
 		bool canMove;
@@ -29,7 +30,7 @@ public:
 	void makeGameBoard();
 	bool canMove(int row, int column);
 	void checkNbrs(int x, int y,int& okayNbrs,int& badNbrs);
-	bool inVise(int x, int y);
+	void inVise(int x, int y);
 	bool isContigious();
 	bool isAdjacent(int x,int y);
 	bool isPlayerOneConnected(int x, int y);
@@ -40,6 +41,8 @@ public:
 	bool GameBoard::moveOld(int x, int y);
 	bool GameBoard::isAdjTo(int x1, int y1, int x2, int y2);
 	int GameBoard::wouldBeCont(int x, int y);
+	void removePiece(int x, int y);
+	void GameBoard::removeVises();
 
 
 private:
