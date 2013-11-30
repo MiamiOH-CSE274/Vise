@@ -51,8 +51,8 @@ int boardH = 20;
 std::vector<hexSpace*> board;
 int numBlack;
 int numWhite;
-int bankBlack;
-int bankWhite;
+int boardBlack;
+int boardWhite;
 
 
 //Number of spare playing pieces left, for each player
@@ -135,8 +135,8 @@ void testApp::setup(){
         board.resize(400);
         numBlack = 4;
         numWhite = 4;
-        bankBlack = 3;
-        bankWhite = 3;
+        boardBlack = 1;
+        boardWhite = 1;
 
 
     //TODO: Put 1 piece for each player in the middle of hte gameBoard, side by side
@@ -261,9 +261,9 @@ void testApp::setup(){
 // not screen coordinates
 bool inVise(int x, int y){
         int target = 20*y+x;
-        if(((board[target]->left->type != board[target]->type) && (board[target]->right->type != board[target]->type) && (board[target]->left->type != 0) && (board[target]->right->type != 0)) ||
-                ((board[target]->upleft->type != board[target]->type) && (board[target]->downright->type != board[target]->type) && (board[target]->upleft->type != 0) && (board[target]->downright->type != 0)) ||
-                ((board[target]->downleft->type != board[target]->type) && (board[target]->upright->type != board[target]->type) && (board[target]->downleft->type != 0) && (board[target]->upright->type != 0)))
+		if(((board[target]->left->type != board[target]->type) && (board[target]->right->type == board[target]->left->type) && (board[target]->right->type != 0)) ||
+			((board[target]->upleft->type != board[target]->type) && (board[target]->downright->type == board[target]->upleft->type) && (board[target]->downright->type != 0)) ||
+			((board[target]->downleft->type != board[target]->type) && (board[target]->upright->type == board[target]->downleft->type) && (board[target]->upright->type != 0)))
                 return true;
         return false;
 }
@@ -295,7 +295,15 @@ void doVise(){
                 for (int j = 0; j < 20; j++){
                         if (inVise(i,j)){
                                 int inVise = board[20*j+i]->type;
-                                board[20*j+i]->type = 0;
+								if(inVise == 1){
+									boardWhite--;
+									numWhite--;
+								}
+								else if(inVise == 2){
+									boardBlack--;
+									numBlack--;
+								}
+                                putPieceAt(i,j,0);
                         }
                                 // Find largest connected component
         /*                        if ((board[20*j+i]->upleft->type != inVise) && (board[20*j+i]->downright->type != inVise)){
