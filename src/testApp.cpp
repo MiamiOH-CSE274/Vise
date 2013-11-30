@@ -155,13 +155,22 @@ bool inVise(int x, int y){
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
  */
 void doVise(){
+    bool viseFound = false;
     for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 20; j++) {
-			myBoard.inVise(i,j);
+			if(myBoard.inVise(i,j)){
+                viseFound = true;
+            }
 		}
 	}
-	myBoard.removeVises();
-	myBoard.resetVise();
+    if (viseFound) {
+        myBoard.removeVises();
+        myBoard.resetVise();
+        myBoard.returnDisconnectedPieces();
+        pl1spares = myBoard.getP1Spares();
+        pl2spares = myBoard.getP2Spares();
+    }
+
 }
 
 //--------------------------------------------------------------
@@ -421,15 +430,19 @@ void testApp::mousePressed(int x, int y, int button){
         if(whoseTurn == 1 && pl1spares > 0 && currentAction == 0){
             currentAction = 1;
             pl1spares--;
+            myBoard.setP1Spares(pl1spares);
         } else if(whoseTurn == 2 && pl2spares > 0 && currentAction == 0){
             currentAction = 1;
             pl2spares--;
+            myBoard.setP2Spares(pl2spares);
         } else if (whoseTurn == 1 && currentAction == 1){
             currentAction = 0;
             pl1spares++;
+            myBoard.setP1Spares(pl1spares);
         } else if (whoseTurn == 2 && currentAction == 1){
             currentAction = 0;
             pl2spares++;
+            myBoard.setP2Spares(pl2spares);
         }
     } else if(x > boardXOffset && x <= boardXOffset +(boardW)*hexW ) {
         //We are clicking on the board...
