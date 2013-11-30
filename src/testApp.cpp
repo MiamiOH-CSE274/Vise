@@ -511,6 +511,7 @@ bool isConnected(){
 		if (board[i]->type == 1 || board[i]->type == 2)
 			totalCount++;
 	}
+
 	int root = 0;
 	for (int j = 0; j < 400; j++){
 		root = j;
@@ -521,6 +522,8 @@ bool isConnected(){
 				j++;
 			}
 			j = root;
+			while ((board[j]->downleft->type == 1 || board[j]->downleft->type == 2) || (board[j]->downright->type == 1 || board[j]->downright->type == 2)){
+				countTogether++;
 			while (board[j]->downleft->right->type == 1 || board[j]->downleft->right->type == 2){
 				countTogether++;
 				j++;
@@ -529,6 +532,9 @@ bool isConnected(){
 			while (board[j]->downleft->left->type == 1 || board[j]->downleft->left->type == 2){
 				countTogether++;
 				j++;
+			}
+			j = j+19;
+
 			}
 		}
 		/*	if (board[j]->right->type == 1 || board[j]->right->type == 2){
@@ -547,7 +553,7 @@ bool isConnected(){
 		//}
 	}
 
-	if (totalCount != 0)
+	if (totalCount == countTogether)
 		return true;
     
 	return false;
@@ -578,7 +584,9 @@ bool canPlaceOldPiece(int x, int y){
     //TODO MM
 	int selected = selectedPieceY*20+selectedPieceX;
     int target = 20*y+x;
+
 	if ((board[target]->type == 0) && (isNeighboringSpace(x,y) || isJumpSpace(x,y)))
+		//&& canPlaceNewPiece(x,y))
 		//&& (isConnected()))
 		return true;
     return false;
