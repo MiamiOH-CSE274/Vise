@@ -22,32 +22,9 @@ public:
 };
 
 
-//A board is just a list of nodes, where each node is responsible
-// for keeping a list of the moves adjacent to itself.
-class gameBoard{
-public:
-  //You will need to resize the hexList before you can use it
-  gameBoard(unsigned int numVertices);
-
-
-  //Add an move from node1 to node2, and from node2 to node1, with
-  // the given cost. If the cost is < 0, throw a string exception.
-  // If the move already exists, just update the cost
-  void addMove(int node1, int node2, double cost);
-
-
-  //Remove the move from node1 to node2, and also from node2 to node1.
-  // If there are no such moves, then don't do anything.
-  void removeMove(int node1, int node2);
-
-
-public:
-  std::vector<hexSpace*> hexList;        
-};
-
-
 class hexSpace{
 public:
+        hexSpace(){type=0;};
         int type;
         hexSpace* right;
         hexSpace* left;
@@ -57,4 +34,6 @@ public:
         hexSpace* downleft;
         std::vector<possibleMove>moveList;
 };
+
+
 
