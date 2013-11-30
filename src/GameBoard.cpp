@@ -40,12 +40,6 @@ void GameBoard::setP1Spares(int num){
     p1Spares = num;
 }
 
-
-/*Assigns pointers, there are problems on the side base Cases,
-but right now I'm not too woried about it. If you spot any weird things
-with pointers, the problem is in here.
-*/
-
 int GameBoard::getP1Spares(){
     return p1Spares;
 }
@@ -209,7 +203,6 @@ void GameBoard::assignPointers() {
 
 /*Counts the number of pieces around a specific piece. Is not necessarilly used much,
  this was when I was just going to follow Binkman's idears*/
-
 void GameBoard::checkNbrs(int x, int y,int& okayNbrs,int& badNbrs) {
 	GameNode* check = &board[x][y];
 	int countGood = 0;
@@ -236,7 +229,7 @@ void GameBoard::checkNbrs(int x, int y,int& okayNbrs,int& badNbrs) {
 }
 
 /*Fixes a quirk in inVise() where the boolean used to select which pieces are in a vise
-isn't reset to false, this fixes that*/
+ isn't reset to false, this fixes that*/
 void GameBoard::resetVise() {
 	GameNode* cur;
 	for (int x= 0; x < 20; x++) {
@@ -356,12 +349,11 @@ void GameBoard::returnDisconnectedPieces(){
     }
 }
 /*Finds pieces in Vise, and sets a boolean value accordingly */
-<<<<<<< HEAD
-void GameBoard::inVise(int x, int y) {
+bool GameBoard::inVise(int x, int y) {
     bool isInVise = false;
 	GameNode* check = &board[x][y];
 	if (check->pieceOn == -1)
-		return;
+		return false;
 	if (check->pieceOn == PLAYER_ONE_PIECE) {
         if (check->west->pieceOn == PLAYER_TWO_PIECE && check -> east -> pieceOn == PLAYER_TWO_PIECE){
             check->inVise = true;
@@ -395,8 +387,8 @@ void GameBoard::inVise(int x, int y) {
 }
 
 /*
-Adds piece. Herp derp.
-*/
+ Adds piece. Herp derp.
+ */
 void GameBoard::addPiece(int row, int column,int player) {
 	GameNode* toAdd = &board[row][column];
 	toAdd->pieceOn = player;
@@ -417,11 +409,9 @@ bool GameBoard::isAdjacent(int x,int y) {
 		return false;
 }
 
-
-/* Counts total pieces, then uses dijkstra's algorythm to count the 
-the contigious pieces, if the numbers are different, then the board isn't 
-contigious, and so it returns false. */
-
+/* Counts total pieces, then uses dijkstra's algorythm to count the
+ the contigious pieces, if the numbers are different, then the board isn't
+ contigious, and so it returns false. */
 bool GameBoard::isContigious() {
 	int totalPieces = 0;
     for (int x = 0; x < 20; x++) {
@@ -632,24 +622,6 @@ bool GameBoard::isPlayerOneConnected(int x, int y) {
 /*Checks if adjacent nodes are connected to any player two places*/
 bool GameBoard::isPlayerTwoConnected(int x, int y) {
 	GameNode* check = &board[x][y];
-		if (check->northWest->pieceOn == PLAYER_TWO_PIECE)
-			return true;
-		if (check->northEast->pieceOn == PLAYER_TWO_PIECE)
-			return true;
-		if (check->east->pieceOn == PLAYER_TWO_PIECE)
-			return true;
-		if (check->west->pieceOn == PLAYER_TWO_PIECE)
-			return true;
-		if (check->southEast->pieceOn == PLAYER_TWO_PIECE)
-			return true;
-		if (check->southWest->pieceOn == PLAYER_TWO_PIECE)
-			return true;
-		return false;
-}
-
-/*Checks to see if a old piece can be moved*/
-bool GameBoard::moveOld(int x, int y) {
-
     if (check->northWest->pieceOn == PLAYER_TWO_PIECE)
         return true;
     if (check->northEast->pieceOn == PLAYER_TWO_PIECE)
@@ -723,6 +695,7 @@ bool GameBoard::dijkstraMove(int x, int y) {
 	int arrSize = 0;
 	int moveSize = 2;
 	return true;
+    
 }
 
 /*Calculates where a new piece can be moved*/
@@ -795,7 +768,7 @@ void GameBoard::removePiece(int x, int y) {
 }
 
 /*Here is where I'm trying to figure out if a specific part WOULD be contigious or not if
-a piece is played there */
+ a piece is played there */
 bool GameBoard::wouldBeCont(int x, int y) {
     
     int totalPieces = 0;
@@ -807,6 +780,7 @@ bool GameBoard::wouldBeCont(int x, int y) {
 	}
     
 	int numConnectedIfPlacedThere = 0;
+    //int* visited = new int[10];
 	GameNode* check = &board[x][y];
 	//if (playerOneTurn) {
     if (check->northWest->pieceOn != NO_PLAYER_PIECE)
@@ -842,6 +816,7 @@ bool GameBoard::wouldBeCont(int x, int y) {
     return false;
 }
 
+
 //Determines if you can move old pieces to a certain place. X,Y is the corrdinates of a hex, and this is called on every hex on the board.
 bool GameBoard::canMoveOld(int x, int y){
 	GameNode* moving = &board[x][y];
@@ -864,4 +839,3 @@ bool GameBoard::canMoveOld(int x, int y){
     return wouldBeCont(x, y) && (jump(x, y)||isAdjTo(x, y, oldPieceToMoveX, oldPieceToMoveY));
     
 }
-
