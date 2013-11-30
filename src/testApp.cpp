@@ -14,13 +14,13 @@
  */
 //Functions you might want to use, game logic
 bool inVise(int x, int y);
-void doVise();
+void doVise(); //DO
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
 bool canPlaceNewPiece(int x, int y);
 bool isNeighboringSpace(int x, int y);
 bool isJumpSpace(int x, int y);
-bool isConnected();
-bool canPlaceOldPiece(int x, int y);
+bool isConnected(); // DO
+bool canPlaceOldPiece(int x, int y); //FIx
 int pieceAt(int x,int y);
 void putPieceAt(int x, int y, int whichPiece);
 
