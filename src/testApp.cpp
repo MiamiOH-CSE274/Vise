@@ -163,6 +163,12 @@ void doVise(){
             }
 		}
 	}
+    /*Checks left to do:
+     3a: Checking that the largest component has a piece from each player
+     Handle ties and such appropriately. This just removes from non largest
+     sections of pieces. Very barbaric.
+     
+     */
     if (viseFound) {
         myBoard.removeVises();
         myBoard.resetVise();
