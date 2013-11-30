@@ -1,6 +1,9 @@
 #include "testApp.h"
+#include "gameBoard.h"
+
 
 #include <set>
+
 
 //////////////////
 /* Function declarations
@@ -21,10 +24,12 @@ bool canPlaceOldPiece(int x, int y);
 int pieceAt(int x,int y);
 void putPieceAt(int x, int y, int whichPiece);
 
+
 //Drawing functions
 void drawHex(float x, float y, float sideLen);
-void drawBoard();
+void drawboard();
 void drawSpares();
+
 
 //////////////////
 /*
@@ -34,18 +39,30 @@ void drawSpares();
  * the state of the board and the number of pieces
  */
 
+
 //Width and heigh of the board, in hexes.
 int boardW = 20;
 int boardH = 20;
 
+
 //TODO: Make any variables you need for representing your board here
+
+
+std::vector<hexSpace*> board;
+int numBlack;
+int numWhite;
+int bankBlack;
+int bankWhite;
+
 
 //Number of spare playing pieces left, for each player
 int pl1spares=4;
 int pl2spares=4;
 
+
 //Valid values are 1 or 2, to indicate whose turn it is
 int whoseTurn=1;
+
 
 /*
  * What is the current player doing?
@@ -56,9 +73,11 @@ int whoseTurn=1;
  */
 int currentAction=0;
 
-//The coordinates of the selected piece, if the player is moving an existing piece. This is in Board coordinates, not screen coordinates.
+
+//The coordinates of the selected piece, if the player is moving an existing piece. This is in board coordinates, not screen coordinates.
 int selectedPieceX=0;
 int selectedPieceY=0;
+
 
 /////////////////////
 /*
@@ -69,8 +88,10 @@ int selectedPieceY=0;
  */
 int currentFrame = 0;
 
+
 //Time at the start of the program
 float startTime;
+
 
 /////////////////
 /*
@@ -80,17 +101,25 @@ float startTime;
  * program state
  */
 
+
 //The upper-left corner of the board should be at this x,y position
 float boardXOffset = 50;
 float boardYOffset = 50;
 
+
 //The side length of each hex, in pixels
 float sideLen = 20.0;
+
 
 //The width and height of a hex, in pixels. Notice that you shouldn't
 // change these, just change sideLen
 float hexW = sideLen*2.0*0.86602540378444;
 float hexH = 1.5*sideLen;
+
+
+
+
+
 
 
 
@@ -102,23 +131,146 @@ void testApp::setup(){
     // updates or draws are too time conusming.
     ofSetFrameRate(60);
     
-    //TODO: Initialize your "board" data structure here
+    //TODO: Initialize your "gameBoard" data structure here
+        board.resize(400);
+        numBlack = 4;
+        numWhite = 4;
+        bankBlack = 3;
+        bankWhite = 3;
 
-    //TODO: Put 1 piece for each player in the middle of hte board, side by side
-    
+
+    //TODO: Put 1 piece for each player in the middle of hte gameBoard, side by side
+        for(int i=0; i<400; i++)
+                board[i] = new hexSpace();
+        for(int i = 0; i < 400; i++){
+                if(i<19 && i>0){
+                                board[i]->upleft = board[i+379];
+                                board[i]->upright = board[i+380];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i+19];
+                                board[i]->downright = board[i+20];
+                }
+                else if(i<399 && i>380){
+                                board[i]->upleft = board[i-20];
+                                board[i]->upright = board[i-19];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i-380];
+                                board[i]->downright = board[i-379];
+                }
+                else if(i%40==0 && i!=0){
+                                board[i]->upleft = board[i-1];
+                                board[i]->upright = board[i-20];
+                                board[i]->left = board[i+19];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i+39];
+                                board[i]->downright = board[i+20];
+                }
+                else if((i+20)%40==0 && i!=380){
+                                board[i]->upleft = board[i-20];
+                                board[i]->upright = board[i-19];
+                                board[i]->left = board[i+19];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i+20];
+                                board[i]->downright = board[i+21];
+                }
+                else if((i+1)%40==0 && i!=399){
+                                board[i]->upleft = board[i-20];
+                                board[i]->upright = board[i-39];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i-19];
+                                board[i]->downleft = board[i+20];
+                                board[i]->downright = board[i+1];
+                }
+                else if((i+21)%40==0 && i!=19){
+                                board[i]->upleft = board[i-21];
+                                board[i]->upright = board[i-20];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i-19];
+                                board[i]->downleft = board[i+19];
+                                board[i]->downright = board[i+20];
+                }
+                else if(i>380 && i<399){
+                                board[i]->upleft = board[i-20];
+                                board[i]->upright = board[i-19];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i-380];
+                                board[i]->downright = board[i-379];
+                }
+                else if((i>40 && i<59)||(i>80 && i<99)||(i>120 && i<139)||(i>160 && i<179)||(i>200 && i<219)||(i>240 && i<259)||(i>280 && i<299)||(i>320 && i<339)||(i>360 && i<379)){
+                                board[i]->upleft = board[i-21];
+                                board[i]->upright = board[i-20];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i+19];
+                                board[i]->downright = board[i+20];
+                }
+                else if (i!=0 && i!=19 && i!=380 && i!=399){
+                                board[i]->upleft = board[i-20];
+                                board[i]->upright = board[i-19];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i+20];
+                                board[i]->downright = board[i+21];
+                }
+        }
+        board[0]->upleft = board[399];
+        board[0]->upright = board[380];
+        board[0]->left = board[19];
+        board[0]->right = board[1];
+        board[0]->downleft = board[39];
+        board[0]->downright = board[20];
+
+
+        board[19]->upleft = board[398];
+        board[19]->upright = board[399];
+        board[19]->left = board[18];
+        board[19]->right = board[0];
+        board[19]->downleft = board[38];
+        board[19]->downright = board[39];
+
+
+        board[380]->upleft = board[360];
+        board[380]->upright = board[361];
+        board[380]->left = board[399];
+        board[380]->right = board[381];
+        board[380]->downleft = board[0];
+        board[380]->downright = board[1];
+
+
+        board[399]->upleft = board[379];
+        board[399]->upright = board[360];
+        board[399]->left = board[398];
+        board[399]->right = board[380];
+        board[399]->downleft = board[19];
+        board[399]->downright = board[0];
+
+
+        board[209]->type=1;
+        board[210]->type=2;
+
+
     startTime = ofGetElapsedTimef();
 }
 
-//Return true iff there is a piece in board space (x,y), and that piece
-// is caught in a vise. Note that x and y are in board coordinates,
+
+//Return true iff there is a piece in gameBoard space (x,y), and that piece
+// is caught in a vise. Note that x and y are in gameBoard coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-    //TODO
-    return false;
+        int target = 20*y+x;
+        if((board[target]->left->type != board[target]->type && board[target]->right->type != board[target]->type && board[target]->left->type != 0 && board[target]->right->type != 0) ||
+                (board[target]->upleft->type != board[target]->type && board[target]->downright->type != board[target]->type && board[target]->upleft->type != 0 && board[target]->downright->type != 0) ||
+                (board[target]->downleft->type != board[target]->type && board[target]->upright->type != board[target]->type && board[target]->downleft->type != 0 && board[target]->upright->type != 0))
+                return true;
+        return false;
 }
 
+
 /*
- * This is the method that updates the board if a player is caught in a vise at the end of the turn.
+ * This is the method that updates the gameBoard if a player is caught in a vise at the end of the turn.
  * You may want to break this method up into several sub-methods.
  *
  * 1) FIRST, identify all pieces that are caught in a vise Note: If you have 0101, then
@@ -138,6 +290,7 @@ void doVise(){
     //TODO
 }
 
+
 //--------------------------------------------------------------
 void testApp::update(){
     //This can be helpful if you are doing animations
@@ -146,6 +299,7 @@ void testApp::update(){
     //Check for vised pieces on every update
     doVise();
 }
+
 
 //Draw a single hexagon centered at (x,y).
 // These are screen coordinates, not board coordinates.
@@ -168,6 +322,8 @@ void drawHex(float x, float y, float sideLen){
 }
 
 
+
+
 /*
  * x and y are the input parameters, which are in board coordinates
  * For a given space (x,y), check to see how many of the neighboring spaces
@@ -178,7 +334,43 @@ void drawHex(float x, float y, float sideLen){
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
     //TODO
+        int target = 20*y+x;
+        if(board[target]->upleft->type!=whoseTurn && board[target]->upleft->type!=0)
+                badNbrs++;
+        else if(board[target]->upleft->type!=0)
+                okayNbrs++;
+
+
+        if(board[target]->upright->type!=whoseTurn && board[target]->upright->type!=0)
+                badNbrs++;
+        else if(board[target]->upright->type!=0)
+                okayNbrs++;
+
+
+        if(board[target]->left->type!=whoseTurn && board[target]->left->type!=0)
+                badNbrs++;
+        else if(board[target]->left->type!=0)
+                okayNbrs++;
+
+
+        if(board[target]->right->type!=whoseTurn && board[target]->right->type!=0)
+                badNbrs++;
+        else if(board[target]->right->type!=0)
+                okayNbrs++;
+
+
+        if(board[target]->downleft->type!=whoseTurn && board[target]->downleft->type!=0)
+                badNbrs++;
+        else if(board[target]->downleft->type!=0)
+                okayNbrs++;
+
+
+        if(board[target]->downright->type!=whoseTurn && board[target]->downright->type!=0)
+                badNbrs++;
+        else if(board[target]->downright->type!=0)
+                okayNbrs++;
 }
+
 
 /*
  * Return true iff the current player can place a new piece
@@ -194,19 +386,40 @@ bool canPlaceNewPiece(int x, int y){
     return(okayNbrs > 0 && badNbrs == 0);
 }
 
+
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isNeighboringSpace(int x, int y){
     //TODO
-    return false;
+        int selected = selectedPieceY*20+selectedPieceX;
+        int target = 20*y+x;
+        if((board[selected]->upleft == board[target]) ||
+                (board[selected]->upright == board[target]) ||
+                (board[selected]->left == board[target]) ||
+                (board[selected]->right == board[target]) ||
+                (board[selected]->downleft == board[target]) ||
+                (board[selected]->downright == board[target]))
+                return true;
+        return false;
 }
+
 
 //Return true iff (x,y) is one jump to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isJumpSpace(int x, int y){
     //TODO
+        int selected = selectedPieceY*20+selectedPieceX;
+        int target = 20*y+x;
+        if((board[selected]->upleft->upleft == board[target]) ||
+                (board[selected]->upright->upright == board[target]) ||
+                (board[selected]->left->left == board[target]) ||
+                (board[selected]->right->right == board[target]) ||
+                (board[selected]->downleft->downleft == board[target]) ||
+                (board[selected]->downright->downright == board[target]))
+                return true;
     return false;
 }
+
 
 //Return true if and only if the board currently contains
 // only 1 connected component
@@ -219,6 +432,7 @@ bool isConnected(){
     //TODO
     return false;
 }
+
 
 /* This is used when the player is moving one of her pieces that is
  * already on the board to a new space.
@@ -245,6 +459,7 @@ bool canPlaceOldPiece(int x, int y){
     return false;
 }
 
+
 /*
  * Which type of piece is at board position (x,y)?
  * If no piece, return 0. Otherwise, return the player number of the piece
@@ -252,10 +467,12 @@ bool canPlaceOldPiece(int x, int y){
  */
 int pieceAt(int x,int y){
     //TODO
-    return 0;
+        int target = 20*y+x;
+        return board[target]->type;
 }
 
-void drawBoard(){
+
+void drawboard(){
     //NOTE: This will need to be adapted to your board
     // data structure!
     //For each board hex...
@@ -328,6 +545,7 @@ void drawBoard(){
     
 }
 
+
 /*
  * Draw the store of remaining pieces on the right side of the screen
  */
@@ -345,12 +563,14 @@ void drawSpares(){
     }
 }
 
+
 //--------------------------------------------------------------
 void testApp::draw(){
     ofBackground(128,128,128); //gray
-    drawBoard();
+    drawboard();
     drawSpares();
 }
+
 
 /*
  * Put a piece on the board at position (x,y). 
@@ -358,7 +578,10 @@ void testApp::draw(){
  */
 void putPieceAt(int x, int y, int whichPiece){
     //TODO
+        int target = 20*y+x;
+        board[target]->type=whichPiece;
 }
+
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
@@ -419,4 +642,3 @@ void testApp::mousePressed(int x, int y, int button){
         }
     }
 }
-
