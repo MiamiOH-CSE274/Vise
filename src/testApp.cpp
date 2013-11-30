@@ -288,16 +288,159 @@ bool inVise(int x, int y){
  */
 void doVise(){
 	// left is either upleft,left,or downleft
-	int countL = 0;
-	int countR = 0;
+	int countLW = 0;
+	int countLB = 0;
+	int countRW = 0;
+	int countRB = 0;
 	// Find all pieces in the vise
 	for (int i = 0; i < 20; i++){
 		for (int j = 0; j < 20; j++){
+			int target = 20*j+i;
+			int inV = board[20*j+i]->type;
 			if (inVise(i,j)){
-				int inVise = board[20*j+i]->type;
 				board[20*j+i]->type = 0;
 			}
-				// Find largest connected component
+			if (isConnected() == false){
+				// Count left subtree
+				// Vise is upleft and downright
+				if (board[target]->upleft->type != inV && board[target]->downright->type != inV){
+				}
+				// Vise is left and right
+				if (board[target]->left->type != inV && board[target]->right->type != inV){
+				}
+				// Vise is downleft and upright
+				int temp = target;
+				if (board[target]->downleft->type != inV && board[target]->upright->type != inV){
+					if (board[target]->downleft->type == 1)
+						countLW++;
+					else if (board[target]->downleft->type == 2)
+						countLB++;
+					while (board[target]->downleft->right->type == 1 || board[target]->downleft->right->type == 2){
+						if (board[target]->downleft->right->type == 1)
+						countLW++;
+						else if (board[target]->downleft->right->type == 2)
+						countLB++;
+						target = target + 1;
+					}
+					target = temp;
+					while (board[target]->downleft->left->type == 1 || board[target]->downleft->left->type == 2){
+						if (board[target]->downleft->left->type == 1)
+						countLW++;
+						else if (board[target]->downleft->left->type == 2)
+						countLB++;
+						target = target + 1;
+					}
+					if (board[target]->left->type == 1)
+						countLW++;
+					else if (board[target]->left->type == 2)
+						countLB++;
+					
+					target = temp;
+					while (board[target]->left->left->type == 1 || board[target]->left->left->type == 2){
+						if (board[target]->left->left->type == 1)
+						countLW++;
+						else if (board[target]->left->left->type == 2)
+						countLB++;
+						target = target - 1;
+					}
+					if (board[target]->upleft->type == 1)
+						countLW++;
+					else if (board[target]->upleft->type == 2)
+						countLB++;
+					
+					target = temp;
+					while (board[target]->upleft->left->type == 1 || board[target]->upleft->left->type == 2){
+						if (board[target]->upleft->left->type == 1)
+						countLW++;
+						else if (board[target]->upleft->left->type == 2)
+						countLB++;
+						target = target - 1;
+					}
+
+					if (board[target]->downleft->downleft->type == 1)
+						countRW++;
+					else if (board[target]->downleft->downleft->type == 2)
+						countRB++;
+					
+					target = temp;
+					while (board[target]->downleft->downleft->right->type == 1 || board[target]->downleft->upright->right->type == 2){
+						if (board[target]->downleft->downleft->right->type == 1)
+						countRW++;
+						else if (board[target]->downleft->downleft->right->type == 2)
+						countRB++;
+						target = target + 1;
+					}
+				
+					target = temp;
+					while (board[target]->downleft->downleft->left->type == 1 || board[target]->downleft->downleft->left->type == 2){
+						if (board[target]->downleft->downleft->left->type == 1)
+						countRW++;
+						else if (board[target]->downleft->downleft->left->type == 2)
+						countRB++;
+						target = target + 1;
+					}
+
+					// Do upright side
+					if (board[target]->upright->type == 1)
+						countRW++;
+					else if (board[target]->upright->type == 2)
+						countRB++;
+					
+					target = temp;
+					while (board[target]->upright->right->type == 1 || board[target]->upright->right->type == 2){
+						if (board[target]->upright->right->type == 1)
+						countRW++;
+						else if (board[target]->upright->right->type == 2)
+						countRB++;
+						target = target + 1;
+					}
+					if (board[target]->right->type == 1)
+						countRW++;
+					else if (board[target]->right->type == 2)
+						countRB++;
+					
+					target = temp;
+					while (board[target]->right->right->type == 1 || board[target]->right->right->type == 2){
+						if (board[target]->right->right->type == 1)
+						countRW++;
+						else if (board[target]->right->right->type == 2)
+						countRB++;
+						target = target + 1;
+					}
+					//dddd
+					
+					if (board[target]->upright->upright->type == 1)
+						countRW++;
+					else if (board[target]->upright->upright->type == 2)
+						countRB++;
+					
+					target = temp;
+					while (board[target]->upright->upright->right->type == 1 || board[target]->upright->upright->right->type == 2){
+						if (board[target]->upright->upright->right->type == 1)
+						countRW++;
+						else if (board[target]->upright->upright->right->type == 2)
+						countRB++;
+						target = target + 1;
+					}
+				
+					target = temp;
+					while (board[target]->upright->upright->left->type == 1 || board[target]->upright->upright->left->type == 2){
+						if (board[target]->upright->upright->left->type == 1)
+						countRW++;
+						else if (board[target]->upright->upright->left->type == 2)
+						countRB++;
+						target = target + 1;
+					}
+				}
+		/*if (countRW+countRB < countLW+countLW){
+		pl1spares = countRW;
+		pl2spares = countRB;
+
+		//pl1spares and pl2spares
+		}*/
+		}
+		
+						// Find largest connected component
 	/*			if ((board[20*j+i]->upleft->type != inVise) && (board[20*j+i]->downright->type != inVise)){
 					countL++;
 					countR++;
@@ -353,9 +496,7 @@ void doVise(){
 			}*/
 		}
 	}
-	if (countR < countL){
-		//pl1spares and pl2spares
-	}
+	
 
 	// Find largest connected component
 
@@ -508,8 +649,10 @@ bool isConnected(){
 	int countTogether = 0;
 
 	for (int i = 0; i < 400; i++){
-		if (board[i]->type == 1 || board[i]->type == 2)
-			totalCount++;
+		if (board[i]->type == 1)
+			numWhite++;
+		else if(board[i]->type == 2)
+			numBlack++;
 	}
 
 	int root = 0;
@@ -522,38 +665,25 @@ bool isConnected(){
 				j++;
 			}
 			j = root;
-			while ((board[j]->downleft->type == 1 || board[j]->downleft->type == 2) || (board[j]->downright->type == 1 || board[j]->downright->type == 2)){
-				countTogether++;
-			while (board[j]->downleft->right->type == 1 || board[j]->downleft->right->type == 2){
-				countTogether++;
-				j++;
-			}
-			j = root;
-			while (board[j]->downleft->left->type == 1 || board[j]->downleft->left->type == 2){
-				countTogether++;
-				j++;
-			}
-			j = j+19;
-
-			}
-		}
-		/*	if (board[j]->right->type == 1 || board[j]->right->type == 2){
-				countTogether++;
-				if (board[j]->right->type == 1 || board[j]->right->type == 2){
+			while (board[j]->type == 1 || board[j]->type == 2) {
+				while ((board[j]->downleft->type == 1 || board[j]->downleft->type == 2)){
 					countTogether++;
+			//while (board[j]->downleft->right->type == 1 || board[j]->downleft->right->type == 2){
+				//countTogether++;
+					j++;
 				}
-			}
-			if (board[j]->downright->type == 1 || board[j]->downright->type == 2){
-				countTogether++;
-			}
-			if (board[j]->downleft->type == 1 || board[j]->downleft->type == 2){
-				countTogether++;
-			}*/
+				j = root - 1;
+				while (board[j]->downleft->type == 1 || board[j]->downleft->type == 2){
+					countTogether++;
+					j--;
+				}
+				j = root;
+				j = j+19;
 
-		//}
+				}
+		}
 	}
-
-	if (totalCount == countTogether)
+	if ((numBlack+numWhite) == countTogether)
 		return true;
     
 	return false;
@@ -586,12 +716,13 @@ bool canPlaceOldPiece(int x, int y){
     int target = 20*y+x;
 
 	if ((board[target]->type == 0) && (isNeighboringSpace(x,y) || isJumpSpace(x,y))){
-		if ((board[20*y+x]->upright->type == 1 || board[20*y+x]->upright->type == 2)
-			|| (board[20*y+x]->right->type == 1 || board[20*y+x]->right->type == 2)
-			|| (board[20*y+x]->downright->type == 1 || board[20*y+x]->downright->type == 2)
-			|| (board[20*y+x]->downleft->type == 1 || board[20*y+x]->downleft->type == 2)
-			|| (board[20*y+x]->left->type == 1 || board[20*y+x]->left->type == 2)
-			|| (board[20*y+x]->upleft->type == 1 || board[20*y+x]->upleft->type == 2)){
+		if ((board[target]->upright->type == 1 || board[target]->upright->type == 2)
+			|| (board[target]->right->type == 1 || board[target]->right->type == 2)
+			|| (board[target]->downright->type == 1 || board[target]->downright->type == 2)
+			|| (board[target]->downleft->type == 1 || board[target]->downleft->type == 2)
+			|| (board[target]->left->type == 1 || board[target]->left->type == 2)
+			|| (board[target]->upleft->type == 1 || board[target]->upleft->type == 2)){
+			//	if (isConnected())
 		//&& canPlaceNewPiece(x,y))
 		//&& (isConnected()))
 			return true;
