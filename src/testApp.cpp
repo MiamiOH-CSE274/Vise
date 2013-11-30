@@ -585,10 +585,18 @@ bool canPlaceOldPiece(int x, int y){
 	int selected = selectedPieceY*20+selectedPieceX;
     int target = 20*y+x;
 
-	if ((board[target]->type == 0) && (isNeighboringSpace(x,y) || isJumpSpace(x,y)))
+	if ((board[target]->type == 0) && (isNeighboringSpace(x,y) || isJumpSpace(x,y))){
+		if ((board[20*y+x]->upright->type == 1 || board[20*y+x]->upright->type == 2)
+			|| (board[20*y+x]->right->type == 1 || board[20*y+x]->right->type == 2)
+			|| (board[20*y+x]->downright->type == 1 || board[20*y+x]->downright->type == 2)
+			|| (board[20*y+x]->downleft->type == 1 || board[20*y+x]->downleft->type == 2)
+			|| (board[20*y+x]->left->type == 1 || board[20*y+x]->left->type == 2)
+			|| (board[20*y+x]->upleft->type == 1 || board[20*y+x]->upleft->type == 2)){
 		//&& canPlaceNewPiece(x,y))
 		//&& (isConnected()))
-		return true;
+			return true;
+		}
+	}
     return false;
 }
 
