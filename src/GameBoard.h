@@ -41,7 +41,7 @@ public:
 	void setPieceToMove(int x, int y);
 	bool jump(int x, int y);
 	bool isAdjTo(int x1, int y1, int x2, int y2);
-	int wouldBeCont(int x, int y);
+	bool wouldBeCont(int x, int y);
 	void removePiece(int x, int y);
 	void removeVises();
     void returnDisconnectedPieces();
@@ -62,6 +62,10 @@ private:
 	GameNode* oldPieceToMove;
     int p1Spares, p2Spares;
 	void dijkstraRecursiveReturn (GameNode* cur, int* visited, int arrSize);
+    bool p1InGroup (GameNode* cur, int* visited, int arrSize);
+    bool p2InGroup (GameNode* cur, int* visited, int arrSize);
+    int pieceCount(GameNode* cur, int* visited, int arrSize, int player);
+    //int dijkstraRecursiveForWBC(GameNode* cur, int* visited, int arrSize);
 
 	
 
