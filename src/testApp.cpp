@@ -753,6 +753,10 @@ void testApp::mousePressed(int x, int y, int button){
                 if(canPlaceNewPiece(whichCol,whichRow)){
                     currentAction = 0;
                     putPieceAt(whichCol,whichRow,whoseTurn);
+					if(whoseTurn == 1)
+						boardWhite++;
+					else
+						boardBlack++;
                     whoseTurn = 3 - whoseTurn;
                 }
             }
