@@ -11,9 +11,7 @@ gameBoard::gameBoard(unsigned int numNodes){
 
 //Add an move from node1 to node2, and from node2 to node1, with
 // the given cost. If the cost is < 0, throw a string exception.
-void gameBoard::addMove(int node1, int node2, double cost){
-  if(cost<0)
-	  throw (std::string) "cost must be >= 0";
+void gameBoard::addMove(int node1, int node2){
   possibleMove* toAdd = new possibleMove(node2);
   hexList[node1]->moveList.push_back(*toAdd);
 }
