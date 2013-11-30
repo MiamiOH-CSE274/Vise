@@ -49,6 +49,8 @@ public:
     void setP2Spares(int num);
     int getP1Spares();
     int getP2Spares();
+    bool getPlayerOneTurn();
+    void setPlayerOneTurn(bool turn);
 
 
 private:

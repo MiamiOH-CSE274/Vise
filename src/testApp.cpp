@@ -16,7 +16,7 @@ void doVise();
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
 bool canPlaceNewPiece(int x, int y);
 bool isNeighboringSpace(int x, int y);
-bool isJumpSpace(int x, int y);
+//bool isJumpSpace(int x, int y);
 bool isConnected();
 bool canPlaceOldPiece(int x, int y);
 int pieceAt(int x,int y);
@@ -133,8 +133,8 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-	myBoard.inVise(x,y);
-	return false;
+	
+	return myBoard.inVise(x,y);;
 }
 
 /*
@@ -163,16 +163,13 @@ void doVise(){
             }
 		}
 	}
-    /*Checks left to do:
-     3a: Checking that the largest component has a piece from each player
-     Handle ties and such appropriately. This just removes from non largest
-     sections of pieces. Very barbaric.
+    /*
      
      */
     if (viseFound) {
         myBoard.removeVises();
-        myBoard.resetVise();
         myBoard.returnDisconnectedPieces();
+        myBoard.resetVise();
         pl1spares = myBoard.getP1Spares();
         pl2spares = myBoard.getP2Spares();
     }
@@ -461,6 +458,10 @@ void testApp::mousePressed(int x, int y, int button){
                     currentAction = 0;
                     putPieceAt(whichCol,whichRow,whoseTurn);
                     whoseTurn = 3 - whoseTurn;
+                    if (whoseTurn==2){
+                        myBoard.setPlayerOneTurn(false);
+                    }
+                    else myBoard.setPlayerOneTurn(true);
                 }
             }
         } else if(currentAction == 0){
@@ -486,6 +487,10 @@ void testApp::mousePressed(int x, int y, int button){
                     currentAction = 0;
                     putPieceAt(whichCol,whichRow,whoseTurn);
                     whoseTurn = 3 - whoseTurn;
+                    if (whoseTurn==2){
+                        myBoard.setPlayerOneTurn(false);
+                    }
+                    else myBoard.setPlayerOneTurn(true);
                 }
             }
         }

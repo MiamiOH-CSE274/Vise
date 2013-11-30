@@ -28,6 +28,14 @@ void GameBoard::makeGameBoard() {
 	
 }
 
+void GameBoard::setPlayerOneTurn(bool turn){
+    playerOneTurn = turn;
+}
+
+bool GameBoard::getPlayerOneTurn(){
+    return playerOneTurn;
+}
+
 void GameBoard::setP1Spares(int num){
     p1Spares = num;
 }
@@ -384,7 +392,6 @@ bool GameBoard::inVise(int x, int y) {
 void GameBoard::addPiece(int row, int column,int player) {
 	GameNode* toAdd = &board[row][column];
 	toAdd->pieceOn = player;
-	playerOneTurn = !playerOneTurn;
 	return;
 }
 
@@ -773,36 +780,36 @@ bool GameBoard::wouldBeCont(int x, int y) {
 	}
     
 	int numConnectedIfPlacedThere = 0;
-    int* visited = new int[10];
+    //int* visited = new int[10];
 	GameNode* check = &board[x][y];
 	//if (playerOneTurn) {
     if (check->northWest->pieceOn != NO_PLAYER_PIECE)
-        numConnectedIfPlacedThere += dijkstraRecursive(check->northWest, visited, 0);
+        numConnectedIfPlacedThere += dijkstraRecursive(check->northWest, new int[10], 0);
     if (numConnectedIfPlacedThere==totalPieces) {
         return true;
     }
     if (check->northEast->pieceOn != NO_PLAYER_PIECE)
-        numConnectedIfPlacedThere += dijkstraRecursive(check->northEast, visited, 0);
+        numConnectedIfPlacedThere += dijkstraRecursive(check->northEast, new int[10], 0);
     if (numConnectedIfPlacedThere==totalPieces) {
         return true;
     }
     if (check->east->pieceOn != NO_PLAYER_PIECE)
-        numConnectedIfPlacedThere += dijkstraRecursive(check->east, visited, 0);
+        numConnectedIfPlacedThere += dijkstraRecursive(check->east, new int[10], 0);
     if (numConnectedIfPlacedThere==totalPieces) {
         return true;
     }
     if (check->west->pieceOn != NO_PLAYER_PIECE)
-        numConnectedIfPlacedThere += dijkstraRecursive(check->west, visited, 0);
+        numConnectedIfPlacedThere += dijkstraRecursive(check->west, new int[10], 0);
     if (numConnectedIfPlacedThere==totalPieces) {
         return true;
     }
     if (check->southEast->pieceOn != NO_PLAYER_PIECE)
-        numConnectedIfPlacedThere += dijkstraRecursive(check->southEast, visited, 0);
+        numConnectedIfPlacedThere += dijkstraRecursive(check->southEast, new int[10], 0);
     if (numConnectedIfPlacedThere==totalPieces) {
         return true;
     }
     if (check->southWest->pieceOn != NO_PLAYER_PIECE)
-        numConnectedIfPlacedThere += dijkstraRecursive(check->southWest, visited, 0);
+        numConnectedIfPlacedThere += dijkstraRecursive(check->southWest, new int[10], 0);
     if (numConnectedIfPlacedThere==totalPieces) {
         return true;
     }
