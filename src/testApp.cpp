@@ -16,7 +16,7 @@ void doVise();
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
 bool canPlaceNewPiece(int x, int y);
 bool isNeighboringSpace(int x, int y);
-bool isJumpSpace(int x, int y);
+//bool isJumpSpace(int x, int y);
 bool isConnected();
 bool canPlaceOldPiece(int x, int y);
 int pieceAt(int x,int y);
@@ -133,8 +133,8 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-	myBoard.inVise(x,y);
-	return false;
+	
+	return myBoard.inVise(x,y);;
 }
 
 /*
@@ -155,13 +155,25 @@ bool inVise(int x, int y){
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
  */
 void doVise(){
+    bool viseFound = false;
     for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 20; j++) {
-			myBoard.inVise(i,j);
+			if(myBoard.inVise(i,j)){
+                viseFound = true;
+            }
 		}
 	}
-	myBoard.removeVises();
-	myBoard.resetVise();
+    /*
+     
+     */
+    if (viseFound) {
+        myBoard.removeVises();
+        myBoard.returnDisconnectedPieces();
+        myBoard.resetVise();
+        pl1spares = myBoard.getP1Spares();
+        pl2spares = myBoard.getP2Spares();
+    }
+
 }
 
 //--------------------------------------------------------------
@@ -421,15 +433,19 @@ void testApp::mousePressed(int x, int y, int button){
         if(whoseTurn == 1 && pl1spares > 0 && currentAction == 0){
             currentAction = 1;
             pl1spares--;
+            myBoard.setP1Spares(pl1spares);
         } else if(whoseTurn == 2 && pl2spares > 0 && currentAction == 0){
             currentAction = 1;
             pl2spares--;
+            myBoard.setP2Spares(pl2spares);
         } else if (whoseTurn == 1 && currentAction == 1){
             currentAction = 0;
             pl1spares++;
+            myBoard.setP1Spares(pl1spares);
         } else if (whoseTurn == 2 && currentAction == 1){
             currentAction = 0;
             pl2spares++;
+            myBoard.setP2Spares(pl2spares);
         }
     } else if(x > boardXOffset && x <= boardXOffset +(boardW)*hexW ) {
         //We are clicking on the board...
@@ -442,6 +458,10 @@ void testApp::mousePressed(int x, int y, int button){
                     currentAction = 0;
                     putPieceAt(whichCol,whichRow,whoseTurn);
                     whoseTurn = 3 - whoseTurn;
+                    if (whoseTurn==2){
+                        myBoard.setPlayerOneTurn(false);
+                    }
+                    else myBoard.setPlayerOneTurn(true);
                 }
             }
         } else if(currentAction == 0){
@@ -467,6 +487,10 @@ void testApp::mousePressed(int x, int y, int button){
                     currentAction = 0;
                     putPieceAt(whichCol,whichRow,whoseTurn);
                     whoseTurn = 3 - whoseTurn;
+                    if (whoseTurn==2){
+                        myBoard.setPlayerOneTurn(false);
+                    }
+                    else myBoard.setPlayerOneTurn(true);
                 }
             }
         }

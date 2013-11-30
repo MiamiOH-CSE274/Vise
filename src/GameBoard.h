@@ -30,7 +30,7 @@ public:
 	void makeGameBoard();
 	bool canMove(int row, int column);
 	void checkNbrs(int x, int y,int& okayNbrs,int& badNbrs);
-	void inVise(int x, int y);
+	bool inVise(int x, int y);
 	void resetVise();
 	bool isContigious();
 	bool isAdjacent(int x,int y);
@@ -39,11 +39,18 @@ public:
 	int dijkstraRecursive(GameNode* cur, int* visited, int arrSize);
     bool canMoveOld(int row, int column);
 	void setPieceToMove(int x, int y);
-	bool moveOld(int x, int y);
+	bool jump(int x, int y);
 	bool isAdjTo(int x1, int y1, int x2, int y2);
-	int wouldBeCont(int x, int y);
+	bool wouldBeCont(int x, int y);
 	void removePiece(int x, int y);
 	void removeVises();
+    void returnDisconnectedPieces();
+    void setP1Spares(int num);
+    void setP2Spares(int num);
+    int getP1Spares();
+    int getP2Spares();
+    bool getPlayerOneTurn();
+    void setPlayerOneTurn(bool turn);
 
 
 private:
@@ -55,7 +62,12 @@ private:
 	int oldPieceToMoveY;
 	bool dijkstraMoveRecursive (GameNode* cur, int* visited, int arrSize, int movesLeft);
 	GameNode* oldPieceToMove;
-	
+    int p1Spares, p2Spares;
+	void dijkstraRecursiveReturn (GameNode* cur, int* visited, int arrSize);
+    bool p1InGroup (GameNode* cur, int* visited, int arrSize);
+    bool p2InGroup (GameNode* cur, int* visited, int arrSize);
+    int pieceCount(GameNode* cur, int* visited, int arrSize, int player);
+    //int dijkstraRecursiveForWBC(GameNode* cur, int* visited, int arrSize);
 
 	
 
