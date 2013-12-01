@@ -23,6 +23,7 @@ class hexSpace{
 public:
         hexSpace(){type=0;};
         int type;
+		int checked;
         hexSpace* right;
         hexSpace* left;
         hexSpace* upright;
