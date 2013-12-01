@@ -53,6 +53,10 @@ int numBlack;
 int numWhite;
 int bankBlack;
 int bankWhite;
+int countRW;
+int countRB;
+int countLW;
+int countLB;
 
 
 //Number of spare playing pieces left, for each player
@@ -288,30 +292,303 @@ bool inVise(int x, int y){
  */
 void doVise(){
 	// left is either upleft,left,or downleft
-	int countLW = 0;
-	int countLB = 0;
-	int countRW = 0;
-	int countRB = 0; 
+	//int countLW = 0;
+	//int countLB = 0;
+	//int countRW = 0;
+	//int countRB = 0; 
 
 	/*
 	int numBlack;
 	int numWhite;
 	int bankBlack;
 	int bankWhite;
+	checked
 	*/
 
+	int inV = 0;
+	int target = 0;
+	int temp = 0;
 
+	// if 1 upleft and downright
+	// if 2 left and right
+	// if 3 upright and downleft
+	
+	int typeOFVise = 0;
+	int visePos = 0;
+	
 	// Find all pieces in the vise
 	for (int i = 0; i < 20; i++){
 		for (int j = 0; j < 20; j++){
-			int target = 20*j+i;
-			int inV = board[20*j+i]->type;
-			
 			if (inVise(i,j)){
+				target = 20*j+i;
+				inV = board[20*j+i]->type;
 				board[20*j+i]->type = 0;
 			}
 		}
 	}
+
+	temp = target;
+	visePos = target;
+		
+	// Vise is upleft and downright
+	if (board[target]->upleft->type != inV && board[target]->downright->type != inV){
+
+	}
+	
+	// Vise is left and right
+	if (board[target]->left->type != inV && board[target]->right->type != inV){
+	}
+	
+	// Vise is downleft and upright
+	if (board[target]->downleft->type != inV && board[target]->upright->type != inV){
+		typeOFVise = 3;
+		//upright first
+		bool circle = true;
+
+		target = target - 20;
+		int start = target;
+		
+			if (board[target]->type == 1){
+				countRW++;
+				board[target]->checked = 1;
+			}
+			else {
+				countRB++;
+				board[target]->checked = 1;
+			}
+
+		while (circle){
+			
+			//upright first countRB countRW
+			if (board[target]->upright->type != 0 && board[target]->upright->checked == 0){
+				target = target - 20;
+				if (board[target]->upright->type == 1){
+					countRW++;
+					board[target]->upright->checked = 1;
+				}
+				else {
+					countRB++;
+					board[target]->upright->checked = 1;
+				}
+
+			}
+			//right
+			else if (board[target]->right->type != 0 && board[target]->right->checked == 0){
+				target = target + 1;
+				if (board[target]->right->type == 1){
+					countRW++;
+					board[target]->right->checked = 1;
+				}
+				else {
+					countRB++;
+					board[target]->right->checked = 1;
+				}
+			
+			
+			}
+			//downright
+			else if (board[target]->downright->type != 0 && board[target]->downright->checked == 0){
+				target = target + 20;
+				if (board[target]->downright->type == 1){
+					countRW++;
+					board[target]->downright->checked = 1;
+				}
+				else {
+					countRB++;
+					board[target]->downright->checked = 1;
+				}
+			
+			
+			}
+			//downleft
+			else if (board[target]->downleft->type != 0 && board[target]->downleft->checked == 0){
+				target = target + 19;
+				if (board[target]->downleft->type == 1){
+					countRW++;
+					board[target]->downleft->checked = 1;
+				}
+				else {
+					countRB++;
+					board[target]->downleft->checked = 1;
+				}
+			
+			
+			}
+			//left
+			else if (board[target]->left->type != 0 && board[target]->left->checked == 0){
+				target = target - 1;
+				if (board[target]->left->type == 1){
+					countRW++;
+					board[target]->left->checked = 1;
+				}
+				else {
+					countRB++;
+					board[target]->left->checked = 1;
+				}
+			
+			
+			}
+			//upleft
+			else if (board[target]->upleft->type != 0 && board[target]->upleft->checked == 0){
+				target = target - 21;
+				if (board[target]->upleft->type == 1){
+					countRW++;
+					board[target]->upleft->checked = 1;
+				}
+				else {
+					countRB++;
+					board[target]->upleft->checked = 1;
+				}
+			}
+			else if (board[start]->upright->checked == 1 || board[start]->right->checked == 1 
+				|| board[start]->downright->checked == 1 || board[start]->downleft->checked == 1 
+				|| board[start]->left->checked == 1 || board[start]->upleft->checked == 1 ){
+				//(board[target]->left->type == 0 || board[target]->downleft->type == 0){
+				target = start;
+
+			}
+			else {
+				circle = false;
+			}
+		}
+
+		//downleft second
+		circle = true;
+		
+		target = temp + 20;
+		int start2 = target;
+		
+			if (board[target]->type == 1){
+				countLW++;
+				board[target]->checked = 1;
+			}
+			else {
+				countLB++;
+				board[target]->checked = 1;
+			}
+
+		while (circle){
+			
+			//upright
+			if (board[target]->upright->type != 0 && board[target]->upright->checked == 0){
+				target = target - 20;
+				if (board[target]->upright->type == 1){
+					countLW++;
+					board[target]->upright->checked = 1;
+				}
+				else {
+					countLB++;
+					board[target]->upright->checked = 1;
+				}
+
+			}
+			//right
+			else if (board[target]->right->type != 0 && board[target]->right->checked == 0){
+				target = target + 1;
+				if (board[target]->right->type == 1){
+					countLW++;
+					board[target]->right->checked = 1;
+				}
+				else {
+					countLB++;
+					board[target]->right->checked = 1;
+				}
+			
+			
+			}
+			//downright
+			else if (board[target]->downright->type != 0 && board[target]->downright->checked == 0){
+				target = target + 20;
+				if (board[target]->downright->type == 1){
+					countLW++;
+					board[target]->downright->checked = 1;
+				}
+				else {
+					countLB++;
+					board[target]->downright->checked = 1;
+				}
+			
+			
+			}
+			//downleft
+			else if (board[target]->downleft->type != 0 && board[target]->downleft->checked == 0){
+				target = target + 19;
+				if (board[target]->downleft->type == 1){
+					countLW++;
+					board[target]->downleft->checked = 1;
+				}
+				else {
+					countLB++;
+					board[target]->downleft->checked = 1;
+				}
+			
+			
+			}
+			//left
+			else if (board[target]->left->type != 0 && board[target]->left->checked == 0){
+				target = target - 1;
+				if (board[target]->left->type == 1){
+					countLW++;
+					board[target]->left->checked = 1;
+				}
+				else {
+					countLB++;
+					board[target]->left->checked = 1;
+				}
+			
+			
+			}
+			//upleft
+			else if (board[target]->upleft->type != 0 && board[target]->upleft->checked == 0){
+				target = target - 21;
+				if (board[target]->upleft->type == 1){
+					countLW++;
+					board[target]->upleft->checked = 1;
+				}
+				else {
+					countLB++;
+					board[target]->upleft->checked = 1;
+				}
+			}
+			else if (board[start2]->upright->checked == 1 || board[start2]->right->checked == 1 
+				|| board[start2]->downright->checked == 1 || board[start2]->downleft->checked == 1 
+				|| board[start2]->left->checked == 1 || board[start2]->upleft->checked == 1 ){
+				target = start2;
+			}
+			else{
+				circle = false;
+			}
+		}
+
+	// Left bundle is smaller
+	int removed = 0;
+	std::cout << "HERE" << std::endl;
+	std::cout << countLB << " " << countLW << std::endl;
+	std::cout << countRB << " " << countRW << std::endl;
+	
+
+	if ((countLB + countLW) < (countRB + countRW)){
+		if (typeOFVise == 3){
+			
+		//	while((countLB + countLW) > removed){
+				if (board[visePos]->downleft->type == 1){
+					bankWhite++;
+					board[visePos]->downleft->type = 0;
+					removed++;
+				}
+				else if (board[visePos]->downleft->type == 2){
+					bankBlack++;
+					board[visePos]->downleft->type = 0;
+					removed++;
+				}
+			//}
+		}
+	}
+		
+		
+		
+		
+		/*
 	int firstW = 0;
 	int firstB = 0;
 	int secW = 0;
@@ -370,6 +647,7 @@ void doVise(){
 	}
 	std::cout << firstW << std::endl;
 	std::cout << firstB << std::endl;
+	*/
 			//	if (isConnected() == false){
 				// Count left subtree
 				// Vise is upleft and downright
@@ -593,6 +871,8 @@ void doVise(){
 
 	
     //TODO
+		}
+		
 }
 
 
