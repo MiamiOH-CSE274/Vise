@@ -53,10 +53,10 @@ int numBlack;
 int numWhite;
 int bankBlack;
 int bankWhite;
-int countRW;
-int countRB;
-int countLW;
-int countLB;
+int countRW = 0;
+int countRB = 0;
+int countLW = 0;
+int countLB = 0;
 
 
 //Number of spare playing pieces left, for each player
@@ -292,11 +292,12 @@ bool inVise(int x, int y){
  */
 void doVise(){
 	// left is either upleft,left,or downleft
-	//int countLW = 0;
-	//int countLB = 0;
-	//int countRW = 0;
-	//int countRB = 0; 
-
+/*countLW = 0;
+countLB = 0;
+countRW = 0;
+countRB = 0; */
+	std::cout << countLW << " " << countLB << std::endl;
+	std::cout << countRW << " " << countRB << std::endl;
 	/*
 	int numBlack;
 	int numWhite;
@@ -440,9 +441,9 @@ void doVise(){
 					board[target]->upleft->checked = 1;
 				}
 			}
-			else if (board[start]->upright->checked == 1 || board[start]->right->checked == 1 
-				|| board[start]->downright->checked == 1 || board[start]->downleft->checked == 1 
-				|| board[start]->left->checked == 1 || board[start]->upleft->checked == 1 ){
+			else if (board[start]->upright->checked == 0 || board[start]->right->checked == 0 
+				|| board[start]->downright->checked == 0 || board[start]->downleft->checked == 0
+				|| board[start]->left->checked == 0 || board[start]->upleft->checked == 0){
 				//(board[target]->left->type == 0 || board[target]->downleft->type == 0){
 				target = start;
 
@@ -550,9 +551,9 @@ void doVise(){
 					board[target]->upleft->checked = 1;
 				}
 			}
-			else if (board[start2]->upright->checked == 1 || board[start2]->right->checked == 1 
-				|| board[start2]->downright->checked == 1 || board[start2]->downleft->checked == 1 
-				|| board[start2]->left->checked == 1 || board[start2]->upleft->checked == 1 ){
+			else if (board[start2]->upright->checked == 0 || board[start2]->right->checked == 0 
+				|| board[start2]->downright->checked == 0 || board[start2]->downleft->checked == 0
+				|| board[start2]->left->checked == 0 || board[start2]->upleft->checked == 0){
 				target = start2;
 			}
 			else{
@@ -571,6 +572,7 @@ void doVise(){
 		if (typeOFVise == 3){
 			
 		//	while((countLB + countLW) > removed){
+			std::cout << "in vise3" << std::endl;
 				if (board[visePos]->downleft->type == 1){
 					bankWhite++;
 					board[visePos]->downleft->type = 0;
