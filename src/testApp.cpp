@@ -762,7 +762,7 @@ bool isConnected(){
 				//countTogether++;
 					j++;
 				}
-				j = root - 1;
+				j = root + 1;
 				while (board[j]->downleft->type == 1 || board[j]->downleft->type == 2){
 					countTogether++;
 					j--;
