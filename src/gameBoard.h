@@ -21,7 +21,7 @@ public:
 
 class hexSpace{
 public:
-        hexSpace(){type=0;};
+        hexSpace(){type=0; checked=0;};
         int type;
 		int checked;
         hexSpace* right;

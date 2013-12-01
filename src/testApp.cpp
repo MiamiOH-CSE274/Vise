@@ -139,8 +139,8 @@ void testApp::setup(){
         board.resize(400);
         numBlack = 4;
         numWhite = 4;
-        boardBlack = 1;
-        boardWhite = 1;
+        bankBlack = 3;
+        bankWhite = 3;
 
 
     //TODO: Put 1 piece for each player in the middle of hte gameBoard, side by side
@@ -1386,9 +1386,9 @@ void testApp::mousePressed(int x, int y, int button){
                     currentAction = 0;
                     putPieceAt(whichCol,whichRow,whoseTurn);
 					if(whoseTurn == 1)
-						boardWhite++;
+						bankWhite--;
 					else
-						boardBlack++;
+						bankBlack--;
                     whoseTurn = 3 - whoseTurn;
                 }
             }
