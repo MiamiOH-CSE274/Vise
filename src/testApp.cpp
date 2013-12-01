@@ -296,8 +296,11 @@ void doVise(){
 countLB = 0;
 countRW = 0;
 countRB = 0; */
-	std::cout << countLW << " " << countLB << std::endl;
-	std::cout << countRW << " " << countRB << std::endl;
+
+	std::cout << "START" << std::endl;
+	std::cout << countLB << " " << countLW << std::endl;
+	std::cout << countRB << " " << countRW << std::endl;
+	std::cout << "END" << std::endl;
 	/*
 	int numBlack;
 	int numWhite;
@@ -349,11 +352,11 @@ countRB = 0; */
 		target = target - 20;
 		int start = target;
 		
-			if (board[target]->type == 1){
+			if (board[target]->type == 1 && board[target]->checked == 0){
 				countRW++;
 				board[target]->checked = 1;
 			}
-			else {
+			else if (board[target]->type == 2 && board[target]->checked == 0) {
 				countRB++;
 				board[target]->checked = 1;
 			}
@@ -563,12 +566,14 @@ countRB = 0; */
 
 	// Left bundle is smaller
 	int removed = 0;
+	
 	std::cout << "HERE" << std::endl;
 	std::cout << countLB << " " << countLW << std::endl;
 	std::cout << countRB << " " << countRW << std::endl;
 	
 
 	if ((countLB + countLW) < (countRB + countRW)){
+		std::cout << "ddd" << std::endl;
 		if (typeOFVise == 3){
 			
 		//	while((countLB + countLW) > removed){
