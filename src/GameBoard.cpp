@@ -243,6 +243,12 @@ void GameBoard::resetVise() {
     
 }
 
+void gameOver() {
+	std::cout<<"Game Over" <<std::endl;
+
+
+}
+
 void GameBoard::returnDisconnectedPieces(){
     int largestGroup = 0;
     int largestBlueGroup =0;
@@ -251,6 +257,8 @@ void GameBoard::returnDisconnectedPieces(){
     int redsInCombined=0;
     bool foundBlue = false;
     bool foundRed = false;
+	if(countPieces(1) == 0 || countPieces(2) == 0)
+		gameOver();
     //Determine largest group of pieces...
     for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 20; j++) {
@@ -508,6 +516,11 @@ int GameBoard::pieceCount(GameNode* cur, int* visited, int arrSize, int player){
 
 void GameBoard::dijkstraRecursiveReturn(GameNode *cur, int *visited, int arrSize){
 	//If nothing is there, don't do anything
+	//If already visited
+	for (int i = 0; i < 10; i++) {
+		if (cur->numIdentifier == visited[i])
+			return;
+	}
 	if (cur->pieceOn == NO_PLAYER_PIECE)
 		return;
     else{
@@ -521,11 +534,7 @@ void GameBoard::dijkstraRecursiveReturn(GameNode *cur, int *visited, int arrSize
         }
     }
 	
-	//If already visited
-	for (int i = 0; i < 10; i++) {
-		if (cur->numIdentifier == visited[i])
-			return;
-	}
+	
 	//Hadn't visited, so add it to visited
 	visited[arrSize] = cur->numIdentifier;
 	arrSize++;
@@ -640,50 +649,41 @@ bool GameBoard::isPlayerTwoConnected(int x, int y) {
 /*Checks to see if a old piece can be moved*/
 bool GameBoard::jump(int x, int y) {
 	GameNode* checking = &board[x][y];
-	checking->curLookAt = true;
     
     if(checking->pieceOn != -1) {
-        checking->curLookAt = false;
         return false;
     }
     if(checking->east->pieceOn == PLAYER_ONE_PIECE || checking->east->pieceOn == PLAYER_TWO_PIECE ) {
         if (checking->east->east->pieceOn == -1 && checking->east->east == oldPieceToMove) {
-            checking->curLookAt = false;
             return true;
         }
     }
     if(checking->northEast->pieceOn == PLAYER_ONE_PIECE || checking->northEast->pieceOn == PLAYER_TWO_PIECE ) {
         if (checking->northEast->northEast->pieceOn == -1 && checking->northEast->northEast == oldPieceToMove) {
-            checking->curLookAt = false;
             return true;
         }
     }
     
     if(checking->northWest->pieceOn == PLAYER_ONE_PIECE || checking->northWest->pieceOn == PLAYER_TWO_PIECE) {
         if (checking->northWest->northWest->pieceOn == -1 && checking->northWest->northWest == oldPieceToMove) {
-            checking->curLookAt = false;
             return true;
         }
     }
     if(checking->west->pieceOn == PLAYER_ONE_PIECE || checking->west->pieceOn == PLAYER_TWO_PIECE) {
         if (checking->west->west->pieceOn == -1 && checking->west->west == oldPieceToMove) {
-            checking->curLookAt = false;
             return true;
         }
     }
     if(checking->southEast->pieceOn == PLAYER_ONE_PIECE || checking->southEast->pieceOn == PLAYER_TWO_PIECE) {
         if (checking->southEast->southEast->pieceOn == -1 && checking->southEast->southEast == oldPieceToMove) {
-            checking->curLookAt = false;
             return true;
         }
     }
     if(checking->southWest->pieceOn == PLAYER_ONE_PIECE || checking->southWest->pieceOn == PLAYER_TWO_PIECE) {
         if (checking->southWest->southWest->pieceOn == -1 && checking->southWest->southWest == oldPieceToMove) {
-            checking->curLookAt = false;
             return true;
         }
     }
-    checking->curLookAt = false;
     return false;
     
 }
@@ -699,13 +699,12 @@ bool GameBoard::dijkstraMove(int x, int y) {
 }
 
 /*Calculates where a new piece can be moved*/
-bool GameBoard::canMove(int x, int y) {
-	//return true;
+bool GameBoard::canMove(int x, int y, int player) {
 	int pieceNum = getPiece(x,y);
 	if (pieceNum == 1 || pieceNum == 0) {
 		return false;
 	}
-	if (playerOneTurn) {
+	if (player==1) {
 		if (isPlayerOneConnected(x,y) && !isPlayerTwoConnected(x,y))
 			return true;
 		else
@@ -816,6 +815,48 @@ bool GameBoard::wouldBeCont(int x, int y) {
     return false;
 }
 
+int GameBoard::numPieces(int playerCheckingFor) {
+	GameNode* cur;
+	int count = 0;
+	for (int x = 0; x < 20; x++) {
+		for (int y = 0; y < 20; y++) {
+			cur = &board[x][y];
+			if (cur->pieceOn == playerCheckingFor)
+				count++;
+		}
+	}
+	return count;
+}
+
+bool GameBoard::isMove (int playerCheckingFor) {
+	GameNode* cur;
+	bool hasMove = false;
+	for (int x = 0; x < 20; x++) {
+		for (int y = 0; y < 20; y++) {
+			if(canMove(x,y,playerCheckingFor) || canMoveOld(x,y))
+				return true;
+		}
+	}
+	return false;
+
+}
+
+int GameBoard::countPieces (int playerCheckingFor) {
+	GameNode* cur;
+	int count = 0;
+	for (int x = 0; x < 20; x++) {
+		for (int y = 0; y < 20; y++) {
+			cur = &board[x][y];
+			if (cur->pieceOn == playerCheckingFor)
+				count++;
+		}
+
+	}
+	return count;
+
+
+}
+
 
 //Determines if you can move old pieces to a certain place. X,Y is the corrdinates of a hex, and this is called on every hex on the board.
 bool GameBoard::canMoveOld(int x, int y){
@@ -836,6 +877,6 @@ bool GameBoard::canMoveOld(int x, int y){
 //	}
     
     //return ((isAdjTo(x, y, oldPieceToMoveX, oldPieceToMoveY)&&(isPlayerOneConnected(x, y)&&isPlayerTwoConnected(x, y)))||(jump(x, y)&&(isPlayerOneConnected(x, y)&&isPlayerTwoConnected(x, y))));
-    return wouldBeCont(x, y) && (jump(x, y)||isAdjTo(x, y, oldPieceToMoveX, oldPieceToMoveY));
+    return (wouldBeCont(x, y) && (jump(x, y))||isAdjTo(x, y, oldPieceToMoveX, oldPieceToMoveY));
     
 }

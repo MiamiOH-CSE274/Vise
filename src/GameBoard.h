@@ -23,12 +23,13 @@ public:
 	};
 
 public:   
+	int numPieces(int playerCheckingFor);
 	std::vector<std::vector<GameNode> > board;
 	void addPiece(int row, int column, int player);
 	void removePiece();
 	int getPiece(int row, int column);
 	void makeGameBoard();
-	bool canMove(int row, int column);
+	bool canMove(int row, int column, int player);
 	void checkNbrs(int x, int y,int& okayNbrs,int& badNbrs);
 	bool inVise(int x, int y);
 	void resetVise();
@@ -51,6 +52,8 @@ public:
     int getP2Spares();
     bool getPlayerOneTurn();
     void setPlayerOneTurn(bool turn);
+	int countPieces (int playerCheckingFor);
+	bool isMove (int playerCheckingFor);
 
 
 private:
@@ -60,6 +63,7 @@ private:
 	bool dijkstraMove(int x, int y);
 	int oldPieceToMoveX;
 	int oldPieceToMoveY;
+	
 	bool dijkstraMoveRecursive (GameNode* cur, int* visited, int arrSize, int movesLeft);
 	GameNode* oldPieceToMove;
     int p1Spares, p2Spares;
