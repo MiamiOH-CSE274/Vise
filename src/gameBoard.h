@@ -24,8 +24,9 @@ public:
 
 class hexSpace{
 public:
-        hexSpace(){type=0;};
+        hexSpace(){type=0; checked=0;};
         int type;
+		int checked;
         hexSpace* right;
         hexSpace* left;
         hexSpace* upright;
@@ -34,4 +35,3 @@ public:
         hexSpace* downleft;
         std::vector<possibleMove>moveList;
 };
-
