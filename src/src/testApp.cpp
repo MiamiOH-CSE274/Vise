@@ -284,7 +284,7 @@ bool canPlaceOldPiece(int x, int y){
  */
 int pieceAt(int x,int y){
     //TODO
-    return 0;
+    return board[20 * y + x].piece;
 }
 
 void drawBoard(){
@@ -389,7 +389,9 @@ void testApp::draw(){
  * If whichPieces is 0, then it clears that board position.
  */
 void putPieceAt(int x, int y, int whichPiece){
-    //TODO
+    if(whichPiece == 0) board[20 * y + x].piece = 0;
+	else
+		board[20 * y + x].piece = whichPiece;
 }
 
 //--------------------------------------------------------------
