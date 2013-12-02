@@ -23,6 +23,7 @@ bool isConnected(); // DO
 bool canPlaceOldPiece(int x, int y); //FIx
 int pieceAt(int x,int y);
 void putPieceAt(int x, int y, int whichPiece);
+pair <int,int> countCluster(int target);
 
 
 //Drawing functions
@@ -290,24 +291,64 @@ bool inVise(int x, int y){
  * 3c) If no such component exists, then select the largest connected component.
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
  */
+pair <int,int> countCluster(hexSpace* target){
+	std::pair <int,int> cluster;
+		
+	//= new pair<int,int>();
+	//cluster.first = 0;
+	//cluster.second = 0;
+
+
+	if ((target->type == 0) || (target->checked == 1)){
+		cluster.first = 0;
+		cluster.second = 0;
+		return cluster;
+	}
+	else {
+		if (target->type == 1) {
+			cluster.first++;
+		}
+		else if (target->type == 2) {
+			cluster.second++;
+		}
+		std::pair<int,int> addOn;
+		addOn=countCluster(target->upleft);
+		cluster.first = cluster.first + addOn.first;
+		cluster.second = cluster.second + addOn.second;
+		
+		addOn=countCluster(target->left);
+		cluster.first = cluster.first + addOn.first;
+		cluster.second = cluster.second + addOn.second;
+
+		addOn=countCluster(target->downleft);
+		cluster.first = cluster.first + addOn.first;
+		cluster.second = cluster.second + addOn.second;
+
+		addOn=countCluster(target->downright);
+		cluster.first = cluster.first + addOn.first;
+		cluster.second = cluster.second + addOn.second;
+
+		addOn=countCluster(target->right);
+		cluster.first = cluster.first + addOn.first;
+		cluster.second = cluster.second + addOn.second;
+
+		addOn=countCluster(target->upright);
+		cluster.first = cluster.first + addOn.first;
+		cluster.second = cluster.second + addOn.second;
+
+		return cluster;
+	}
+	
+
+}
+
+
 void doVise(){
 	// left is either upleft,left,or downleft
 /*countLW = 0;
 countLB = 0;
 countRW = 0;
 countRB = 0; */
-
-	std::cout << "START" << std::endl;
-	std::cout << countLB << " " << countLW << std::endl;
-	std::cout << countRB << " " << countRW << std::endl;
-	std::cout << "END" << std::endl;
-	/*
-	int numBlack;
-	int numWhite;
-	int bankBlack;
-	int bankWhite;
-	checked
-	*/
 
 	int inV = 0;
 	int target = 0;
@@ -333,7 +374,49 @@ countRB = 0; */
 		}
 	}
 
-	if (target != 0)
+
+
+	// Recursive time!
+	pair <int,int> firstCluster;
+	pair <int,int> secCluster;
+
+	hexSpace* firstStart;
+	hexSpace* secStart;
+
+	for (int i = 0; i < 399; i++){
+		if (board[i]->type != 0 && board[i]->checked != 1){
+			firstStart = board[i];
+			break;
+		}
+	}
+
+	if (inVise(x,y)){
+		std::cout << firstStart << std::endl;
+		firstCluster = countCluster(firstStart);
+		//secCluster = countCluster();
+	}
+
+
+
+
+
+	/*std::cout << "START" << std::endl;
+	std::cout << countLB << " " << countLW << std::endl;
+	std::cout << countRB << " " << countRW << std::endl;
+	std::cout << "END" << std::endl;*/
+	/*
+	int numBlack;
+	int numWhite;
+	int bankBlack;
+	int bankWhite;
+	checked
+	*/
+
+	
+
+
+	/* SO CLOsE TRYING RECURSIVE
+	//if (target != 0)
 	
 	temp = target;
 	visePos = target;
@@ -349,6 +432,7 @@ countRB = 0; */
 	
 	// Vise is downleft and upright
 	if (board[target]->downleft->type != inV && board[target]->upright->type != inV){
+		std::cout << "VISE@" << std::endl;
 		typeOFVise = 3;
 		//upright first
 		bool circle = true;
@@ -448,14 +532,36 @@ countRB = 0; */
 					board[target]->upleft->checked = 1;
 				}
 			}
-			else if (board[start]->upright->checked == 0 || board[start]->right->checked == 0 
-				|| board[start]->downright->checked == 0 || board[start]->downleft->checked == 0
-				|| board[start]->left->checked == 0 || board[start]->upleft->checked == 0){
+			else if (target == start){
+				circle = false;
+			}
+			else if ((board[target]->upright->checked == 1 || board[target]->upright->type == 0) && (board[start]->right->checked == 1 || board[target]->right->type == 0)
+				&& (board[target]->downright->checked == 1 || board[target]->downright->type == 0) && (board[target]->downleft->checked == 1 || board[target]->downleft->type == 0)
+				&& (board[target]->left->checked == 1 || board[target]->left->type == 0) && (board[target]->upleft->checked == 1 || board[target]->upleft->type == 0)){
 				//(board[target]->left->type == 0 || board[target]->downleft->type == 0){
-				target = start;
-
+					if (board[target]->upleft->type != 0)
+						target = target - 21;					
+					else if (board[target]->left->type != 0){
+						target = target - 1;	
+					}
+					else if (board[target]->downleft->type != 0){
+						target = target + 19;	
+					}
+					else if (board[target]->downright->type != 0){
+						target = target + 20;	
+					}
+					else if (board[target]->right->type != 0){
+						target = target + 1;	
+					}
+					else if (board[target]->upright->type != 0){
+						target = target - 20;	
+					}
+					else {
+						target = start;	
+					}
 			}
 			else {
+				target = start;
 				circle = false;
 			}
 		}
@@ -558,12 +664,36 @@ countRB = 0; */
 					board[target]->upleft->checked = 1;
 				}
 			}
-			else if (board[start2]->upright->checked == 0 || board[start2]->right->checked == 0 
-				|| board[start2]->downright->checked == 0 || board[start2]->downleft->checked == 0
-				|| board[start2]->left->checked == 0 || board[start2]->upleft->checked == 0){
-				target = start2;
+			else if (target == start2){
+				circle = false;
 			}
-			else{
+			else if ((board[target]->upright->checked == 1 || board[target]->upright->type == 0) && (board[start]->right->checked == 1 || board[target]->right->type == 0)
+				&& (board[target]->downright->checked == 1 || board[target]->downright->type == 0) && (board[target]->downleft->checked == 1 || board[target]->downleft->type == 0)
+				&& (board[target]->left->checked == 1 || board[target]->left->type == 0) && (board[target]->upleft->checked == 1 || board[target]->upleft->type == 0)){
+				//(board[target]->left->type == 0 || board[target]->downleft->type == 0){
+					if (board[target]->upleft->type != 0)
+						target = target - 21;					
+					else if (board[target]->left->type != 0){
+						target = target - 1;	
+					}
+					else if (board[target]->downleft->type != 0){
+						target = target + 19;	
+					}
+					else if (board[target]->downright->type != 0){
+						target = target + 20;	
+					}
+					else if (board[target]->right->type != 0){
+						target = target + 1;	
+					}
+					else if (board[target]->upright->type != 0){
+						target = target - 20;	
+					}
+					else {
+						target = start2;	
+					}
+			}
+			else {
+				target = start2;
 				circle = false;
 			}
 		}
@@ -595,7 +725,7 @@ countRB = 0; */
 			//}
 		}
 	}
-		
+	*/	
 		
 		
 		
@@ -882,7 +1012,7 @@ countRB = 0; */
 
 	
     //TODO
-		}
+	//	}
 		
 }
 
