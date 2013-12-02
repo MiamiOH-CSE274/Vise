@@ -899,7 +899,6 @@ bool GameBoard::canMoveOld(int x, int y){
 //	}
     
     //return ((isAdjTo(x, y, oldPieceToMoveX, oldPieceToMoveY)&&(isPlayerOneConnected(x, y)&&isPlayerTwoConnected(x, y)))||(jump(x, y)&&(isPlayerOneConnected(x, y)&&isPlayerTwoConnected(x, y))));
-    std::cout<<"WBC: " << wouldBeCont(9, 11)<<std::endl;
     return wouldBeCont(x, y) && (jump(x, y)||isAdjTo(x, y, oldPieceToMoveX, oldPieceToMoveY));
     
 }
