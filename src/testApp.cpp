@@ -98,6 +98,7 @@ float hexH = 1.5*sideLen;
 GameBoard myBoard;
 ofColor player1, player2, player1Turn, player2Turn;
 ofColor start, end2, customBlack;
+ofSoundPlayer tada;
 
 bool colorDirection;
 
@@ -120,6 +121,8 @@ void testApp::setup(){
     music2.loadSound("ViseMusic.mp3");
     music2.setLoop(true);
     music2.play();
+    
+    tada.loadSound("TaDa.wav");
     
     //TODO: Initialize your "board" data structure here
         //GameBoard myBoard;
@@ -167,6 +170,7 @@ void doVise(){
      
      */
     if (viseFound) {
+        tada.play();
         myBoard.removeVises();
         myBoard.returnDisconnectedPieces();
         myBoard.resetVise();

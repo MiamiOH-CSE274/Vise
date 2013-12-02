@@ -61,13 +61,13 @@ private:
 	bool dijkstraMove(int x, int y);
 	int oldPieceToMoveX;
 	int oldPieceToMoveY;
-	int dijkstraOldRecursive (GameNode* cur, int* visited, int arrSize, GameNode* orig);
+	//int dijkstraOldRecursive (GameNode* cur, int* visited, int arrSize, GameNode* orig);
 	GameNode* oldPieceToMove;
     int p1Spares, p2Spares;
-	void dijkstraRecursiveReturn (GameNode* cur, int* visited, int arrSize);
-    bool p1InGroup (GameNode* cur, int* visited, int arrSize);
-    bool p2InGroup (GameNode* cur, int* visited, int arrSize);
-    int pieceCount(GameNode* cur, int* visited, int arrSize, int player);
+	void dijkstraRecursiveReturn (GameNode* cur, int* visited, int& arrSize);
+    bool p1InGroup (GameNode* cur, int* visited, int& arrSize);
+    bool p2InGroup (GameNode* cur, int* visited, int& arrSize);
+    int pieceCount(GameNode* cur, int* visited, int& arrSize, int player);
     //int dijkstraRecursiveForWBC(GameNode* cur, int* visited, int arrSize);
 
 	

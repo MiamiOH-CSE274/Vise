@@ -20,11 +20,16 @@ void GameBoard::makeGameBoard() {
     }
     assignPointers();
     addPiece(10,10,1);
-    //addPiece(11, 10, 2);
-    //addPiece(12, 10, 2);
-    //addPiece(10, 11, 1);
-    //addPiece(10, 12, 1);
-    addPiece(11,10,2);
+    addPiece(11, 10, 2);
+//    addPiece(11, 11, 1);
+//    addPiece(12, 10, 2);
+//    addPiece(9, 9, 2);
+//    addPiece(9, 11, 1);
+//    addPiece(10, 8, 1);
+//    addPiece(11, 8, 1);
+//    addPiece(11, 9, 1);
+//    addPiece(10, 12, 1);
+//    addPiece(11,10,2);
     p1Spares = 4;
     p2Spares = 4;
     
@@ -264,17 +269,21 @@ void GameBoard::returnDisconnectedPieces(){
                     //Reset the foundPiece booleans
                     foundRed = foundBlue = false;
                     GameNode* check = &board[i][j];
-                    if (p1InGroup(check, new int[10], 0))
+                    int num = 0;
+                    int& zero = num;
+                    if (p1InGroup(check, new int[180], zero))
                         foundBlue = true;
-                    if (p2InGroup(check, new int[10], 0))
+                    num = 0;
+                    zero = num;
+                    if (p2InGroup(check, new int[180], zero))
                         foundRed = true;
                     
                     //Based on results of finding blue and red, store the
                     //size of the group in appropriate category.
                     if(numGroupedPieces>largestGroup && foundBlue && foundRed){
                         largestGroup = numGroupedPieces;
-                        bluesInCombined = pieceCount(check, new int[10], 0, PLAYER_ONE_PIECE);
-                        redsInCombined = pieceCount(check, new int[10], 0, PLAYER_TWO_PIECE);
+                        bluesInCombined = pieceCount(check, new int[180], zero, PLAYER_ONE_PIECE);
+                        redsInCombined = pieceCount(check, new int[180], zero, PLAYER_TWO_PIECE);
                     }
                     
                     else if (foundBlue && !foundRed && numGroupedPieces>largestBlueGroup)
@@ -297,7 +306,9 @@ void GameBoard::returnDisconnectedPieces(){
                             visited[i]= -1;
                         }
                         GameNode* check = &board[i][j];
-                        dijkstraRecursiveReturn(check,visited,0);
+                        int num = 0;
+                        int& zero = num;
+                        dijkstraRecursiveReturn(check,visited,zero);
                     }
                 }
             }
@@ -316,7 +327,9 @@ void GameBoard::returnDisconnectedPieces(){
                             visited[i]= -1;
                         }
                         GameNode* check = &board[i][j];
-                        dijkstraRecursiveReturn(check,visited,0);
+                        int num = 0;
+                        int& zero = num;
+                        dijkstraRecursiveReturn(check,visited,zero);
                     }
                 }
             }
@@ -334,14 +347,25 @@ void GameBoard::returnDisconnectedPieces(){
                         for (int i=0; i<30; i++) {
                             visited[i]= -1;
                         }
+                        int num = 0;
+                        int& zero = num;
                         GameNode* check = &board[i][j];
-                        dijkstraRecursiveReturn(check,visited,0);
+                        dijkstraRecursiveReturn(check,visited,zero);
                     }
-                    else if (numGroupedPieces==largestGroup &&
-                             (bluesInCombined!=pieceCount(&board[i][j], new int[10], 0, PLAYER_ONE_PIECE)||
-                              redsInCombined!=pieceCount(&board[i][j], new int[10], 0, PLAYER_TWO_PIECE))){
-                                 dijkstraRecursiveReturn(&board[i][j],new int[10],0);
-                             }
+
+                    else{
+                        int num = 0;
+                        int& zero = num;
+                        int num2 = 0;
+                        int& zero2 = num2;
+                        int num3 = 0;
+                        int& zero3 = num;
+                        if (numGroupedPieces==largestGroup &&
+                            (bluesInCombined!=pieceCount(&board[i][j], new int[180], zero, PLAYER_ONE_PIECE)||
+                             redsInCombined!=pieceCount(&board[i][j], new int[180], zero2, PLAYER_TWO_PIECE))){
+                                dijkstraRecursiveReturn(&board[i][j],new int[180],zero3);
+                            }
+                    }
                         }
             }
         }
@@ -349,16 +373,28 @@ void GameBoard::returnDisconnectedPieces(){
     
     //Should only happen if we have two groups of same credentials
     while (!isContigious()) {
+        bool shouldBreak = false;
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 20; j++) {
                 if (getPiece(i, j)!=-1){
-                        int* visited = new int[30];
-                    for (int i=0; i<30; i++) {
+                        int* visited = new int[180];
+                    for (int i=0; i<180; i++) {
                         visited[i]= -1;
                     }
                         GameNode* check = &board[i][j];
-                        dijkstraRecursiveReturn(check,visited,0);
+                    int num = 0;
+                    int& zero = num;
+                        dijkstraRecursiveReturn(check,visited,zero);
+                    if (isContigious()) {
+                        shouldBreak = true;
+                    }
                 }
+                if (shouldBreak) {
+                    break;
+                }
+            }
+            if (shouldBreak) {
+                break;
             }
         }
 
@@ -497,44 +533,15 @@ int GameBoard::dijkstraRecursive(GameNode* cur, int* visited, int& arrSize) {
     
 }
 
-int GameBoard::dijkstraOldRecursive(GameNode* cur, int* visited, int arrSize, GameNode* orig) {
-	int curCount = 0;
-	//If nothing is there, don't add anything
-	if (cur->pieceOn == -1 && cur!=orig)
-		return 0;
-	
-	//If already visited
-	for (int i = 0; i < 180; i++) {
-		if (cur->numIdentifier == visited[i])
-			return 0;
-	}
-	//Hadn't visited, so add it to visited
-	visited[arrSize] = cur->numIdentifier;
-	arrSize++;
-	curCount++;
-	
-	//Count in each direction
-	curCount = curCount + dijkstraOldRecursive(cur->west,visited,arrSize, orig);
-	curCount = curCount + dijkstraOldRecursive(cur->east,visited,arrSize,orig);
-	curCount = curCount + dijkstraOldRecursive(cur->northEast,visited,arrSize,orig);
-	curCount = curCount + dijkstraOldRecursive(cur->northWest,visited,arrSize,orig);
-	curCount = curCount + dijkstraOldRecursive(cur->southEast,visited,arrSize,orig);
-	curCount = curCount + dijkstraOldRecursive(cur->southWest,visited,arrSize,orig);
-    
-	return curCount;
-	
-	
-    
-}
 
-int GameBoard::pieceCount(GameNode* cur, int* visited, int arrSize, int player){
+int GameBoard::pieceCount(GameNode* cur, int* visited, int& arrSize, int player){
     int curCount = 0;
 	//If nothing is there, don't add anything
 	if (cur->pieceOn == -1)
 		return 0;
 	
 	//If already visited
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 180; i++) {
 		if (cur->numIdentifier == visited[i])
 			return 0;
 	}
@@ -556,7 +563,7 @@ int GameBoard::pieceCount(GameNode* cur, int* visited, int arrSize, int player){
 	return curCount;
 }
 
-void GameBoard::dijkstraRecursiveReturn(GameNode *cur, int *visited, int arrSize){
+void GameBoard::dijkstraRecursiveReturn(GameNode *cur, int *visited, int& arrSize){
 	//If nothing is there, don't do anything
 	if (cur->pieceOn == NO_PLAYER_PIECE)
 		return;
@@ -572,7 +579,7 @@ void GameBoard::dijkstraRecursiveReturn(GameNode *cur, int *visited, int arrSize
     }
 	
 	//If already visited
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 180; i++) {
 		if (cur->numIdentifier == visited[i])
 			return;
 	}
@@ -589,10 +596,10 @@ void GameBoard::dijkstraRecursiveReturn(GameNode *cur, int *visited, int arrSize
     dijkstraRecursiveReturn(cur->southWest,visited,arrSize);
 }
 
-bool GameBoard::p1InGroup(GameBoard::GameNode *cur, int *visited, int arrSize){
+bool GameBoard::p1InGroup(GameBoard::GameNode *cur, int *visited, int& arrSize){
    	//If already visited...so this would be a player2 space
     //bool visitedAlready = false;
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 180; i++) {
 		if (cur->numIdentifier == visited[i])
 			//visitedAlready = true;
             return false;
@@ -620,10 +627,10 @@ bool GameBoard::p1InGroup(GameBoard::GameNode *cur, int *visited, int arrSize){
     return false;
 }
 
-bool GameBoard::p2InGroup(GameBoard::GameNode *cur, int *visited, int arrSize){
+bool GameBoard::p2InGroup(GameBoard::GameNode *cur, int *visited, int& arrSize){
    	//If already visited...so this would be a player2 space
     //bool visitedAlready = false;
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 180; i++) {
 		if (cur->numIdentifier == visited[i])
 			//visitedAlready = true;
             return false;
