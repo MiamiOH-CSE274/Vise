@@ -60,6 +60,7 @@ int countLW = 0;
 int countLB = 0;
 
 
+
 //Number of spare playing pieces left, for each player
 int pl1spares=4;
 int pl2spares=4;
@@ -266,9 +267,10 @@ void testApp::setup(){
 // not screen coordinates
 bool inVise(int x, int y){
         int target = 20*y+x;
-        if(((board[target]->left->type != board[target]->type) && (board[target]->right->type != board[target]->type) && (board[target]->left->type != 0) && (board[target]->right->type != 0)) ||
-                ((board[target]->upleft->type != board[target]->type) && (board[target]->downright->type != board[target]->type) && (board[target]->upleft->type != 0) && (board[target]->downright->type != 0)) ||
-                ((board[target]->downleft->type != board[target]->type) && (board[target]->upright->type != board[target]->type) && (board[target]->downleft->type != 0) && (board[target]->upright->type != 0)))
+		if(((board[target]->left->type != board[target]->type) && (board[target]->right->type == board[target]->left->type) && (board[target]->right->type != 0)) ||
+			((board[target]->upleft->type != board[target]->type) && (board[target]->downright->type == board[target]->upleft->type) && (board[target]->downright->type != 0)) ||
+			((board[target]->downleft->type != board[target]->type) && (board[target]->upright->type == board[target]->downleft->type) && (board[target]->upright->type != 0)))
+
                 return true;
         return false;
 }
@@ -353,6 +355,8 @@ countRB = 0; */
 	int inV = 0;
 	int target = 0;
 	int temp = 0;
+	vector<int> toDelete;
+	toDelete.resize(0);
 
 	// if 1 upleft and downright
 	// if 2 left and right
@@ -369,11 +373,16 @@ countRB = 0; */
 			if (inVise(i,j)){
 				target = 20*j+i;
 				inV = board[20*j+i]->type;
-				board[target]->type = 0;
+				toDelete.push_back(target);
 			}
 		}
 	}
 
+	if(!toDelete.empty()){
+		for(int i = 0; i != toDelete.size(); i++)
+			board[toDelete[i]]->type=0;
+		toDelete.clear();
+	}
 
 
 	// Recursive time!
@@ -417,6 +426,8 @@ countRB = 0; */
 
 	/* SO CLOsE TRYING RECURSIVE
 	//if (target != 0)
+
+
 	
 	temp = target;
 	visePos = target;
@@ -524,7 +535,7 @@ countRB = 0; */
 			else if (board[target]->upleft->type != 0 && board[target]->upleft->checked == 0){
 				target = target - 21;
 				if (board[target]->upleft->type == 1){
-					countRW++;
+				countRW++;
 					board[target]->upleft->checked = 1;
 				}
 				else {
@@ -1008,9 +1019,6 @@ countRB = 0; */
 	
 
 	// Find largest connected component
-
-
-	
     //TODO
 	//	}
 		
@@ -1136,12 +1144,14 @@ bool isJumpSpace(int x, int y){
     //TODO
         int selected = selectedPieceY*20+selectedPieceX;
         int target = 20*y+x;
+
         if((board[selected]->upleft->upleft == board[target] && board[selected]->upleft->type !=0) ||
                 (board[selected]->upright->upright == board[target] && board[selected]->upright->type !=0) ||
                 (board[selected]->left->left == board[target] && board[selected]->left->type !=0) ||
                 (board[selected]->right->right == board[target] && board[selected]->right->type !=0) ||
                 (board[selected]->downleft->downleft == board[target] && board[selected]->downleft->type !=0) ||
                 (board[selected]->downright->downright == board[target] && board[selected]->downright->type !=0))
+
                 return true;
     return false;
 }
@@ -1156,6 +1166,7 @@ bool isJumpSpace(int x, int y){
 // return false
 bool isConnected(){
     //TODO -- not working..
+
 	int totalCount = 0;
 	int countTogether = 0;
 
@@ -1197,7 +1208,7 @@ bool isConnected(){
 	if ((numBlack+numWhite) == countTogether)
 		return true;
     
-	return false;
+        return false;
 }
 
 
@@ -1223,10 +1234,9 @@ bool isConnected(){
  */
 bool canPlaceOldPiece(int x, int y){
     //TODO MM
-	int selected = selectedPieceY*20+selectedPieceX;
+        int selected = selectedPieceY*20+selectedPieceX;
     int target = 20*y+x;
 	bool isConnect = false;
-
 	// Check to see how many neighbors selected has
 	/*int neighbors = 0;
 	int neighWhite = 0;
@@ -1413,7 +1423,7 @@ void drawboard(){
                     if(canPlaceNewPiece(x, y)){
                         ofCircle(boardXOffset+x*hexW+offset,boardYOffset+y*hexH,sideLen/2);
                     }
-					
+                                        
                 } else if(currentAction == 2){
                     //If the user is trying to move an old piece,
                     // higlight the space if it is valid to place the piece here
@@ -1522,6 +1532,10 @@ void testApp::mousePressed(int x, int y, int button){
                 if(canPlaceNewPiece(whichCol,whichRow)){
                     currentAction = 0;
                     putPieceAt(whichCol,whichRow,whoseTurn);
+					if(whoseTurn == 1)
+						bankWhite--;
+					else
+						bankBlack--;
                     whoseTurn = 3 - whoseTurn;
                 }
             }

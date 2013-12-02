@@ -25,6 +25,3 @@ public:
         hexSpace* downleft;
         std::vector<possibleMove>moveList;
 };
-
-
-
