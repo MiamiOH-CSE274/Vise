@@ -318,7 +318,9 @@ countRB = 0; */
 	// if 3 upright and downleft
 	
 	int typeOFVise = 0;
-	int visePos = 0;
+	 int visePos = 0;
+
+	 // Do 1010 - array?
 	
 	// Find all pieces in the vise
 	for (int i = 0; i < 20; i++){
@@ -326,11 +328,13 @@ countRB = 0; */
 			if (inVise(i,j)){
 				target = 20*j+i;
 				inV = board[20*j+i]->type;
-				board[20*j+i]->type = 0;
+				board[target]->type = 0;
 			}
 		}
 	}
 
+	if (target != 0)
+	
 	temp = target;
 	visePos = target;
 		
