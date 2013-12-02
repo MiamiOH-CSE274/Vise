@@ -460,7 +460,7 @@ int GameBoard::dijkstraTotal(int x, int y) {
     }
 	GameNode* check = &board[x][y];
     int num=0;
-    int& zero = nutetermtt;
+    int& zero = num;
 	return dijkstraRecursive(check,visited, zero);
     
     
