@@ -312,6 +312,8 @@ countRB = 0; */
 	int inV = 0;
 	int target = 0;
 	int temp = 0;
+	vector<int> toDelete;
+	toDelete.resize(0);
 
 	// if 1 upleft and downright
 	// if 2 left and right
@@ -328,9 +330,15 @@ countRB = 0; */
 			if (inVise(i,j)){
 				target = 20*j+i;
 				inV = board[20*j+i]->type;
-				board[target]->type = 0;
+				toDelete.push_back(target);
 			}
 		}
+	}
+
+	if(!toDelete.empty()){
+		for(int i = 0; i != toDelete.size(); i++)
+			board[toDelete[i]]->type=0;
+		toDelete.clear();
 	}
 
 	if (target != 0)
