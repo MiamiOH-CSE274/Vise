@@ -16,14 +16,14 @@ public:
 		bool inVise;
 		bool curLookAt;
 		int pieceOn;
-		bool canMove;
-		GameNode() {pieceOn = -1; canMove = false;};
+		bool checked;
+		GameNode() {pieceOn = -1; checked = false; inVise=false;};
 		int getPieceOn(int row, int column);
 
 	};
 
-public:   
-	int numPieces(int playerCheckingFor);
+public:
+    int numPieces;
 	std::vector<std::vector<GameNode> > board;
 	void addPiece(int row, int column, int player);
 	void removePiece();
@@ -37,7 +37,7 @@ public:
 	bool isAdjacent(int x,int y);
 	bool isPlayerOneConnected(int x, int y);
 	bool isPlayerTwoConnected(int x, int y);
-	int dijkstraRecursive(GameNode* cur, int* visited, int arrSize);
+	int dijkstraRecursive(GameNode* cur, int* visited, int& arrSize);
     bool canMoveOld(int row, int column);
 	void setPieceToMove(int x, int y);
 	bool jump(int x, int y);
@@ -63,8 +63,12 @@ private:
 	bool dijkstraMove(int x, int y);
 	int oldPieceToMoveX;
 	int oldPieceToMoveY;
+<<<<<<< HEAD
 	
 	bool dijkstraMoveRecursive (GameNode* cur, int* visited, int arrSize, int movesLeft);
+=======
+	int dijkstraOldRecursive (GameNode* cur, int* visited, int arrSize, GameNode* orig);
+>>>>>>> ca1f4296c37d65441fc297babd2bb749f6449baa
 	GameNode* oldPieceToMove;
     int p1Spares, p2Spares;
 	void dijkstraRecursiveReturn (GameNode* cur, int* visited, int arrSize);

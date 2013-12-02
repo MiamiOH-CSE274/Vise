@@ -20,6 +20,10 @@ void GameBoard::makeGameBoard() {
     }
     assignPointers();
     addPiece(10,10,1);
+    //addPiece(11, 10, 2);
+    //addPiece(12, 10, 2);
+    //addPiece(10, 11, 1);
+    //addPiece(10, 12, 1);
     addPiece(11,10,2);
     p1Spares = 4;
     p2Spares = 4;
@@ -296,7 +300,10 @@ void GameBoard::returnDisconnectedPieces(){
                 if (getPiece(i, j)!=-1){
                     int numGroupedPieces =dijkstraTotal(i,j);
                     if(numGroupedPieces!=largestBlueGroup){
-                        int* visited = new int[10];
+                        int* visited = new int[30];
+                        for (int i=0; i<30; i++) {
+                            visited[i]= -1;
+                        }
                         GameNode* check = &board[i][j];
                         dijkstraRecursiveReturn(check,visited,0);
                     }
@@ -312,7 +319,10 @@ void GameBoard::returnDisconnectedPieces(){
                 if (getPiece(i, j)!=-1){
                     int numGroupedPieces =dijkstraTotal(i,j);
                     if(numGroupedPieces!=largestRedGroup){
-                        int* visited = new int[10];
+                        int* visited = new int[30];
+                        for (int i=0; i<30; i++) {
+                            visited[i]= -1;
+                        }
                         GameNode* check = &board[i][j];
                         dijkstraRecursiveReturn(check,visited,0);
                     }
@@ -328,7 +338,10 @@ void GameBoard::returnDisconnectedPieces(){
                 if (getPiece(i, j)!=-1){
                     int numGroupedPieces =dijkstraTotal(i,j);
                     if(numGroupedPieces!=largestGroup){
-                        int* visited = new int[10];
+                        int* visited = new int[30];
+                        for (int i=0; i<30; i++) {
+                            visited[i]= -1;
+                        }
                         GameNode* check = &board[i][j];
                         dijkstraRecursiveReturn(check,visited,0);
                     }
@@ -347,7 +360,10 @@ void GameBoard::returnDisconnectedPieces(){
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 20; j++) {
                 if (getPiece(i, j)!=-1){
-                        int* visited = new int[10];
+                        int* visited = new int[30];
+                    for (int i=0; i<30; i++) {
+                        visited[i]= -1;
+                    }
                         GameNode* check = &board[i][j];
                         dijkstraRecursiveReturn(check,visited,0);
                 }
@@ -400,7 +416,6 @@ bool GameBoard::inVise(int x, int y) {
 void GameBoard::addPiece(int row, int column,int player) {
 	GameNode* toAdd = &board[row][column];
 	toAdd->pieceOn = player;
-	return;
 }
 
 /* Gets piece. Herp derp. */
@@ -447,22 +462,27 @@ bool GameBoard::isContigious() {
 /*Starts Dijkstra's algorythm, to help organize things*/
 int GameBoard::dijkstraTotal(int x, int y) {
 	int count = 0;
-	int* visited = new int[10];
+	int* visited = new int[180];
+    for (int i=0; i<180; i++) {
+        visited[i]= -1;
+    }
 	GameNode* check = &board[x][y];
-	return dijkstraRecursive(check,visited,0);
+    int num=0;
+    int& zero = num;
+	return dijkstraRecursive(check,visited, zero);
     
     
 }
 
 /*Meat of finding if the board is contiguious.*/
-int GameBoard::dijkstraRecursive(GameNode* cur, int* visited, int arrSize) {
+int GameBoard::dijkstraRecursive(GameNode* cur, int* visited, int& arrSize) {
 	int curCount = 0;
 	//If nothing is there, don't add anything
 	if (cur->pieceOn == -1)
 		return 0;
 	
 	//If already visited
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 180; i++) {
 		if (cur->numIdentifier == visited[i])
 			return 0;
 	}
@@ -478,6 +498,36 @@ int GameBoard::dijkstraRecursive(GameNode* cur, int* visited, int arrSize) {
 	curCount = curCount + dijkstraRecursive(cur->northWest,visited,arrSize);
 	curCount = curCount + dijkstraRecursive(cur->southEast,visited,arrSize);
 	curCount = curCount + dijkstraRecursive(cur->southWest,visited,arrSize);
+    
+	return curCount;
+	
+	
+    
+}
+
+int GameBoard::dijkstraOldRecursive(GameNode* cur, int* visited, int arrSize, GameNode* orig) {
+	int curCount = 0;
+	//If nothing is there, don't add anything
+	if (cur->pieceOn == -1 && cur!=orig)
+		return 0;
+	
+	//If already visited
+	for (int i = 0; i < 180; i++) {
+		if (cur->numIdentifier == visited[i])
+			return 0;
+	}
+	//Hadn't visited, so add it to visited
+	visited[arrSize] = cur->numIdentifier;
+	arrSize++;
+	curCount++;
+	
+	//Count in each direction
+	curCount = curCount + dijkstraOldRecursive(cur->west,visited,arrSize, orig);
+	curCount = curCount + dijkstraOldRecursive(cur->east,visited,arrSize,orig);
+	curCount = curCount + dijkstraOldRecursive(cur->northEast,visited,arrSize,orig);
+	curCount = curCount + dijkstraOldRecursive(cur->northWest,visited,arrSize,orig);
+	curCount = curCount + dijkstraOldRecursive(cur->southEast,visited,arrSize,orig);
+	curCount = curCount + dijkstraOldRecursive(cur->southWest,visited,arrSize,orig);
     
 	return curCount;
 	
@@ -770,48 +820,61 @@ void GameBoard::removePiece(int x, int y) {
  a piece is played there */
 bool GameBoard::wouldBeCont(int x, int y) {
     
-    int totalPieces = 0;
-    for (int x = 0; x < 20; x++) {
-		for (int y = 0; y < 20; y++) {
-			if (getPiece(x,y) != -1)
-				totalPieces++;
-		}
-	}
+//    int totalPieces = 0;
+//    for (int x = 0; x < 20; x++) {
+//		for (int y = 0; y < 20; y++) {
+//			if (getPiece(x,y) != -1)
+//				totalPieces++;
+//		}
+//	}
     
-	int numConnectedIfPlacedThere = 0;
-    //int* visited = new int[10];
+	//int numConnectedIfPlacedThere = 0;
+    //int* visited = new int[180];
 	GameNode* check = &board[x][y];
+    if (check->pieceOn == -1) {
+        check->pieceOn = 1;
+        bool shouldReturn = isContigious();
+        check->pieceOn=-1;
+        return shouldReturn;
+    }
+
+    //numConnectedIfPlacedThere = dijkstraOldRecursive(check, visited, 0, check);
 	//if (playerOneTurn) {
-    if (check->northWest->pieceOn != NO_PLAYER_PIECE)
-        numConnectedIfPlacedThere += dijkstraRecursive(check->northWest, new int[10], 0);
-    if (numConnectedIfPlacedThere==totalPieces) {
-        return true;
-    }
-    if (check->northEast->pieceOn != NO_PLAYER_PIECE)
-        numConnectedIfPlacedThere += dijkstraRecursive(check->northEast, new int[10], 0);
-    if (numConnectedIfPlacedThere==totalPieces) {
-        return true;
-    }
-    if (check->east->pieceOn != NO_PLAYER_PIECE)
-        numConnectedIfPlacedThere += dijkstraRecursive(check->east, new int[10], 0);
-    if (numConnectedIfPlacedThere==totalPieces) {
-        return true;
-    }
-    if (check->west->pieceOn != NO_PLAYER_PIECE)
-        numConnectedIfPlacedThere += dijkstraRecursive(check->west, new int[10], 0);
-    if (numConnectedIfPlacedThere==totalPieces) {
-        return true;
-    }
-    if (check->southEast->pieceOn != NO_PLAYER_PIECE)
-        numConnectedIfPlacedThere += dijkstraRecursive(check->southEast, new int[10], 0);
-    if (numConnectedIfPlacedThere==totalPieces) {
-        return true;
-    }
-    if (check->southWest->pieceOn != NO_PLAYER_PIECE)
-        numConnectedIfPlacedThere += dijkstraRecursive(check->southWest, new int[10], 0);
-    if (numConnectedIfPlacedThere==totalPieces) {
-        return true;
-    }
+//    if (check->northWest->pieceOn != NO_PLAYER_PIECE)
+//        numConnectedIfPlacedThere += dijkstraRecursive(check->northWest, visited, 0);
+//    if (numConnectedIfPlacedThere==totalPieces) {
+//        return true;
+//    }
+//    if (check->northEast->pieceOn != NO_PLAYER_PIECE)
+//        numConnectedIfPlacedThere += dijkstraRecursive(check->northEast, visited, 30);
+//    if (numConnectedIfPlacedThere==totalPieces) {
+//        return true;
+//    }
+//    if (check->east->pieceOn != NO_PLAYER_PIECE)
+//        numConnectedIfPlacedThere += dijkstraRecursive(check->east, visited, 60);
+//    if (numConnectedIfPlacedThere==totalPieces) {
+//        return true;
+//    }
+//    if (check->west->pieceOn != NO_PLAYER_PIECE)
+//        numConnectedIfPlacedThere += dijkstraRecursive(check->west, visited, 90);
+//    if (numConnectedIfPlacedThere==totalPieces) {
+//        return true;
+//    }
+//    if (check->southEast->pieceOn != NO_PLAYER_PIECE)
+//        numConnectedIfPlacedThere += dijkstraRecursive(check->southEast, visited, 120);
+//    if (numConnectedIfPlacedThere==totalPieces) {
+//        return true;
+//    }
+//    if (check->southWest->pieceOn != NO_PLAYER_PIECE)
+//        numConnectedIfPlacedThere += dijkstraRecursive(check->southWest, visited, 150);
+//    if (numConnectedIfPlacedThere==totalPieces) {
+//        return true;
+//    }
+//    std::cout<<totalPieces<<", "<<numConnectedIfPlacedThere<<std::endl;
+//    if (numConnectedIfPlacedThere==totalPieces) {
+//        return true;
+//    }
+    
     return false;
 }
 
