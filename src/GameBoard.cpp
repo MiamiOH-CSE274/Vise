@@ -20,11 +20,11 @@ void GameBoard::makeGameBoard() {
     }
     assignPointers();
     addPiece(10,10,1);
-    addPiece(11, 10, 1);
-    addPiece(11, 11, 1);
-    addPiece(10, 11, 2);
-    addPiece(11, 12, 2);
-    //addPiece(11,10,2);
+    //addPiece(11, 10, 2);
+    //addPiece(12, 10, 2);
+    //addPiece(10, 11, 1);
+    //addPiece(10, 12, 1);
+    addPiece(11,10,2);
     p1Spares = 4;
     p2Spares = 4;
     
