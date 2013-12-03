@@ -140,10 +140,8 @@ void testApp::setup(){
     
     //TODO: Initialize your "gameBoard" data structure here
         board.resize(400);
-        numBlack = 4;
-        numWhite = 4;
-        bankBlack = 3;
-        bankWhite = 3;
+        numBlack = 5;
+        numWhite = 5;
 
 
     //TODO: Put 1 piece for each player in the middle of hte gameBoard, side by side
@@ -421,9 +419,13 @@ void doVise(){
 // and check to see if the board is still connected
 
 	if(!toDelete.empty()){
-		// Delete the pieces in the Vise
-		for(int i = 0; i != toDelete.size(); i++)
+		for(int i = 0; i != toDelete.size(); i++){
+			if(board[toDelete[i]]->type = 1)
+				numWhite--;
+			else if(board[toDelete[i]]->type = 2)
+				numBlack--;
 			board[toDelete[i]]->type=0;
+		}
 		toDelete.clear();
 
 		// Set all pieces checked to 0
@@ -709,7 +711,7 @@ bool isJumpSpace(int x, int y){
 bool isConnected(){
     //TODO -- not working..
 
-	int totalCount = 0;
+	/*int totalCount = 0;
 	int countTogether = 0;
 
 	for (int i = 0; i < 400; i++){
@@ -717,42 +719,38 @@ bool isConnected(){
 			numWhite++;
 		else if(board[i]->type == 2)
 			numBlack++;
-	}
+	}*/
+	for (int i = 0; i < 400; i++)
+		board[i]->checked = 0;
 
-	int root = 0;
-	for (int j = 0; j < 400; j++){
-		root = j;
-		if (board[j]->type == 1 || board[j]->type == 2){
-			countTogether++;
-			while (board[j]->right->type == 1 || board[j]->right->type == 2){
-				countTogether++;
-				j++;
-			}
-			j = root;
-			while (board[j]->type == 1 || board[j]->type == 2) {
-				while ((board[j]->downleft->type == 1 || board[j]->downleft->type == 2)){
-					countTogether++;
-			//while (board[j]->downleft->right->type == 1 || board[j]->downleft->right->type == 2){
-				//countTogether++;
-					j++;
-				}
-				j = root + 1;
-				while (board[j]->downleft->type == 1 || board[j]->downleft->type == 2){
-					countTogether++;
-					j--;
-				}
-				j = root;
-				j = j+19;
-
-				}
+	int start;
+	for(int i = 0; i < 400; i++)
+		if(board[i]->type != 0){
+			start = i;
+			break;
 		}
+		pair<int,int> pairPieces = countCluster(board[start]);
+		int numPieces = pairPieces.first + pairPieces.second;
+		if(numPieces == numWhite - pl1spares + numBlack - pl2spares)
+			return true;
+		return false;
+	for (int i = 0; i < 400; i++){
+		board[i]->checked = 0;
 	}
-	if ((numBlack+numWhite) == countTogether)
-		return true;
-    
-        return false;
 }
 
+bool stillConnected(int x, int y){
+	bool stillConnected = false;
+	int target = 20*y+x;
+	int currentSpot = 20*selectedPieceY+selectedPieceX;
+	if(board[target]->type == 0){
+		board[target]->type = whoseTurn;
+		board[currentSpot]->type = 0;
+		stillConnected = isConnected();
+		board[target]->type = 0;
+	}
+	return stillConnected;
+}
 
 /* This is used when the player is moving one of her pieces that is
  * already on the board to a new space.
@@ -775,149 +773,11 @@ bool isConnected(){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-    //TODO MM
-        int selected = selectedPieceY*20+selectedPieceX;
+    //TODO
     int target = 20*y+x;
-	bool isConnect = false;
-	// Check to see how many neighbors selected has
-	/*int neighbors = 0;
-	int neighWhite = 0;
-	int neighBlack = 0;
-	
-	if (board[selected]->upleft->type != 0){
-		neighbors++;
-		if (board[selected]->upleft->type = 1)
-			neighWhite++;
-		else
-			neighBlack++;
-	}
-	if (board[selected]->upright->type != 0){
-		neighbors++;
-		//if (board[selected]->upright->type = 1)
-			//neighWhite++;
-		//else
-			//neighBlack++;
-	}
-	if (board[selected]->right->type != 0){
-		neighbors++;
-		/*if (board[selected]->right->type = 1)
-			neighWhite++;
-		else
-			neighBlack++;
-			
-	}
-	if (board[selected]->downright->type != 0){
-		neighbors++;
-		/*if (board[selected]->downright->type = 1)
-			neighWhite++;
-		else
-			neighBlack++;
-			
-	}
-	if (board[selected]->downleft->type != 0){
-		neighbors++;
-		/*if (board[selected]->downleft->type = 1)
-			neighWhite++;
-		else
-			neighBlack++;
-			
-	}
-	if (board[selected]->left->type != 0){
-		neighbors++;
-		/*if (board[selected]->left->type = 1)
-			neighWhite++;
-		else
-			neighBlack++;
-			
-	}
-
-	int neighborsXY = 0;
-	int neighXYWhite = 0;
-	int neighXYBlack = 0;
-
-	if (board[target]->upleft->type != 0){
-		neighborsXY++;
-		/*if (board[selected]->upleft->type = 1)
-			neighXYWhite++;
-		else
-			neighXYBlack++;
-			
-
-	}
-	if (board[target]->upright->type != 0){
-		neighborsXY++;
-		/*if (board[selected]->upright->type = 1)
-			neighXYWhite++;
-		else
-			neighXYBlack++;
-			
-
-	}
-	if (board[target]->right->type != 0){
-		neighborsXY++;
-		/*if (board[selected]->right->type = 1)
-			neighXYWhite++;
-		else
-			neighXYBlack++;
-			}
-	if (board[target]->downright->type != 0){
-		neighborsXY++;
-	/*	if (board[selected]->downright->type = 1)
-			neighXYWhite++;
-		else
-			neighXYBlack++;
-			
-
-	}
-	if (board[target]->downleft->type != 0){
-		neighborsXY++;
-		/*if (board[selected]->downleft->type = 1)
-			neighXYWhite++;
-		else
-			neighXYBlack++;
-			
-	}	
-	if (board[target]->left->type != 0){
-		neighborsXY++;
-		/*if (board[selected]->left->type = 1)
-			neighXYWhite++;
-		else
-			neighXYBlack++;
-			
-	}
-	// Check if isconnected	
-	//if (board[selected]
-	//if (board[
-
-	if (neighborsXY < neighbors)
-		isConnect = false;
-	//if (board[selected]->upleft->type != 0 && board[target]
-//	else if (neighXYWhite < neighWhite)
-//		isConnect = false;
-//	else if (neightXYBlack < neighBlack)
-//		isConnect = false;
-	/*else
-		isConnect = true;*/
-
-
-
-
-	if ((board[target]->type == 0) && (isNeighboringSpace(x,y) || isJumpSpace(x,y))){
-		if ((board[target]->upright->type == 1 || board[target]->upright->type == 2)
-			|| (board[target]->right->type == 1 || board[target]->right->type == 2)
-			|| (board[target]->downright->type == 1 || board[target]->downright->type == 2)
-			|| (board[target]->downleft->type == 1 || board[target]->downleft->type == 2)
-			|| (board[target]->left->type == 1 || board[target]->left->type == 2)
-			|| (board[target]->upleft->type == 1 || board[target]->upleft->type == 2)){
-		//		if (isConnect){
-				 
-			//	if (isConnected())
-		//&& canPlaceNewPiece(x,y))
-		//&& (isConnected()))
+	if ((board[target]->type == 0) && (isNeighboringSpace(x,y) || isJumpSpace(x,y)))
+		if(stillConnected(x,y))
 			return true;
-		//		}
-		}
-	}
     return false;
 }
 
