@@ -414,7 +414,7 @@ void doVise(){
 		}
 	}
 
-
+while(!isConnected()){
 	if(!toDelete.empty()){
 		for(int i = 0; i != toDelete.size(); i++)
 			board[toDelete[i]]->type=0;
@@ -476,6 +476,7 @@ if ((firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW 
 		else if (((firstClusterB + firstClusterW) < (secClusterB + secClusterW))){
 			// Second cluster is bigger and contains at least 1 white and 1 black
 			std::cout << "SECCLUSTER" << std::endl;
+			removeCluster(board[firstStart]);
 		}
 		else if (((firstClusterB + firstClusterW) == (secClusterB + secClusterW)) && (firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW > 0)){
 			// TIE
@@ -483,18 +484,23 @@ if ((firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW 
 			
 			if (lastTurn == 1){
 				if (firstClusterW > secClusterW){
+					removeCluster(board[secStart]);
 					//First cluster has more whites
 				}
 				else if ((firstClusterW < secClusterW)){
+					
 					// Second cluster has more whites
+					removeCluster(board[firstStart]);
 				}
 			}
 			else if (lastTurn == 2){
 				if (firstClusterB > secClusterB){
 					//First cluster has more blacks
+					removeCluster(board[secStart]);
 				}
 				else if ((firstClusterB < secClusterB)){
 					// Second cluster has more blacks
+					removeCluster(board[firstStart]);
 				}
 			}
 
@@ -545,7 +551,7 @@ else {
 
 	}		
 }
-
+}
 
 //--------------------------------------------------------------
 void testApp::update(){
