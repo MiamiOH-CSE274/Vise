@@ -1,7 +1,6 @@
 #include "testApp.h"
 #include "gameBoard.h"
 
-
 #include <set>
 
 
@@ -59,6 +58,7 @@ int countRW = 0;
 int countRB = 0;
 int countLW = 0;
 int countLB = 0;
+bool vise;
 
 
 
@@ -137,7 +137,11 @@ void testApp::setup(){
     //This is the *maximum* rate. Your program might go slower if your
     // updates or draws are too time conusming.
     ofSetFrameRate(60);
+
+	ofTrueTypeFont::setGlobalDpi(72);
     
+	arial24.loadFont("arial.ttf",24);
+
     //TODO: Initialize your "gameBoard" data structure here
         board.resize(400);
         numBlack = 5;
@@ -388,7 +392,7 @@ std::pair <int,int> countCluster(hexSpace* target){
 
 
 void doVise(){
-	
+
 	int inV = 0;
 	int target = 0;
 	int temp = 0;
@@ -410,6 +414,7 @@ void doVise(){
 				target = 20*j+i;
 				inV = board[20*j+i]->type;
 				toDelete.push_back(target);
+				vise = true;
 			}
 		}
 	}
@@ -427,7 +432,7 @@ void doVise(){
 			board[toDelete[i]]->type=0;
 		}
 		toDelete.clear();
-
+		
 		// Set all pieces checked to 0
 		for (int i = 0; i < 400; i++){
 			board[i]->checked = 0;
@@ -436,8 +441,7 @@ void doVise(){
 		// While the board is not connected check for the 
 		// clusters and put the pieces in the clusters back
 		// in the bank based on the rules for doVise()
-	//	while(!isConnected()){
-		
+	
 			// Recursive time!
 			pair <int,int> firstCluster;
 			pair <int,int> secCluster;
@@ -491,6 +495,7 @@ void doVise(){
 			int secClusterB = secCluster.second;
 
 			// Compare Clusters
+			if ((secClusterB + secClusterW) > 0){
 			if ((firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW > 0)){
 				if (((firstClusterB + firstClusterW) > (secClusterB + secClusterW))){
 					// First cluster is bigger and contains at least 1 white and 1 black, remove second
@@ -566,7 +571,7 @@ void doVise(){
 				}
 			}
 		}		
-//	}
+		}
 }
 
 //--------------------------------------------------------------
@@ -709,31 +714,24 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(){
-    //TODO -- not working..
-
-	/*int totalCount = 0;
-	int countTogether = 0;
-
-	for (int i = 0; i < 400; i++){
-		if (board[i]->type == 1)
-			numWhite++;
-		else if(board[i]->type == 2)
-			numBlack++;
-	}*/
-	for (int i = 0; i < 400; i++)
+    for (int i = 0; i < 400; i++)
 		board[i]->checked = 0;
 
 	int start;
+	
 	for(int i = 0; i < 400; i++)
 		if(board[i]->type != 0){
 			start = i;
 			break;
 		}
+		
 		pair<int,int> pairPieces = countCluster(board[start]);
 		int numPieces = pairPieces.first + pairPieces.second;
+	
 		if(numPieces == numWhite - pl1spares + numBlack - pl2spares)
 			return true;
 		return false;
+	
 	for (int i = 0; i < 400; i++){
 		board[i]->checked = 0;
 	}
@@ -773,12 +771,13 @@ bool stillConnected(int x, int y){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-    //TODO
     int target = 20*y+x;
+
 	if ((board[target]->type == 0) && (isNeighboringSpace(x,y) || isJumpSpace(x,y)))
 		if(stillConnected(x,y))
 			return true;
-    return false;
+    
+	return false;
 }
 
 
@@ -788,10 +787,9 @@ bool canPlaceOldPiece(int x, int y){
  * (1 or 2)
  */
 int pieceAt(int x,int y){
-    //TODO
-        int target = 20*y+x;
-		//std::cout << board[target]->type << std::endl;
-        return board[target]->type;
+	int target = 20*y+x;
+		
+    return board[target]->type;
 }
 
 
@@ -893,6 +891,23 @@ void testApp::draw(){
     ofBackground(128,128,128); //gray
     drawboard();
     drawSpares();
+
+/*	if (vise){
+		ofSetColor(155);
+		ostringstream stringBuilder;
+
+		stringBuilder.clear();
+		stringBuilder.str("");
+
+		stringBuilder << "Vise Occuring" << flush;
+		double strWidth = arial24.stringWidth(stringBuilder.str());
+		double strX = 5 + (260 - strWidth)/2;
+		arial24.drawString(stringBuilder.str(), strX, 130+5+24+24+5);
+
+		stringBuilder.clear();
+		stringBuilder.str("");
+
+	}*/
 }
 
 
