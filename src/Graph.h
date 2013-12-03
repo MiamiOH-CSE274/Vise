@@ -47,6 +47,11 @@ public:
   void placePiece(int x, int y, int given);
   int getClose(int x, int y, int hex);
   int getConnected(int i);
+  //returns an integer list of the neighbors of the tile located at (x,y)
+  int* getNeighbors(int x, int y);
+  //void placePiece(int x, int y, int given);
+  //int getClose(int x, int y, int hex);
+  bool isClose(int x1, int y1, int x2, int y2); 
 
 private:
   std::vector<Node> adjList;	
