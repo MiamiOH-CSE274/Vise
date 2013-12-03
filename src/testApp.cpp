@@ -13,7 +13,6 @@
  */
 //Functions you might want to use, game logic
 bool inVise(int x, int y);
-
 void doVise(); 
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
 bool canPlaceNewPiece(int x, int y);
@@ -396,7 +395,6 @@ void doVise(){
 				target = 20*j+i;
 				inV = board[20*j+i]->type;
 				toDelete.push_back(target);
-				vise = true;
 			}
 		}
 	}
