@@ -1,7 +1,6 @@
 #include "testApp.h"
 #include "gameBoard.h"
 
-
 #include <set>
 
 
@@ -14,7 +13,8 @@
  */
 //Functions you might want to use, game logic
 bool inVise(int x, int y);
-void doVise();
+
+void doVise(); 
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
 bool canPlaceNewPiece(int x, int y);
 bool isNeighboringSpace(int x, int y);
@@ -49,8 +49,6 @@ int boardH = 20;
 
 
 //TODO: Make any variables you need for representing your board here
-
-
 std::vector<hexSpace*> board;
 int numBlack;
 int numWhite;
@@ -132,13 +130,13 @@ void testApp::setup(){
     // updates or draws are too time conusming.
     ofSetFrameRate(60);
     
-    //TODO: Initialize your "gameBoard" data structure here
+    //Initialize your "gameBoard" data structure here
         board.resize(400);
         numBlack = 5;
         numWhite = 5;
 
 
-    //TODO: Put 1 piece for each player in the middle of hte gameBoard, side by side
+    //Put 1 piece for each player in the middle of the gameBoard, side by side
         for(int i=0; i<400; i++)
                 board[i] = new hexSpace();
         for(int i = 0; i < 400; i++){
@@ -268,27 +266,10 @@ bool inVise(int x, int y){
 					return true;
 		}
         return false;
-
 }
 
 
-/*
- * This is the method that updates the gameBoard if a player is caught in a vise at the end of the turn.
- * You may want to break this method up into several sub-methods.
- *
- * 1) FIRST, identify all pieces that are caught in a vise Note: If you have 0101, then
- *    both the middle 1 and middle 0 are caught in the vice. Use the "inVise" method defined above.
- * 2) NEXT, delete them all from the game (in previous example, you would get 0__1)
- * 3) LAST, find the largest connected component that contains
- *    at least 1 piece from each player. Place all other pieces back in the
- *    storehouse (that is, update pl1spares and pl2spares). If there is a tie, pick the one that has the most pieces from the player
- *    that just played.
- * 3b) If no such component exists, then select the largest
- *    connected component that contains a piece of the player who played
- *    most recently.
- * 3c) If no such component exists, then select the largest connected component.
- * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
-*/ 
+// This method removes the cluster that is attached to the hexSpace target
 void removeCluster(hexSpace* target){
 	if (target->checked == 1){
 		target->checked = 1; 
@@ -318,9 +299,11 @@ void removeCluster(hexSpace* target){
 	
 
 }
+
+
+// This method counts the number of white and black pieces that 
+// are in one cluster
 std::pair <int,int> countCluster(hexSpace* target){
-	
-//	std::cout << target->checked << " " << target->type << std::endl;
 	if (target->checked == 1){
 		target->checked = 1;
 		std::pair <int,int> cluster (0,0);
@@ -376,26 +359,35 @@ std::pair <int,int> countCluster(hexSpace* target){
 		std::pair <int,int> cluster (0,0);
 		return cluster;
 	}
-	
-
 }
 
 
+/*
+ * This is the method that updates the gameBoard if a player is caught in a vise at the end of the turn.
+ * You may want to break this method up into several sub-methods.
+ *
+ * 1) FIRST, identify all pieces that are caught in a vise Note: If you have 0101, then
+ *    both the middle 1 and middle 0 are caught in the vice. Use the "inVise" method defined above.
+ * 2) NEXT, delete them all from the game (in previous example, you would get 0__1)
+ * 3) LAST, find the largest connected component that contains
+ *    at least 1 piece from each player. Place all other pieces back in the
+ *    storehouse (that is, update pl1spares and pl2spares). If there is a tie, pick the one that has the most pieces from the player
+ *    that just played.
+ * 3b) If no such component exists, then select the largest
+ *    connected component that contains a piece of the player who played
+ *    most recently.
+ * 3c) If no such component exists, then select the largest connected component.
+ * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
+*/ 
 void doVise(){
-	
+
 	int inV = 0;
 	int target = 0;
 	int temp = 0;
-	// intialize an array to hold the pieces that are in vise
+
+	// Intialize an array to hold the pieces that are in vise
 	vector<int> toDelete;
 	toDelete.resize(0);
-
-	// if 1 upleft and downright
-	// if 2 left and right
-	// if 3 upright and downleft
-	
-	int typeOFVise = 0;
-	 int visePos = 0;
 
 	// Find all pieces in the vise and add to toDelete
 	for (int i = 0; i < 20; i++){
@@ -404,6 +396,7 @@ void doVise(){
 				target = 20*j+i;
 				inV = board[20*j+i]->type;
 				toDelete.push_back(target);
+				vise = true;
 			}
 		}
 	}
@@ -421,7 +414,7 @@ void doVise(){
 			board[toDelete[i]]->type=0;
 		}
 		toDelete.clear();
-
+	while (!isConnected()){		
 		// Set all pieces checked to 0
 		for (int i = 0; i < 400; i++){
 			board[i]->checked = 0;
@@ -430,8 +423,7 @@ void doVise(){
 		// While the board is not connected check for the 
 		// clusters and put the pieces in the clusters back
 		// in the bank based on the rules for doVise()
-	//	while(!isConnected()){
-		
+	
 			// Recursive time!
 			pair <int,int> firstCluster;
 			pair <int,int> secCluster;
@@ -485,6 +477,7 @@ void doVise(){
 			int secClusterB = secCluster.second;
 
 			// Compare Clusters
+			if ((secClusterB + secClusterW) > 0){
 			if ((firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW > 0)){
 				if (((firstClusterB + firstClusterW) > (secClusterB + secClusterW))){
 					// First cluster is bigger and contains at least 1 white and 1 black, remove second
@@ -517,6 +510,14 @@ void doVise(){
 							removeCluster(board[firstStart]);
 						}
 					}
+				}
+			}
+			else if ((firstClusterB > 0 && firstClusterW > 0) || (secClusterB > 0 && secClusterW > 0)){
+				if (firstClusterB > 0 && firstClusterW > 0){
+					removeCluster(board[secStart]);
+				}
+				else{
+					removeCluster(board[firstStart]);
 				}
 			}
 			else if (firstClusterW == 0 || firstClusterB == 0 || secClusterW == 0 || secClusterB == 0){
@@ -560,7 +561,13 @@ void doVise(){
 				}
 			}
 		}		
-//	}
+	// Set all the pieces checks back to 0
+			for (int i = 0; i < 400; i++){
+				board[i]->checked = 0;
+			}
+	}
+	
+	}
 }
 
 //--------------------------------------------------------------
@@ -605,7 +612,6 @@ void drawHex(float x, float y, float sideLen){
  * under consideration.
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
-    //TODO
         int target = 20*y+x;
         if(board[target]->upleft->type!=whoseTurn && board[target]->upleft->type!=0)
                 badNbrs++;
@@ -662,7 +668,6 @@ bool canPlaceNewPiece(int x, int y){
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isNeighboringSpace(int x, int y){
-    //TODO
         int selected = selectedPieceY*20+selectedPieceX;
         int target = 20*y+x;
         if((board[selected]->upleft == board[target]) ||
@@ -679,7 +684,6 @@ bool isNeighboringSpace(int x, int y){
 //Return true iff (x,y) is one jump to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isJumpSpace(int x, int y){
-    //TODO
         int selected = selectedPieceY*20+selectedPieceX;
         int target = 20*y+x;
 
@@ -703,36 +707,32 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(){
-    //TODO -- not working..
-
-	/*int totalCount = 0;
-	int countTogether = 0;
-
-	for (int i = 0; i < 400; i++){
-		if (board[i]->type == 1)
-			numWhite++;
-		else if(board[i]->type == 2)
-			numBlack++;
-	}*/
-	for (int i = 0; i < 400; i++)
+    for (int i = 0; i < 400; i++)
 		board[i]->checked = 0;
 
 	int start;
+	
 	for(int i = 0; i < 400; i++)
 		if(board[i]->type != 0){
 			start = i;
 			break;
 		}
+		
 		pair<int,int> pairPieces = countCluster(board[start]);
 		int numPieces = pairPieces.first + pairPieces.second;
+	
 		if(numPieces == numWhite - pl1spares + numBlack - pl2spares)
 			return true;
 		return false;
+	
 	for (int i = 0; i < 400; i++){
 		board[i]->checked = 0;
 	}
 }
 
+// This method determines if the x,y coordinates, if filled
+// with a piece will keep the board connected.
+// return true if it will still be connnected and false otherwise
 bool stillConnected(int x, int y){
 	bool stillConnected = false;
 	int target = 20*y+x;
@@ -767,12 +767,13 @@ bool stillConnected(int x, int y){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-    //TODO
     int target = 20*y+x;
+
 	if ((board[target]->type == 0) && (isNeighboringSpace(x,y) || isJumpSpace(x,y)))
 		if(stillConnected(x,y))
 			return true;
-    return false;
+    
+	return false;
 }
 
 
@@ -782,10 +783,9 @@ bool canPlaceOldPiece(int x, int y){
  * (1 or 2)
  */
 int pieceAt(int x,int y){
-    //TODO
-        int target = 20*y+x;
-		//std::cout << board[target]->type << std::endl;
-        return board[target]->type;
+	int target = 20*y+x;
+		
+    return board[target]->type;
 }
 
 
@@ -895,7 +895,6 @@ void testApp::draw(){
  * If whichPieces is 0, then it clears that board position.
  */
 void putPieceAt(int x, int y, int whichPiece){
-    //TODO
         int target = 20*y+x;
         board[target]->type = whichPiece;
 }
