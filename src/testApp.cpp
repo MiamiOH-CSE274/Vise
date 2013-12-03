@@ -426,32 +426,83 @@ void doVise(){
 
 		std::cout << secCluster.first << " " << secCluster.second << std::endl;
 
+		for (int i = 0; i < 400; i++){
+			board[i]->checked = 0;
+		}
 
-		/*LAST, find the largest connected component that contains
- *    at least 1 piece from each player. Place all other pieces back in the
- *    storehouse (that is, update pl1spares and pl2spares). If there is a tie, pick the one that has the most pieces from the player
- *    that just played.
- * 3b) If no such component exists, then select the largest
- *    connected component that contains a piece of the player who played
- *    most recently.
- * 3c) If no such component exists, then select the largest connected component.
- * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
- */
+		int lastTurn = 3 - whoseTurn;
 		// compare clusters
 		int firstClusterB = firstCluster.second;
 		int firstClusterW = firstCluster.first;
 		int secClusterB = secCluster.second;
 		int secClusterW = secCluster.first;
 
-		if ((firstClusterB + firstClusterW) > (secClusterB + secClusterW)){
+
+if ((firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW > 0)){
+		if (((firstClusterB + firstClusterW) > (secClusterB + secClusterW)) && (firstClusterB > 0 && firstClusterW > 0)){
+			// First cluster is bigger and contains at least 1 white and 1 black.
 			std::cout << "FIRSTCLUSTERBIGGER" << std::endl;
 		}
-		else if (firstCluster < secCluster){
+		else if (((firstClusterB + firstClusterW) < (secClusterB + secClusterW)) && (secClusterB > 0 && secClusterW > 0)){
+			// Second cluster is bigger and contains at least 1 white and 1 black
 			std::cout << "SECCLUSTER" << std::endl;
 		}
-		else{
+		else if (((firstClusterB + firstClusterW) == (secClusterB + secClusterW)) && (firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW > 0)){
+			// TIE
+			// pick one with the most pieces from the recent player
+			
+			if (lastTurn == 1){
+				if (firstClusterW > secClusterW){
+					//First cluster has more whites
+				}
+				else if ((firstClusterW < secClusterW)){
+					// Second cluster has more whites
+				}
+			}
+			else if (lastTurn == 2){
+				if (firstClusterB > secClusterB){
+					//First cluster has more blacks
+				}
+				else if ((firstClusterB < secClusterB)){
+					// Second cluster has more blacks
+				}
+			}
+
 			std::cout << "NEIGHT" << std::endl;
 		}
+}
+else if (firstClusterW == 0 || firstClusterB == 0 || secClusterW == 0 || secClusterB == 0){
+	if (lastTurn == 1){
+				if (firstClusterW > secClusterW){
+					//First cluster has more whites
+				}
+				else if ((firstClusterW < secClusterW)){
+					// Second cluster has more whites
+				}
+			}
+		else if (lastTurn == 2){
+				if (firstClusterB > secClusterB){
+					//First cluster has more blacks
+				}
+				else if ((firstClusterB < secClusterB)){
+					// Second cluster has more blacks
+				}
+			}
+		else {
+			// Tie pick arbitrailly - first cluster??
+		}
+}
+else {
+	if ((firstClusterW + firstClusterB) > (secClusterW + secClusterB)){
+		// pick firstCluster
+	}
+	else if ((firstClusterW + firstClusterB) < (secClusterW + secClusterB)){
+		// pick secCluster
+	}
+	else{
+		// Tie pick arbitrailly - firstCluster??
+	}
+}
 
 
 	}		
