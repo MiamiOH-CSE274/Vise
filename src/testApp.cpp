@@ -1,6 +1,7 @@
 #include "testApp.h"
 #include "Graph.h"
 #include <set>
+#include <stack>
 
 
 //////////////////
@@ -92,7 +93,7 @@ float sideLen = 20.0;
 // change these, just change sideLen
 float hexW = sideLen*2.0*0.86602540378444;
 float hexH = 1.5*sideLen;
-Graph board(400);
+Graph board(boardH*boardW);
 
 
 
@@ -180,7 +181,7 @@ void drawHex(float x, float y, float sideLen){
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
 	for(int i=0;i<6;i++)
-		board.getClose(x,y);
+		board.isClose(x,y);
 
 }
 
@@ -207,8 +208,9 @@ bool isNeighboringSpace(int x, int y){
 //Return true iff (x,y) is one jump to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isJumpSpace(int x, int y){
-    //TODO
-    return false;
+	return ((((20*y)+x) == (((20*selectedPieceY)+selectedPieceX)-41)) || (((20*y)+x) == (((20*selectedPieceY)+selectedPieceX)-39)) ||
+			(((20*y)+x) == (((20*selectedPieceY)+selectedPieceX)-2)) || (((20*y)+x) == (((20*selectedPieceY)+selectedPieceX)+2)) ||
+			(((20*y)+x) == (((20*selectedPieceY)+selectedPieceX)+39)) || (((20*y)+x) == (((20*selectedPieceY)+selectedPieceX)+41)));
 }
 
 //Return true if and only if the board currently contains
@@ -219,7 +221,27 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(){
-    //TODO
+	int totalPiecesOnBoard = 0;
+    for (int index = 0; index < (boardH*boardW); index++){
+		if (board.getPiece((index%boardW), (index/boardH)) != 0)
+			totalPiecesOnBoard++;
+	}
+	std::stack<int> open;
+	int tileCount = 0;
+	open.push(0);
+	int* tileStatus = new int[totalPiecesOnBoard];
+	for (int statusCount = 0; statusCount < totalPiecesOnBoard; statusCount++)
+		tileStatus[statusCount] = 0;
+	tileStatus[0] = 1;
+	while (open.size() != 0){
+		tileCount++;
+		int visitingNode = open.top();
+		int visitingNodeXCoord = visitingNode%boardW;
+		int visitingNodeYCoord = visitingNode/boardH;
+		open.pop();
+		tileStatus[visitingNode] = 2;
+		for (int neighborCount = 0; neighborCount <   //how to determine the size of the neighbor list?
+	}
     return false;
 }
 
