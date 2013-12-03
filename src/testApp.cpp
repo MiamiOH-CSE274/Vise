@@ -116,8 +116,16 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-    //TODO
-    return false;
+	//int player=board.getPiece(x,y);
+	//int near= board.getNeighbors(x,y);
+	//if(board.adjList.at(board.getClose(x,y,0))
+
+
+
+
+
+
+	return board.inVise(x,y);
 }
 
 /*

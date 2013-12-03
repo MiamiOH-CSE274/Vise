@@ -52,6 +52,7 @@ public:
   //void placePiece(int x, int y, int given);
   //int getClose(int x, int y, int hex);
   bool isClose(int x1, int y1, int x2, int y2); 
+  bool inVise(int x, int y);
 
 private:
   std::vector<Node> adjList;	

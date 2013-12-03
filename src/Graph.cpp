@@ -56,7 +56,8 @@ void Graph::placePiece(int x, int y, int given){
 }
 
 int Graph::getClose(int x, int y, int hex){
-	return adjList.at( adjList.at((y*20)+x).edgeList.at(hex).dest).piece;
+	if(hex < adjList.at(y*20+x).edgeList.size())//adjList.at(y*20+x) //adjList.at( adjList.at((y*20)+x).edgeList.size()))
+		return adjList.at( adjList.at((y*20)+x).edgeList.at(hex).dest).piece;
 }
 int Graph::getPiece(int i){
 	return adjList.at(i).piece;
@@ -75,5 +76,20 @@ bool Graph::isClose(int x1, int y1, int x2, int y2){
 		if (adjList.at((y1*20)+x1).edgeList.at(edgeCount).dest == (y2*20)+x2)
 			return true;
 	}
+	return false;
+}
+
+
+bool Graph::inVise(int x, int y){
+	std::vector<int> list;
+	int player=getPiece(x,y);
+	for(int i=0;i<adjList.at(20*y+x).edgeList.size();i++){
+		if(adjList.at(adjList.at((20*y)+x).edgeList.at(i).dest).piece!=player&& adjList.at(adjList.at((20*y)+x).edgeList.at(i).dest).piece!=0)
+			list.push_back(adjList.at(20*y+x).edgeList.at(i).dest);//adjList.at(adjList.at((20*y)+x).edgeList.at(i).dest));
+
+	}
+	for(int i=0;i<list.size();i++)
+		if(adjList.at(list[i]).piece==adjList.at(list[i]+40).piece)
+			return true;
 	return false;
 }
