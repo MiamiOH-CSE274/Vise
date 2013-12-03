@@ -24,6 +24,7 @@ bool canPlaceOldPiece(int x, int y); //FIx
 int pieceAt(int x,int y);
 void putPieceAt(int x, int y, int whichPiece);
 pair <int,int> countCluster(hexSpace* target);
+void removeCluster(hexSpace* target);
 
 
 //Drawing functions
@@ -296,6 +297,34 @@ bool inVise(int x, int y){
  * 3c) If no such component exists, then select the largest connected component.
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
 */ 
+void removeCluster(hexSpace* target){
+	if (target->checked == 1){
+		target->checked = 1; 
+	}	
+	else if ((target->type == 0)){
+		target->checked = 1; 
+	}
+	else if (target->checked == 0){
+		
+		target->checked = 1;
+			
+		countCluster(target->upleft);
+		countCluster(target->left);
+		countCluster(target->downleft);
+		countCluster(target->downright);
+		countCluster(target->right);
+		countCluster(target->upright);
+	}
+	if (target->type == 1){
+		pl1spares++;
+	}
+	else if (target->type == 2){
+		pl2spares++;
+	}
+	target->type = 0; 
+	
+
+}
 std::pair <int,int> countCluster(hexSpace* target){
 	
 //	std::cout << target->checked << " " << target->type << std::endl;
@@ -439,11 +468,12 @@ void doVise(){
 
 
 if ((firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW > 0)){
-		if (((firstClusterB + firstClusterW) > (secClusterB + secClusterW)) && (firstClusterB > 0 && firstClusterW > 0)){
+		if (((firstClusterB + firstClusterW) > (secClusterB + secClusterW))){
 			// First cluster is bigger and contains at least 1 white and 1 black.
 			std::cout << "FIRSTCLUSTERBIGGER" << std::endl;
+			removeCluster(board[secStart]);
 		}
-		else if (((firstClusterB + firstClusterW) < (secClusterB + secClusterW)) && (secClusterB > 0 && secClusterW > 0)){
+		else if (((firstClusterB + firstClusterW) < (secClusterB + secClusterW))){
 			// Second cluster is bigger and contains at least 1 white and 1 black
 			std::cout << "SECCLUSTER" << std::endl;
 		}
@@ -475,32 +505,40 @@ else if (firstClusterW == 0 || firstClusterB == 0 || secClusterW == 0 || secClus
 	if (lastTurn == 1){
 				if (firstClusterW > secClusterW){
 					//First cluster has more whites
+					removeCluster(board[secStart]);
 				}
 				else if ((firstClusterW < secClusterW)){
 					// Second cluster has more whites
+					removeCluster(board[firstStart]);
 				}
 			}
 		else if (lastTurn == 2){
 				if (firstClusterB > secClusterB){
 					//First cluster has more blacks
+					removeCluster(board[secStart]);
 				}
 				else if ((firstClusterB < secClusterB)){
 					// Second cluster has more blacks
+					removeCluster(board[firstStart]);
 				}
 			}
 		else {
 			// Tie pick arbitrailly - first cluster??
+			removeCluster(board[secStart]);
 		}
 }
 else {
 	if ((firstClusterW + firstClusterB) > (secClusterW + secClusterB)){
 		// pick firstCluster
+		removeCluster(board[secStart]);
 	}
 	else if ((firstClusterW + firstClusterB) < (secClusterW + secClusterB)){
 		// pick secCluster
+		removeCluster(board[firstStart]);
 	}
 	else{
 		// Tie pick arbitrailly - firstCluster??
+		removeCluster(board[secStart]);
 	}
 }
 
