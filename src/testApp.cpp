@@ -308,12 +308,12 @@ void removeCluster(hexSpace* target){
 		
 		target->checked = 1;
 			
-		countCluster(target->upleft);
-		countCluster(target->left);
-		countCluster(target->downleft);
-		countCluster(target->downright);
-		countCluster(target->right);
-		countCluster(target->upright);
+		removeCluster(target->upleft);
+		removeCluster(target->left);
+		removeCluster(target->downleft);
+		removeCluster(target->downright);
+		removeCluster(target->right);
+		removeCluster(target->upright);
 	}
 	if (target->type == 1){
 		pl1spares++;
@@ -321,6 +321,7 @@ void removeCluster(hexSpace* target){
 	else if (target->type == 2){
 		pl2spares++;
 	}
+
 	target->type = 0; 
 	
 
@@ -433,7 +434,7 @@ void doVise(){
 		// While the board is not connected check for the 
 		// clusters and put the pieces in the clusters back
 		// in the bank based on the rules for doVise()
-		while(!isConnected()){
+	//	while(!isConnected()){
 		
 			// Recursive time!
 			pair <int,int> firstCluster;
@@ -563,7 +564,7 @@ void doVise(){
 				}
 			}
 		}		
-	}
+//	}
 }
 
 //--------------------------------------------------------------
