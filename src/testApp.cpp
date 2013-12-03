@@ -23,7 +23,7 @@ bool isConnected(); // DO
 bool canPlaceOldPiece(int x, int y); //FIx
 int pieceAt(int x,int y);
 void putPieceAt(int x, int y, int whichPiece);
-pair <int,int> countCluster(int target);
+pair <int,int> countCluster(hexSpace* target);
 
 
 //Drawing functions
@@ -296,39 +296,57 @@ bool inVise(int x, int y){
  * 3c) If no such component exists, then select the largest connected component.
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
  */
-pair <int,int> countCluster(hexSpace* target){
-	std::pair <int,int> cluster;
+std::pair <int,int> countCluster(hexSpace* target){
+	std::pair <int,int> cluster (0,0);
 		
 	//= new pair<int,int>();
-	//cluster.first = 0;
-	//cluster.second = 0;
 
-
-	if ((target->type == 0)){
-		//|| ((target->checked == 1))){
-		//&&(target->type != 0))){
-		cluster.first = 0;
-		cluster.second = 0;
+	if (target->checked == 1){
+	//	cluster.first = 0;
+	//	cluster.second = 0;
 		target->checked = 1;
-		return cluster;
+//		std::cout << cluster.first << " " << cluster.second << std::endl;
+		return std::pair <int,int> (0,0); 
 	}
-	else if (target->checked == 1){
-		
+	else if ((target->type == 0)){
+//		cluster.first = 0;
+//		cluster.second = 0;
+		target->checked = 1;
+		//return cluster;
+		return std::pair <int,int> (0,0);
 	}
-	else {
+	else if (target->checked == 0) {
 		target->checked == 1;
-		cluster.first = 0;
-		cluster.second = 0;
 		if (target->type == 1) {
 			cluster.first = 1;
-			cluster.second = 0;
+	//		cluster.second = 0;
+			cluster.first = cluster.first + countCluster(target->upleft).first 
+			+ countCluster(target->left).first 
+			+ countCluster(target->downleft).first 
+			+ countCluster(target->downright).first
+			+ countCluster(target->right).first
+			+ countCluster(target->upright).first;
 		}
 		else if (target->type == 2) {
-			cluster.first = 0;
+	//		cluster.first = 0;
 			cluster.second = 1;
+			cluster.second = cluster.second
+			+ countCluster(target->upleft).second 
+			+ countCluster(target->left).second
+			+ countCluster(target->downleft).second 
+			+ countCluster(target->downright).second
+			+ countCluster(target->right).second
+			+ countCluster(target->upright).second;
 		}
-		std::pair<int,int> addOn;
-		addOn=countCluster(target->upleft);
+		else {
+			cluster.first = 0;
+			cluster.second = 0;
+		}
+		
+
+		//std::pair<int,int> addOn;
+		
+		/*addOn=countCluster(target->upleft);
 		cluster.first = cluster.first + addOn.first;
 		cluster.second = cluster.second + addOn.second;
 		
@@ -351,9 +369,14 @@ pair <int,int> countCluster(hexSpace* target){
 		addOn=countCluster(target->upright);
 		cluster.first = cluster.first + addOn.first;
 		cluster.second = cluster.second + addOn.second;
+		*/
+
 		
 		
+		return cluster;
 		
+	}
+	else {
 		return cluster;
 	}
 	
@@ -421,7 +444,7 @@ void doVise(){
 			}
 		}
 		if (secStart != -1) {
-			secCluster = countCluster(board[secStart]);
+		//	secCluster = countCluster(board[secStart]);
 		}
 
 		// compare clusters
