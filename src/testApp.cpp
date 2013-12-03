@@ -279,8 +279,12 @@ bool isConnected(){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-    //TODO
-    return false;
+	if(board.getPiece(x,y)!=0)
+		return false;
+
+	if(!canPlaceNewpiece())	
+		return false;
+	return true;
 }
 
 /*

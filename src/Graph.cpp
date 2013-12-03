@@ -40,6 +40,11 @@ void Graph::Setup(){
 			if(((i%40)>=20) && (i+1<20))
 				addEdge(i,i+21);
 		}
+		adjList.at(i).piece=0;
+		if(i==210)
+			adjList.at(i).piece=1;
+		if(i==211)
+			adjList.at(i).piece=2;
 	}
 }
 int Graph::getPiece(int x, int y){
