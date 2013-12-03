@@ -390,9 +390,9 @@ void doVise(){
 		for(int i = 0; i != toDelete.size(); i++)
 			board[toDelete[i]]->type=0;
 		toDelete.clear();
-	/*	for (int i = 0; i < 400; i++){
+		for (int i = 0; i < 400; i++){
 			board[i]->checked = 0;
-		}*/
+		}
 
 		// Recursive time!
 		pair <int,int> firstCluster;
@@ -410,7 +410,7 @@ void doVise(){
 			
 		//std::cout << firstStart << std::endl;
 		firstCluster = countCluster(board[firstStart]);
-	
+		std::cout << firstCluster.first << " " << firstCluster.second << std::endl;
 
 		for (int i = 0; i < 400; i++){
 			if (board[i]->type != 0 && board[i]->checked != 1){
@@ -418,12 +418,41 @@ void doVise(){
 				break;
 			}
 		}
+		std::cout << "HERE" << std::endl;
+
 		if (secStart != -1) {
 			secCluster = countCluster(board[secStart]);
 		}
 
+		std::cout << secCluster.first << " " << secCluster.second << std::endl;
+
+
+		/*LAST, find the largest connected component that contains
+ *    at least 1 piece from each player. Place all other pieces back in the
+ *    storehouse (that is, update pl1spares and pl2spares). If there is a tie, pick the one that has the most pieces from the player
+ *    that just played.
+ * 3b) If no such component exists, then select the largest
+ *    connected component that contains a piece of the player who played
+ *    most recently.
+ * 3c) If no such component exists, then select the largest connected component.
+ * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
+ */
 		// compare clusters
-	
+		int firstClusterB = firstCluster.second;
+		int firstClusterW = firstCluster.first;
+		int secClusterB = secCluster.second;
+		int secClusterW = secCluster.first;
+
+		if ((firstClusterB + firstClusterW) > (secClusterB + secClusterW)){
+			std::cout << "FIRSTCLUSTERBIGGER" << std::endl;
+		}
+		else if (firstCluster < secCluster){
+			std::cout << "SECCLUSTER" << std::endl;
+		}
+		else{
+			std::cout << "NEIGHT" << std::endl;
+		}
+
 
 	}		
 }
@@ -792,7 +821,7 @@ bool canPlaceOldPiece(int x, int y){
 int pieceAt(int x,int y){
     //TODO
         int target = 20*y+x;
-		std::cout << board[target]->type << std::endl;
+		//std::cout << board[target]->type << std::endl;
         return board[target]->type;
 }
 
