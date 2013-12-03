@@ -14,13 +14,14 @@
  */
 //Functions you might want to use, game logic
 bool inVise(int x, int y);
-void doVise(); //DO
+void doVise();
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
 bool canPlaceNewPiece(int x, int y);
 bool isNeighboringSpace(int x, int y);
 bool isJumpSpace(int x, int y);
-bool isConnected(); // DO
-bool canPlaceOldPiece(int x, int y); //FIx
+bool isConnected();
+bool stillConnected(int x, int y);
+bool canPlaceOldPiece(int x, int y);
 int pieceAt(int x,int y);
 void putPieceAt(int x, int y, int whichPiece);
 pair <int,int> countCluster(hexSpace* target);
@@ -53,13 +54,6 @@ int boardH = 20;
 std::vector<hexSpace*> board;
 int numBlack;
 int numWhite;
-int bankBlack;
-int bankWhite;
-int countRW = 0;
-int countRB = 0;
-int countLW = 0;
-int countLB = 0;
-
 
 
 //Number of spare playing pieces left, for each player
@@ -935,10 +929,6 @@ void testApp::mousePressed(int x, int y, int button){
                 if(canPlaceNewPiece(whichCol,whichRow)){
                     currentAction = 0;
                     putPieceAt(whichCol,whichRow,whoseTurn);
-					if(whoseTurn == 1)
-						bankWhite--;
-					else
-						bankBlack--;
                     whoseTurn = 3 - whoseTurn;
                 }
             }
