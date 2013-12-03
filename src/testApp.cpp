@@ -267,12 +267,15 @@ void testApp::setup(){
 // not screen coordinates
 bool inVise(int x, int y){
         int target = 20*y+x;
-		if(((board[target]->left->type != board[target]->type) && (board[target]->right->type == board[target]->left->type) && (board[target]->right->type != 0)) ||
-			((board[target]->upleft->type != board[target]->type) && (board[target]->downright->type == board[target]->upleft->type) && (board[target]->downright->type != 0)) ||
-			((board[target]->downleft->type != board[target]->type) && (board[target]->upright->type == board[target]->downleft->type) && (board[target]->upright->type != 0)))
-
-                return true;
+		
+		if (board[target]->type != 0){
+			if (((board[target]->left->type != board[target]->type) && (board[target]->right->type == board[target]->left->type) && (board[target]->right->type != 0)) ||
+				((board[target]->upleft->type != board[target]->type) && (board[target]->downright->type == board[target]->upleft->type) && (board[target]->downright->type != 0)) ||
+				((board[target]->downleft->type != board[target]->type) && (board[target]->upright->type == board[target]->downleft->type) && (board[target]->upright->type != 0)))
+					return true;
+		}
         return false;
+
 }
 
 
@@ -301,24 +304,35 @@ pair <int,int> countCluster(hexSpace* target){
 	//cluster.second = 0;
 
 
-	if ((target->type == 0) || (target->checked == 1)){
+	if ((target->type == 0)){
+		//|| ((target->checked == 1))){
+		//&&(target->type != 0))){
 		cluster.first = 0;
 		cluster.second = 0;
+		target->checked = 1;
 		return cluster;
 	}
+	else if (target->checked == 1){
+		
+	}
 	else {
+		target->checked == 1;
+		cluster.first = 0;
+		cluster.second = 0;
 		if (target->type == 1) {
-			cluster.first++;
+			cluster.first = 1;
+			cluster.second = 0;
 		}
 		else if (target->type == 2) {
-			cluster.second++;
+			cluster.first = 0;
+			cluster.second = 1;
 		}
 		std::pair<int,int> addOn;
 		addOn=countCluster(target->upleft);
 		cluster.first = cluster.first + addOn.first;
 		cluster.second = cluster.second + addOn.second;
 		
-		addOn=countCluster(target->left);
+		addOn = countCluster(target->left);
 		cluster.first = cluster.first + addOn.first;
 		cluster.second = cluster.second + addOn.second;
 
@@ -337,7 +351,9 @@ pair <int,int> countCluster(hexSpace* target){
 		addOn=countCluster(target->upright);
 		cluster.first = cluster.first + addOn.first;
 		cluster.second = cluster.second + addOn.second;
-
+		
+		
+		
 		return cluster;
 	}
 	
@@ -346,12 +362,7 @@ pair <int,int> countCluster(hexSpace* target){
 
 
 void doVise(){
-	// left is either upleft,left,or downleft
-/*countLW = 0;
-countLB = 0;
-countRW = 0;
-countRB = 0; */
-
+	
 	int inV = 0;
 	int target = 0;
 	int temp = 0;
@@ -365,8 +376,6 @@ countRB = 0; */
 	int typeOFVise = 0;
 	 int visePos = 0;
 
-	 // Do 1010 - array?
-	
 	// Find all pieces in the vise
 	for (int i = 0; i < 20; i++){
 		for (int j = 0; j < 20; j++){
@@ -378,650 +387,47 @@ countRB = 0; */
 		}
 	}
 
+
 	if(!toDelete.empty()){
 		for(int i = 0; i != toDelete.size(); i++)
 			board[toDelete[i]]->type=0;
 		toDelete.clear();
-	}
-
-
-	// Recursive time!
-	pair <int,int> firstCluster;
-	pair <int,int> secCluster;
-
-	hexSpace* firstStart;
-	hexSpace* secStart;
-
-	for (int i = 0; i < 399; i++){
-		if (board[i]->type != 0 && board[i]->checked != 1){
-			firstStart = board[i];
-			break;
-		}
-	}
-
-	if (inVise(x,y)){
-		std::cout << firstStart << std::endl;
-		firstCluster = countCluster(firstStart);
-		//secCluster = countCluster();
-	}
-
-
-
-
-
-	/*std::cout << "START" << std::endl;
-	std::cout << countLB << " " << countLW << std::endl;
-	std::cout << countRB << " " << countRW << std::endl;
-	std::cout << "END" << std::endl;*/
-	/*
-	int numBlack;
-	int numWhite;
-	int bankBlack;
-	int bankWhite;
-	checked
-	*/
-
-	
-
-
-	/* SO CLOsE TRYING RECURSIVE
-	//if (target != 0)
-
-
-	
-	temp = target;
-	visePos = target;
-		
-	// Vise is upleft and downright
-	if (board[target]->upleft->type != inV && board[target]->downright->type != inV){
-
-	}
-	
-	// Vise is left and right
-	if (board[target]->left->type != inV && board[target]->right->type != inV){
-	}
-	
-	// Vise is downleft and upright
-	if (board[target]->downleft->type != inV && board[target]->upright->type != inV){
-		std::cout << "VISE@" << std::endl;
-		typeOFVise = 3;
-		//upright first
-		bool circle = true;
-
-		target = target - 20;
-		int start = target;
-		
-			if (board[target]->type == 1 && board[target]->checked == 0){
-				countRW++;
-				board[target]->checked = 1;
-			}
-			else if (board[target]->type == 2 && board[target]->checked == 0) {
-				countRB++;
-				board[target]->checked = 1;
-			}
-
-		while (circle){
-			
-			//upright first countRB countRW
-			if (board[target]->upright->type != 0 && board[target]->upright->checked == 0){
-				target = target - 20;
-				if (board[target]->upright->type == 1){
-					countRW++;
-					board[target]->upright->checked = 1;
-				}
-				else {
-					countRB++;
-					board[target]->upright->checked = 1;
-				}
-
-			}
-			//right
-			else if (board[target]->right->type != 0 && board[target]->right->checked == 0){
-				target = target + 1;
-				if (board[target]->right->type == 1){
-					countRW++;
-					board[target]->right->checked = 1;
-				}
-				else {
-					countRB++;
-					board[target]->right->checked = 1;
-				}
-			
-			
-			}
-			//downright
-			else if (board[target]->downright->type != 0 && board[target]->downright->checked == 0){
-				target = target + 20;
-				if (board[target]->downright->type == 1){
-					countRW++;
-					board[target]->downright->checked = 1;
-				}
-				else {
-					countRB++;
-					board[target]->downright->checked = 1;
-				}
-			
-			
-			}
-			//downleft
-			else if (board[target]->downleft->type != 0 && board[target]->downleft->checked == 0){
-				target = target + 19;
-				if (board[target]->downleft->type == 1){
-					countRW++;
-					board[target]->downleft->checked = 1;
-				}
-				else {
-					countRB++;
-					board[target]->downleft->checked = 1;
-				}
-			
-			
-			}
-			//left
-			else if (board[target]->left->type != 0 && board[target]->left->checked == 0){
-				target = target - 1;
-				if (board[target]->left->type == 1){
-					countRW++;
-					board[target]->left->checked = 1;
-				}
-				else {
-					countRB++;
-					board[target]->left->checked = 1;
-				}
-			
-			
-			}
-			//upleft
-			else if (board[target]->upleft->type != 0 && board[target]->upleft->checked == 0){
-				target = target - 21;
-				if (board[target]->upleft->type == 1){
-				countRW++;
-					board[target]->upleft->checked = 1;
-				}
-				else {
-					countRB++;
-					board[target]->upleft->checked = 1;
-				}
-			}
-			else if (target == start){
-				circle = false;
-			}
-			else if ((board[target]->upright->checked == 1 || board[target]->upright->type == 0) && (board[start]->right->checked == 1 || board[target]->right->type == 0)
-				&& (board[target]->downright->checked == 1 || board[target]->downright->type == 0) && (board[target]->downleft->checked == 1 || board[target]->downleft->type == 0)
-				&& (board[target]->left->checked == 1 || board[target]->left->type == 0) && (board[target]->upleft->checked == 1 || board[target]->upleft->type == 0)){
-				//(board[target]->left->type == 0 || board[target]->downleft->type == 0){
-					if (board[target]->upleft->type != 0)
-						target = target - 21;					
-					else if (board[target]->left->type != 0){
-						target = target - 1;	
-					}
-					else if (board[target]->downleft->type != 0){
-						target = target + 19;	
-					}
-					else if (board[target]->downright->type != 0){
-						target = target + 20;	
-					}
-					else if (board[target]->right->type != 0){
-						target = target + 1;	
-					}
-					else if (board[target]->upright->type != 0){
-						target = target - 20;	
-					}
-					else {
-						target = start;	
-					}
-			}
-			else {
-				target = start;
-				circle = false;
-			}
+		for (int i = 0; i < 400; i++){
+			board[i]->checked = 0;
 		}
 
-		//downleft second
-		circle = true;
-		
-		target = temp + 20;
-		int start2 = target;
-		
-			if (board[target]->type == 1){
-				countLW++;
-				board[target]->checked = 1;
-			}
-			else {
-				countLB++;
-				board[target]->checked = 1;
-			}
+		// Recursive time!
+		pair <int,int> firstCluster;
+		pair <int,int> secCluster;
 
-		while (circle){
-			
-			//upright
-			if (board[target]->upright->type != 0 && board[target]->upright->checked == 0){
-				target = target - 20;
-				if (board[target]->upright->type == 1){
-					countLW++;
-					board[target]->upright->checked = 1;
-				}
-				else {
-					countLB++;
-					board[target]->upright->checked = 1;
-				}
-
-			}
-			//right
-			else if (board[target]->right->type != 0 && board[target]->right->checked == 0){
-				target = target + 1;
-				if (board[target]->right->type == 1){
-					countLW++;
-					board[target]->right->checked = 1;
-				}
-				else {
-					countLB++;
-					board[target]->right->checked = 1;
-				}
-			
-			
-			}
-			//downright
-			else if (board[target]->downright->type != 0 && board[target]->downright->checked == 0){
-				target = target + 20;
-				if (board[target]->downright->type == 1){
-					countLW++;
-					board[target]->downright->checked = 1;
-				}
-				else {
-					countLB++;
-					board[target]->downright->checked = 1;
-				}
-			
-			
-			}
-			//downleft
-			else if (board[target]->downleft->type != 0 && board[target]->downleft->checked == 0){
-				target = target + 19;
-				if (board[target]->downleft->type == 1){
-					countLW++;
-					board[target]->downleft->checked = 1;
-				}
-				else {
-					countLB++;
-					board[target]->downleft->checked = 1;
-				}
-			
-			
-			}
-			//left
-			else if (board[target]->left->type != 0 && board[target]->left->checked == 0){
-				target = target - 1;
-				if (board[target]->left->type == 1){
-					countLW++;
-					board[target]->left->checked = 1;
-				}
-				else {
-					countLB++;
-					board[target]->left->checked = 1;
-				}
-			
-			
-			}
-			//upleft
-			else if (board[target]->upleft->type != 0 && board[target]->upleft->checked == 0){
-				target = target - 21;
-				if (board[target]->upleft->type == 1){
-					countLW++;
-					board[target]->upleft->checked = 1;
-				}
-				else {
-					countLB++;
-					board[target]->upleft->checked = 1;
-				}
-			}
-			else if (target == start2){
-				circle = false;
-			}
-			else if ((board[target]->upright->checked == 1 || board[target]->upright->type == 0) && (board[start]->right->checked == 1 || board[target]->right->type == 0)
-				&& (board[target]->downright->checked == 1 || board[target]->downright->type == 0) && (board[target]->downleft->checked == 1 || board[target]->downleft->type == 0)
-				&& (board[target]->left->checked == 1 || board[target]->left->type == 0) && (board[target]->upleft->checked == 1 || board[target]->upleft->type == 0)){
-				//(board[target]->left->type == 0 || board[target]->downleft->type == 0){
-					if (board[target]->upleft->type != 0)
-						target = target - 21;					
-					else if (board[target]->left->type != 0){
-						target = target - 1;	
-					}
-					else if (board[target]->downleft->type != 0){
-						target = target + 19;	
-					}
-					else if (board[target]->downright->type != 0){
-						target = target + 20;	
-					}
-					else if (board[target]->right->type != 0){
-						target = target + 1;	
-					}
-					else if (board[target]->upright->type != 0){
-						target = target - 20;	
-					}
-					else {
-						target = start2;	
-					}
-			}
-			else {
-				target = start2;
-				circle = false;
+		int firstStart = -1;
+		int secStart = -1;
+	
+		for (int i = 0; i < 400; i++){
+			if (board[i]->type != 0 && board[i]->checked != 1){
+				firstStart = i;
+				break;
 			}
 		}
-
-	// Left bundle is smaller
-	int removed = 0;
-	
-	std::cout << "HERE" << std::endl;
-	std::cout << countLB << " " << countLW << std::endl;
-	std::cout << countRB << " " << countRW << std::endl;
+			
+		//std::cout << firstStart << std::endl;
+		firstCluster = countCluster(board[firstStart]);
 	
 
-	if ((countLB + countLW) < (countRB + countRW)){
-		std::cout << "ddd" << std::endl;
-		if (typeOFVise == 3){
-			
-		//	while((countLB + countLW) > removed){
-			std::cout << "in vise3" << std::endl;
-				if (board[visePos]->downleft->type == 1){
-					bankWhite++;
-					board[visePos]->downleft->type = 0;
-					removed++;
-				}
-				else if (board[visePos]->downleft->type == 2){
-					bankBlack++;
-					board[visePos]->downleft->type = 0;
-					removed++;
-				}
-			//}
-		}
-	}
-	*/	
-		
-		
-		
-		/*
-	int firstW = 0;
-	int firstB = 0;
-	int secW = 0;
-	int secB = 0;
-	int lastK = 0;
-	int rowAbove = 0;
-	int empty = 0;
-
-	for (int d = 0; d < 400; d++){
-		rowAbove = 0;
-		empty = 0;
-		for (int k = 0; k < 399; k++){
-			if (board[k]->type != 0){
-				if (board[k]->type == 1){
-					firstW++;		
-					rowAbove++;
-				}
-				else if (board[k]->type == 2){
-					firstB++;
-					rowAbove++;
-				}
-				// check neighbors
-				lastK = k;
-				k = k + 1;
+		for (int i = 0; i < 400; i++){
+			if (board[i]->type != 0 && board[i]->checked != 1){
+				secStart = i;
+				break;
 			}
-			empty = empty + 1;
-			if (empty >= rowAbove)
-				k = 400;
-
+		}
+		if (secStart != -1) {
+			secCluster = countCluster(board[secStart]);
 		}
 
-		// Check down now
-		rowAbove = 0;
-		for (int f = lastK + 20; f < 400; f++){
-		
-			if (board[f]->type != 0){
-				if (board[f]->type == 1){
-					firstW++;		
-					rowAbove++;
-				}
-				else if (board[f]->type == 2){
-					firstB++;
-					rowAbove++;
-				}
-				// check neighbors
-				int lastF = f;
-				f = f - 1;
-				empty = 0;
-			}
-			f = f - 1;
-			empty = empty + 1;
-			if (empty >= rowAbove)
-				f = 400;
-		}
-
-	}
-	std::cout << firstW << std::endl;
-	std::cout << firstB << std::endl;
-	*/
-			//	if (isConnected() == false){
-				// Count left subtree
-				// Vise is upleft and downright
-				/*if (board[target]->upleft->type != inV && board[target]->downright->type != inV){
-				}
-				// Vise is left and right
-				if (board[target]->left->type != inV && board[target]->right->type != inV){
-				}
-				// Vise is downleft and upright
-				int temp = target;
-				if (board[target]->downleft->type != inV && board[target]->upright->type != inV){
-					if (board[target]->downleft->type == 1)
-						countLW++;
-					else if (board[target]->downleft->type == 2)
-						countLB++;
-					while (board[target]->downleft->right->type == 1 || board[target]->downleft->right->type == 2){
-						if (board[target]->downleft->right->type == 1)
-							countLW++;
-						else if (board[target]->downleft->right->type == 2)
-							countLB++;
-						target = target + 1;
-					}
-					target = temp;
-					while (board[target]->downleft->left->type == 1 || board[target]->downleft->left->type == 2){
-						if (board[target]->downleft->left->type == 1)
-							countLW++;
-						else if (board[target]->downleft->left->type == 2)
-							countLB++;
-						target = target - 1;
-					}
-					target = temp;
-					if (board[target]->left->type == 1)
-						countLW++;
-					else if (board[target]->left->type == 2)
-						countLB++;
-					
-					target = temp;
-					while (board[target]->left->left->type == 1 || board[target]->left->left->type == 2){
-						if (board[target]->left->left->type == 1)
-						countLW++;
-						else if (board[target]->left->left->type == 2)
-						countLB++;
-						target = target - 1;
-					}
-					target = temp;
-					if (board[target]->upleft->type == 1)
-						countLW++;
-					else if (board[target]->upleft->type == 2)
-						countLB++;
-					
-					target = temp;
-					while (board[target]->upleft->left->type == 1 || board[target]->upleft->left->type == 2){
-						if (board[target]->upleft->left->type == 1)
-						countLW++;
-						else if (board[target]->upleft->left->type == 2)
-						countLB++;
-						target = target - 1;
-					}
-					target = temp;
-					if (board[target]->downleft->downleft->type == 1)
-						countLW++;
-					else if (board[target]->downleft->downleft->type == 2)
-						countLB++;
-					
-					target = temp;
-					while (board[target]->downleft->downleft->right->type == 1 || board[target]->downleft->upright->right->type == 2){
-						if (board[target]->downleft->downleft->right->type == 1)
-						countLW++;
-						else if (board[target]->downleft->downleft->right->type == 2)
-						countLB++;
-						target = target + 1;
-					}
-				
-					target = temp;
-					while (board[target]->downleft->downleft->left->type == 1 || board[target]->downleft->downleft->left->type == 2){
-						if (board[target]->downleft->downleft->left->type == 1)
-						countLW++;
-						else if (board[target]->downleft->downleft->left->type == 2)
-						countLB++;
-						target = target - 1;
-					}
-
-					// Do upright side
-					target = temp;
-					if (board[target]->upright->type == 1)
-						countRW++;
-					else if (board[target]->upright->type == 2)
-						countRB++;
-					
-					target = temp;
-					while (board[target]->upright->right->type == 1 || board[target]->upright->right->type == 2){
-						if (board[target]->upright->right->type == 1)
-						countRW++;
-						else if (board[target]->upright->right->type == 2)
-						countRB++;
-						target = target + 1;
-					}
-					target = temp;
-					if (board[target]->right->type == 1)
-						countRW++;
-					else if (board[target]->right->type == 2)
-						countRB++;
-					
-					target = temp;
-					while (board[target]->right->right->type == 1 || board[target]->right->right->type == 2){
-						if (board[target]->right->right->type == 1)
-						countRW++;
-						else if (board[target]->right->right->type == 2)
-						countRB++;
-						target = target + 1;
-					}
-					//dddd
-					target = temp;
-					if (board[target]->upright->upright->type == 1)
-						countRW++;
-					else if (board[target]->upright->upright->type == 2)
-						countRB++;
-					
-					target = temp;
-					while (board[target]->upright->upright->right->type == 1 || board[target]->upright->upright->right->type == 2){
-						if (board[target]->upright->upright->right->type == 1)
-						countRW++;
-						else if (board[target]->upright->upright->right->type == 2)
-						countRB++;
-						target = target + 1;
-					}
-				
-					target = temp;
-					while (board[target]->upright->upright->left->type == 1 || board[target]->upright->upright->left->type == 2){
-						if (board[target]->upright->upright->left->type == 1)
-						countRW++;
-						else if (board[target]->upright->upright->left->type == 2)
-						countRB++;
-						target = target + 1;
-					}
-				}
-
-		if ((countRB+countRW) < (countLW+countLB)){
-			//pl1spares = countRW;
-			//pl2spares = countRB;
-
-			bankBlack = bankBlack + countRB;
-			bankWhite = bankWhite + countRW;
-		}
-		else if ((countRB+countRW) > (countLW+countLB)){
-			//pl1spares = countRW;
-			//pl2spares = countRB;
-
-			bankBlack = bankBlack + countLB;
-			bankWhite = bankWhite + countLW;
-		}
-		/*if (countRW+countRB < countLW+countLW){
-		pl1spares = countRW;
-		pl2spares = countRB;
-
-		//pl1spares and pl2spares
-		}*/
-//		}
-		
-						// Find largest connected component
-	/*			if ((board[20*j+i]->upleft->type != inVise) && (board[20*j+i]->downright->type != inVise)){
-					countL++;
-					countR++;
-
-				}
-				else if ((board[20*j+i]->left->type != inVise) && (board[20*j+i]->right->type != inVise)){
-					countL++;
-					countR++;
-					if ((board[20*j+i]->left->upright->type == 1 || board[20*j+i]->left->upright->type == 1)){
-						countL++;
-						if ((board[20*j+i]->left->upright->right->type == 1 || board[20*j+i]->left->upright->right->type == 1)){
-							countL++;
-						if ((board[20*j+i]->left->upright->upright->type == 1 || board[20*j+i]->left->upright->upright->type == 1)){
-							countL++;
-						if ((board[20*j+i]->left->upright->upleft->type == 1 || board[20*j+i]->left->upright->upleft->type == 1)){
-							countL++;
-					}
-					if ((board[20*j+i]->left->upleft->type == 1 || board[20*j+i]->left->upleft->type == 1)){
-						countL++;
-						if ((board[20*j+i]->left->upleft->upleft->type == 1 || board[20*j+i]->left->upleft->upleft->type == 1)){
-							countL++;
-						if ((board[20*j+i]->left->upleft->left->type == 1 || board[20*j+i]->left->upleft->left->type == 1)){
-							countL++;
-					}
-					if ((board[20*j+i]->left->left->type == 1 || board[20*j+i]->left->left->type == 1)){
-						countL++;
-						if ((board[20*j+i]->left->left->left->type == 1 || board[20*j+i]->left->left->left->type == 1)){
-							countL++;
-						if ((board[20*j+i]->left->left->downleft->type == 1 || board[20*j+i]->left->left->downleft->type == 1)){
-							countL++;
-					}
-					if ((board[20*j+i]->left->downleft->type == 1 || board[20*j+i]->left->downleft->type == 1)){
-						countL++;
-						if ((board[20*j+i]->left->downleft->downleft->type == 1 || board[20*j+i]->left->downleft->downleft->type == 1)){
-							countL++;
-						if ((board[20*j+i]->left->downleft->downright->type == 1 || board[20*j+i]->left->downleft->downright->type == 1)){
-							countL++;
-					}
-					if ((board[20*j+i]->left->downright->type == 1 || board[20*j+i]->left->downright->type == 1)){
-						countL++;
-						if ((board[20*j+i]->left->downright->downright->type == 1 || board[20*j+i]->left->downright->downright->type == 1)){
-							countL++;
-						if ((board[20*j+i]->left->downright->right->type == 1 || board[20*j+i]->left->downright->right->type == 1)){
-							countL++;
-					}
-						//do right
-
-				}
-				else if ((board[20*j+i]->downleft->type != inVise) && (board[20*j+i]->upright->type != inVise)){
-					countL++;
-					countR++;
-				}
-			}*/
-		
-		
-	
+		// compare clusters
 	
 
-	// Find largest connected component
-    //TODO
-	//	}
-		
+	}		
 }
 
 
@@ -1500,7 +906,7 @@ void testApp::draw(){
 void putPieceAt(int x, int y, int whichPiece){
     //TODO
         int target = 20*y+x;
-        board[target]->type=whichPiece;
+        board[target]->type = whichPiece;
 }
 
 
