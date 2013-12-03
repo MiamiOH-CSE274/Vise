@@ -297,79 +297,34 @@ bool inVise(int x, int y){
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
 */ 
 std::pair <int,int> countCluster(hexSpace* target){
-	//std::pair <int,int> cluster (0,0);
+	
 //	std::cout << target->checked << " " << target->type << std::endl;
 	if (target->checked == 1){
 		target->checked = 1;
 		std::pair <int,int> cluster (0,0);
-	//	std::cout << cluster.first << " " << cluster.second << std::endl;
 		return cluster;
-	}
-	else if (target->type == 1 && target->checked == 0){
-		std::pair <int,int> cluster (1,0);
-	//	std::cout << cluster.first << " " << cluster.second << std::endl;
-		cluster.first = cluster.first + countCluster(target->upleft).first 
-			+ countCluster(target->left).first 
-			+ countCluster(target->downleft).first 
-			+ countCluster(target->downright).first
-			+ countCluster(target->right).first
-			+ countCluster(target->upright).first;
-			return cluster;
-	}
-	else if (target->type == 2 && target->checked == 0){
-		std::pair <int,int> cluster (0,1);
-//		std::cout << cluster.first << " " << cluster.second << std::endl;
-		cluster.second = cluster.second + countCluster(target->upleft).second 
-			+ countCluster(target->left).second 
-			+ countCluster(target->downleft).second 
-			+ countCluster(target->downright).second
-			+ countCluster(target->right).second
-			+ countCluster(target->upright).second;
-			return cluster;
-	}
+	}	
 	else if ((target->type == 0)){
 
 		target->checked = 1;
 		std::pair <int,int> cluster (0,0);
-//		std::cout << cluster.first << " " << cluster.second << std::endl;
-		//return std::pair <int,int> cluster (0,0);
-		return cluster;
-	}	
-	/*else if (target->checked == 0) {
-		target->checked = 1;	
-		if (target->type == 1) {
-			std::pair <int,int> cluster (1,0);
-			
-			cluster.first = cluster.first + countCluster(target-21).first 
-			+ countCluster(target-1).first 
-			+ countCluster(target+19).first 
-			+ countCluster(target+20).first
-			+ countCluster(target+1).first
-			+ countCluster(target-20).first;
-		}
-		else if (target->type == 2) {
-	//		cluster.first = 0;
-			std::pair <int,int> cluster (0,0);
-			//cluster.second = 1;
-			cluster.second = cluster.second
-			+ countCluster(target-21).second 
-			+ countCluster(target-1).second
-			+ countCluster(target+19).second 
-			+ countCluster(target+20).second
-			+ countCluster(target+1).second
-			+ countCluster(target-20).second;
-		}
-		else {
-			std::pair <int,int> cluster (0,0);
-			cluster.first = 0;
-			cluster.second = 0;
-			return cluster;
-		}
-		*/
 
-		//std::pair<int,int> addOn;
+		return cluster;
+	}
+	else if (target->checked == 0){
+		std::pair <int,int> cluster (0,0);	
+		target->checked = 1;
+		if (target->type == 1){
+			cluster.first = 1;
+			cluster.second = 0;
+		}
+		else if (target->type == 2){
+			cluster.first = 0;
+			cluster.second = 1;
+		}
+		std::pair<int,int> addOn (0,0);
 		
-		/*addOn=countCluster(target->upleft);
+		addOn=countCluster(target->upleft);
 		cluster.first = cluster.first + addOn.first;
 		cluster.second = cluster.second + addOn.second;
 		
@@ -392,11 +347,11 @@ std::pair <int,int> countCluster(hexSpace* target){
 		addOn=countCluster(target->upright);
 		cluster.first = cluster.first + addOn.first;
 		cluster.second = cluster.second + addOn.second;
-		*/
+		
+			return cluster;
+	}
 	else {
-		//std::cout << cluster.first << " " << cluster.second << std::endl;
 		std::pair <int,int> cluster (0,0);
-		//std::cout << cluster.first << " " << cluster.second << std::endl;
 		return cluster;
 	}
 	
@@ -464,7 +419,7 @@ void doVise(){
 			}
 		}
 		if (secStart != -1) {
-		//	secCluster = countCluster(board[secStart]);
+			secCluster = countCluster(board[secStart]);
 		}
 
 		// compare clusters
