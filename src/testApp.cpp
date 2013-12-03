@@ -298,14 +298,16 @@ bool inVise(int x, int y){
 */ 
 std::pair <int,int> countCluster(hexSpace* target){
 	//std::pair <int,int> cluster (0,0);
-
+//	std::cout << target->checked << " " << target->type << std::endl;
 	if (target->checked == 1){
 		target->checked = 1;
 		std::pair <int,int> cluster (0,0);
+	//	std::cout << cluster.first << " " << cluster.second << std::endl;
 		return cluster;
 	}
 	else if (target->type == 1 && target->checked == 0){
 		std::pair <int,int> cluster (1,0);
+	//	std::cout << cluster.first << " " << cluster.second << std::endl;
 		cluster.first = cluster.first + countCluster(target->upleft).first 
 			+ countCluster(target->left).first 
 			+ countCluster(target->downleft).first 
@@ -316,6 +318,7 @@ std::pair <int,int> countCluster(hexSpace* target){
 	}
 	else if (target->type == 2 && target->checked == 0){
 		std::pair <int,int> cluster (0,1);
+//		std::cout << cluster.first << " " << cluster.second << std::endl;
 		cluster.second = cluster.second + countCluster(target->upleft).second 
 			+ countCluster(target->left).second 
 			+ countCluster(target->downleft).second 
@@ -325,8 +328,10 @@ std::pair <int,int> countCluster(hexSpace* target){
 			return cluster;
 	}
 	else if ((target->type == 0)){
+
 		target->checked = 1;
 		std::pair <int,int> cluster (0,0);
+//		std::cout << cluster.first << " " << cluster.second << std::endl;
 		//return std::pair <int,int> cluster (0,0);
 		return cluster;
 	}	
@@ -389,7 +394,9 @@ std::pair <int,int> countCluster(hexSpace* target){
 		cluster.second = cluster.second + addOn.second;
 		*/
 	else {
+		//std::cout << cluster.first << " " << cluster.second << std::endl;
 		std::pair <int,int> cluster (0,0);
+		//std::cout << cluster.first << " " << cluster.second << std::endl;
 		return cluster;
 	}
 	
@@ -830,6 +837,7 @@ bool canPlaceOldPiece(int x, int y){
 int pieceAt(int x,int y){
     //TODO
         int target = 20*y+x;
+		std::cout << board[target]->type << std::endl;
         return board[target]->type;
 }
 
