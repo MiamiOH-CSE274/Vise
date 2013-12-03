@@ -52,6 +52,7 @@ public:
     int getP2Spares();
     bool getPlayerOneTurn();
     void setPlayerOneTurn(bool turn);
+    bool playerStillInGame(int player);
 
 
 private:

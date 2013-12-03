@@ -438,6 +438,81 @@ bool GameBoard::inVise(int x, int y) {
     return isInVise;
 }
 
+
+bool GameBoard::playerStillInGame(int player){
+    bool shouldBreak = false;
+    int piecesOnBoard = 0;
+    //Checking for the player having a piece on the board
+    for (int x = 0; x < 20; x++) {
+		for (int y = 0; y < 20; y++) {
+			if (getPiece(x,y) != -1){
+                GameNode* check = &board[x][y];
+                int num=0;
+                int& zero = num;
+                piecesOnBoard = pieceCount(check, new int[180], zero, player);
+				if(piecesOnBoard==0)
+                    return false;
+                shouldBreak = true;
+            }
+		if (shouldBreak)
+            break;
+        }
+        if (shouldBreak)
+            break;
+	}
+    //Checking that player has more than 1 piece available in store and
+    //on board
+    if (player==1) {
+        if (piecesOnBoard + p1Spares ==1) {
+            return false;
+        }
+    }
+    else if(piecesOnBoard + p2Spares==1) return false;
+    
+    //Now, check that the person has a move on their turn
+    bool canMoveOldPiece, canPlaceNewPiece;
+    if (player==1 && playerOneTurn) {
+        for (int x = 0; x < 20; x++) {
+            for (int y = 0; y < 20; y++) {
+                if (canMove(x, y)) {
+                    canPlaceNewPiece = true;
+                }
+                if (getPiece(x, y)==player) {
+                    if (canMoveOld(x, y)) {
+                        canMoveOldPiece = true;
+                    }
+                }
+                
+            }
+        }
+    }
+    
+    else if (player==1 && !playerOneTurn){
+        return true;
+    }
+    
+    if (player==2 && !playerOneTurn) {
+        for (int x = 0; x < 20; x++) {
+            for (int y = 0; y < 20; y++) {
+                if (canMove(x, y)) {
+                    canPlaceNewPiece = true;
+                }
+                if (getPiece(x, y)==player) {
+                    if (canMoveOld(x, y)) {
+                        canMoveOldPiece = true;
+                    }
+                }
+                
+            }
+        }
+    }
+    else if (player==2 && playerOneTurn){
+        return true;
+    }
+    
+    return canMoveOldPiece||canPlaceNewPiece;
+}
+
 /*
  Adds piece. Herp derp.
  */
@@ -889,23 +964,6 @@ bool GameBoard::wouldBeCont(int x, int y) {
 
 //Determines if you can move old pieces to a certain place. X,Y is the corrdinates of a hex, and this is called on every hex on the board.
 bool GameBoard::canMoveOld(int x, int y){
-	GameNode* moving = &board[x][y];
-//	if (!isContigious()&&!wouldBeCont(x, y))
-//		return false;
-//    if (playerOneTurn) {
-////		if ((isAdjTo(x,y,oldPieceToMoveX,oldPieceToMoveY) && isPlayerOneConnected(x,y)))
-//        if (moveOld(x, y))
-//			return true;
-//		else
-//			return false;
-//	} else {
-//		if(isAdjTo(x,y,oldPieceToMoveX,oldPieceToMoveY))
-//			return true;
-//		else
-//			return false;
-//	}
-    
-    //return ((isAdjTo(x, y, oldPieceToMoveX, oldPieceToMoveY)&&(isPlayerOneConnected(x, y)&&isPlayerTwoConnected(x, y)))||(jump(x, y)&&(isPlayerOneConnected(x, y)&&isPlayerTwoConnected(x, y))));
     return wouldBeCont(x, y) && (jump(x, y)||isAdjTo(x, y, oldPieceToMoveX, oldPieceToMoveY));
     
 }
