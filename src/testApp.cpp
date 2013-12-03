@@ -432,8 +432,13 @@ void doVise(){
 
 
 	if(!toDelete.empty()){
-		for(int i = 0; i != toDelete.size(); i++)
+		for(int i = 0; i != toDelete.size(); i++){
+			if(board[toDelete[i]]->type = 1)
+				numWhite--;
+			else
+				numBlack--;
 			board[toDelete[i]]->type=0;
+		}
 		toDelete.clear();
 	/*	for (int i = 0; i < 400; i++){
 			board[i]->checked = 0;
@@ -616,7 +621,7 @@ bool isJumpSpace(int x, int y){
 bool isConnected(){
     //TODO -- not working..
 
-	int totalCount = 0;
+	/*int totalCount = 0;
 	int countTogether = 0;
 
 	for (int i = 0; i < 400; i++){
@@ -624,42 +629,31 @@ bool isConnected(){
 			numWhite++;
 		else if(board[i]->type == 2)
 			numBlack++;
-	}
-
-	int root = 0;
-	for (int j = 0; j < 400; j++){
-		root = j;
-		if (board[j]->type == 1 || board[j]->type == 2){
-			countTogether++;
-			while (board[j]->right->type == 1 || board[j]->right->type == 2){
-				countTogether++;
-				j++;
-			}
-			j = root;
-			while (board[j]->type == 1 || board[j]->type == 2) {
-				while ((board[j]->downleft->type == 1 || board[j]->downleft->type == 2)){
-					countTogether++;
-			//while (board[j]->downleft->right->type == 1 || board[j]->downleft->right->type == 2){
-				//countTogether++;
-					j++;
-				}
-				j = root + 1;
-				while (board[j]->downleft->type == 1 || board[j]->downleft->type == 2){
-					countTogether++;
-					j--;
-				}
-				j = root;
-				j = j+19;
-
-				}
+	}*/
+	int start;
+	for(int i = 0; i < 400; i++)
+		if(board[i]->type != 0){
+			start = i;
+			break
 		}
-	}
-	if ((numBlack+numWhite) == countTogether)
-		return true;
-    
-        return false;
+		pair<int,int> pairPieces = countCluster(board[i]);
+		int numPieces = pairPieces.first + pairPieces.second;
+		if(numPieces == numWhite - pl1spares + numBlack - pl2spares)
+			return true;
+		return false;
 }
 
+bool stillConnected(int x, int y){
+	bool stillConnected;
+	int target = 20*y+x;
+	int currentSpot = 20*selectedPieceY+selectedPieceX;
+	board[target]->type = whoseTurn;
+	board[currentSpot]->type = 0;
+	stillConnected = isConnected();
+	board[target]->type = 0;
+	board[currentSpot]->type = whoseTurn;
+	return stillConnected;
+}
 
 /* This is used when the player is moving one of her pieces that is
  * already on the board to a new space.
