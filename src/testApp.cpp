@@ -24,6 +24,7 @@ bool canPlaceOldPiece(int x, int y); //FIx
 int pieceAt(int x,int y);
 void putPieceAt(int x, int y, int whichPiece);
 pair <int,int> countCluster(hexSpace* target);
+void removeCluster(hexSpace* target);
 
 
 //Drawing functions
@@ -294,6 +295,35 @@ bool inVise(int x, int y){
  * 3c) If no such component exists, then select the largest connected component.
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
 */ 
+void removeCluster(hexSpace* target){
+	if (target->checked == 1){
+		target->checked = 1; 
+	}	
+	else if ((target->type == 0)){
+		target->checked = 1; 
+	}
+	else if (target->checked == 0){
+		
+		target->checked = 1;
+			
+		removeCluster(target->upleft);
+		removeCluster(target->left);
+		removeCluster(target->downleft);
+		removeCluster(target->downright);
+		removeCluster(target->right);
+		removeCluster(target->upright);
+	}
+	if (target->type == 1){
+		pl1spares++;
+	}
+	else if (target->type == 2){
+		pl2spares++;
+	}
+
+	target->type = 0; 
+	
+
+}
 std::pair <int,int> countCluster(hexSpace* target){
 	
 //	std::cout << target->checked << " " << target->type << std::endl;
@@ -362,6 +392,7 @@ void doVise(){
 	int inV = 0;
 	int target = 0;
 	int temp = 0;
+	// intialize an array to hold the pieces that are in vise
 	vector<int> toDelete;
 	toDelete.resize(0);
 
@@ -372,7 +403,7 @@ void doVise(){
 	int typeOFVise = 0;
 	 int visePos = 0;
 
-	// Find all pieces in the vise
+	// Find all pieces in the vise and add to toDelete
 	for (int i = 0; i < 20; i++){
 		for (int j = 0; j < 20; j++){
 			if (inVise(i,j)){
@@ -384,6 +415,9 @@ void doVise(){
 	}
 
 
+// if toDelete contains pieces then delete the pieces
+// and check to see if the board is still connected
+
 	if(!toDelete.empty()){
 		for(int i = 0; i != toDelete.size(); i++){
 			if(board[toDelete[i]]->type = 1)
@@ -393,127 +427,147 @@ void doVise(){
 			board[toDelete[i]]->type=0;
 		}
 		toDelete.clear();
+
+		// Set all pieces checked to 0
 		for (int i = 0; i < 400; i++){
 			board[i]->checked = 0;
 		}
 
-		// Recursive time!
-		pair <int,int> firstCluster;
-		pair <int,int> secCluster;
-
-		int firstStart = -1;
-		int secStart = -1;
+		// While the board is not connected check for the 
+		// clusters and put the pieces in the clusters back
+		// in the bank based on the rules for doVise()
+	//	while(!isConnected()){
+		
+			// Recursive time!
+			pair <int,int> firstCluster;
+			pair <int,int> secCluster;
+			
+			int firstStart = -1;
+			int secStart = -1;
 	
-		for (int i = 0; i < 400; i++){
-			if (board[i]->type != 0 && board[i]->checked != 1){
-				firstStart = i;
-				break;
+			// Find the first piece on the board going from left
+			// to right and up to down
+			for (int i = 0; i < 400; i++){
+				if (board[i]->type != 0 && board[i]->checked != 1){
+					firstStart = i;
+					break;
+				}	
 			}
-		}
 			
-		//std::cout << firstStart << std::endl;
-		firstCluster = countCluster(board[firstStart]);
-		std::cout << firstCluster.first << " " << firstCluster.second << std::endl;
-
-		for (int i = 0; i < 400; i++){
-			if (board[i]->type != 0 && board[i]->checked != 1){
-				secStart = i;
-				break;
+			// Run a recursive countCluster method to determine
+			// how many white and black pieces are in the 
+			// first connected cluster
+			firstCluster = countCluster(board[firstStart]);
+		
+			// Since the board is not connected, find the first piece
+			// on the board that has not been checked yet
+			// This will be the starting point for the second Cluster
+			for (int i = 0; i < 400; i++){
+				if (board[i]->type != 0 && board[i]->checked != 1){
+					secStart = i;
+					break;
+				}
 			}
-		}
-		std::cout << "HERE" << std::endl;
+		
+			// if secStart is not -1, a second cluster has been found
+			// Run the recursive countCluster method on this second Cluster
+			// to find the number of white and black pieces in this Cluster			
+			if (secStart != -1) {
+				secCluster = countCluster(board[secStart]);
+			}
 
-		if (secStart != -1) {
-			secCluster = countCluster(board[secStart]);
-		}
+			// Set all the pieces checks back to 0
+			for (int i = 0; i < 400; i++){
+				board[i]->checked = 0;
+			}
 
-		std::cout << secCluster.first << " " << secCluster.second << std::endl;
-
-		for (int i = 0; i < 400; i++){
-			board[i]->checked = 0;
-		}
-
-		int lastTurn = 3 - whoseTurn;
-		// compare clusters
-		int firstClusterB = firstCluster.second;
-		int firstClusterW = firstCluster.first;
-		int secClusterB = secCluster.second;
-		int secClusterW = secCluster.first;
-
-
-if ((firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW > 0)){
-		if (((firstClusterB + firstClusterW) > (secClusterB + secClusterW)) && (firstClusterB > 0 && firstClusterW > 0)){
-			// First cluster is bigger and contains at least 1 white and 1 black.
-			std::cout << "FIRSTCLUSTERBIGGER" << std::endl;
-		}
-		else if (((firstClusterB + firstClusterW) < (secClusterB + secClusterW)) && (secClusterB > 0 && secClusterW > 0)){
-			// Second cluster is bigger and contains at least 1 white and 1 black
-			std::cout << "SECCLUSTER" << std::endl;
-		}
-		else if (((firstClusterB + firstClusterW) == (secClusterB + secClusterW)) && (firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW > 0)){
-			// TIE
-			// pick one with the most pieces from the recent player
+			// Determine who played the last piece
+			int lastTurn = 3 - whoseTurn;
 			
-			if (lastTurn == 1){
-				if (firstClusterW > secClusterW){
-					//First cluster has more whites
+			// Save the cluster values in these variable
+			int firstClusterW = firstCluster.first;
+			int firstClusterB = firstCluster.second;
+			int secClusterW = secCluster.first;
+			int secClusterB = secCluster.second;
+
+			// Compare Clusters
+			if ((firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW > 0)){
+				if (((firstClusterB + firstClusterW) > (secClusterB + secClusterW))){
+					// First cluster is bigger and contains at least 1 white and 1 black, remove second
+					removeCluster(board[secStart]);
 				}
-				else if ((firstClusterW < secClusterW)){
-					// Second cluster has more whites
+				else if (((firstClusterB + firstClusterW) < (secClusterB + secClusterW))){
+					// Second cluster is bigger and contains at least 1 white and 1 black, remove first
+					removeCluster(board[firstStart]);
+				}
+				else if (((firstClusterB + firstClusterW) == (secClusterB + secClusterW)) && (firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW > 0)){
+					// TIE
+					// pick one with the most pieces from the recent player
+					if (lastTurn == 1){
+						if (firstClusterW > secClusterW){
+							//First cluster has more whites, remove second
+							removeCluster(board[secStart]);
+						}
+						else if ((firstClusterW < secClusterW)){
+							// Second cluster has more whites, remove first
+							removeCluster(board[firstStart]);
+						}
+					}
+					else if (lastTurn == 2){
+						if (firstClusterB > secClusterB){
+							//First cluster has more blacks, remove second
+							removeCluster(board[secStart]);
+						}
+						else if ((firstClusterB < secClusterB)){
+							// Second cluster has more blacks, remove first
+							removeCluster(board[firstStart]);
+						}
+					}
 				}
 			}
-			else if (lastTurn == 2){
-				if (firstClusterB > secClusterB){
-					//First cluster has more blacks
+			else if (firstClusterW == 0 || firstClusterB == 0 || secClusterW == 0 || secClusterB == 0){
+				if (lastTurn == 1){
+					if (firstClusterW > secClusterW){
+						//First cluster has more whites, remove second
+						removeCluster(board[secStart]);
+					}
+					else if ((firstClusterW < secClusterW)){
+						// Second cluster has more whites, remove first
+						removeCluster(board[firstStart]);
+					}
 				}
-				else if ((firstClusterB < secClusterB)){
-					// Second cluster has more blacks
+				else if (lastTurn == 2){
+					if (firstClusterB > secClusterB){
+						//First cluster has more blacks, remove second
+						removeCluster(board[secStart]);
+					}
+					else if ((firstClusterB < secClusterB)){
+						// Second cluster has more blacks, remove first
+						removeCluster(board[firstStart]);
+					}
 				}
-			}
-
-			std::cout << "NEIGHT" << std::endl;
-		}
-}
-else if (firstClusterW == 0 || firstClusterB == 0 || secClusterW == 0 || secClusterB == 0){
-	if (lastTurn == 1){
-				if (firstClusterW > secClusterW){
-					//First cluster has more whites
-				}
-				else if ((firstClusterW < secClusterW)){
-					// Second cluster has more whites
-				}
-			}
-		else if (lastTurn == 2){
-				if (firstClusterB > secClusterB){
-					//First cluster has more blacks
-				}
-				else if ((firstClusterB < secClusterB)){
-					// Second cluster has more blacks
+				else {
+					// Tie pick to remove second cluster
+					removeCluster(board[secStart]);
 				}
 			}
-		else {
-			// Tie pick arbitrailly - first cluster??
-		}
+			else {
+				if ((firstClusterW + firstClusterB) > (secClusterW + secClusterB)){
+					// pick firstCluster and remove second cluster
+					removeCluster(board[secStart]);
+				}			
+				else if ((firstClusterW + firstClusterB) < (secClusterW + secClusterB)){
+					// pick secCluster and remove first cluster
+					removeCluster(board[firstStart]);
+				}
+				else{
+					// Tie pick to remove second cluster
+					removeCluster(board[secStart]);
+				}
+			}
+		}		
+//	}
 }
-else {
-	if ((firstClusterW + firstClusterB) > (secClusterW + secClusterB)){
-		// pick firstCluster
-	}
-	else if ((firstClusterW + firstClusterB) < (secClusterW + secClusterB)){
-		// pick secCluster
-	}
-	else{
-		// Tie pick arbitrailly - firstCluster??
-	}
-}
-
-
-	}		
-	for (int i = 0; i < 400; i++){
-			board[i]->checked = 0;
-	}
-}
-
 
 //--------------------------------------------------------------
 void testApp::update(){
