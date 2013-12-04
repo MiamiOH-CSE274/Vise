@@ -98,6 +98,9 @@ float hexH = 1.5*sideLen;
 GameBoard myBoard;
 ofColor player1, player2, player1Turn, player2Turn;
 ofColor start, end2, customBlack;
+ofSoundPlayer tada, p1Wins, p2Wins;
+ofSoundPlayer music2;
+bool checkedWinDetection = true;
 
 bool colorDirection;
 
@@ -120,6 +123,11 @@ void testApp::setup(){
     music2.loadSound("ViseMusic.mp3");
     music2.setLoop(true);
     music2.play();
+    
+    tada.loadSound("TaDa.wav");
+    
+    p1Wins.loadSound("p1Wins.mp3");
+    p2Wins.loadSound("p2Wins.mp3");
     
     //TODO: Initialize your "board" data structure here
         //GameBoard myBoard;
@@ -167,11 +175,29 @@ void doVise(){
      
      */
     if (viseFound) {
+        tada.play();
         myBoard.removeVises();
         myBoard.returnDisconnectedPieces();
         myBoard.resetVise();
         pl1spares = myBoard.getP1Spares();
         pl2spares = myBoard.getP2Spares();
+
+    }
+    if (currentAction==0 && !checkedWinDetection){
+        bool p1StillInGame = myBoard.playerStillInGame(1);
+        bool p2StillInGame = myBoard.playerStillInGame(2);
+        
+        if (!p1StillInGame) {
+            music2.stop();
+            p2Wins.play();
+        }
+        
+        if (!p2StillInGame) {
+            music2.stop();
+            p1Wins.play();
+        }
+        
+        checkedWinDetection = true;
     }
 
 }
@@ -458,6 +484,7 @@ void testApp::mousePressed(int x, int y, int button){
                     currentAction = 0;
                     putPieceAt(whichCol,whichRow,whoseTurn);
                     whoseTurn = 3 - whoseTurn;
+                    checkedWinDetection = false;
                     if (whoseTurn==2){
                         myBoard.setPlayerOneTurn(false);
                     }
@@ -487,6 +514,7 @@ void testApp::mousePressed(int x, int y, int button){
                     currentAction = 0;
                     putPieceAt(whichCol,whichRow,whoseTurn);
                     whoseTurn = 3 - whoseTurn;
+                    checkedWinDetection = false;
                     if (whoseTurn==2){
                         myBoard.setPlayerOneTurn(false);
                     }
