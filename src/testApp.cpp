@@ -1,6 +1,7 @@
+#include "GameEvent.h"
 #include "testApp.h"
-
 #include <set>
+#include <cmath>
 
 //////////////////
 /* Function declarations
@@ -10,16 +11,16 @@
  * each function does is down in the body of the code.
  */
 //Functions you might want to use, game logic
-bool inVise(int x, int y);
+bool inVise(int x);
 void doVise();
-void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
-bool canPlaceNewPiece(int x, int y);
-bool isNeighboringSpace(int x, int y);
-bool isJumpSpace(int x, int y);
+void checkNbrs(int x, int& okayNbrs, int& badNbrs);
+bool canPlaceNewPiece(int x);
+bool isNeighboringSpace(int x);
+bool isJumpSpace(int x);
 bool isConnected();
-bool canPlaceOldPiece(int x, int y);
-int pieceAt(int x,int y);
-void putPieceAt(int x, int y, int whichPiece);
+bool canPlaceOldPiece(int x);
+int pieceAt(int x);
+void putPieceAt(int x, int whichPiece);
 
 //Drawing functions
 void drawHex(float x, float y, float sideLen);
@@ -93,8 +94,8 @@ float hexW = sideLen*2.0*0.86602540378444;
 float hexH = 1.5*sideLen;
 
 
-
-
+//gameEvent->gameBoard variable
+GameEvent* gameEvent;
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -103,18 +104,31 @@ void testApp::setup(){
     ofSetFrameRate(60);
     
     //TODO: Initialize your "board" data structure here
+	gameEvent = new GameEvent();
+    //TODO: Put 1 piece for each player in the middle of the board, side by side
+    putPieceAt(209, 1);
+	putPieceAt(210, 2);
 
-    //TODO: Put 1 piece for each player in the middle of hte board, side by side
-    
     startTime = ofGetElapsedTimef();
 }
 
 //Return true iff there is a piece in board space (x,y), and that piece
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
-bool inVise(int x, int y){
-    //TODO
-    return false;
+bool inVise(int x){
+    if(gameEvent->gameBoard[x]->player == 0)
+		return false;
+	else if(gameEvent->gameBoard[x]->player == 1) {
+		if((gameEvent->gameBoard[x]->topRight->player == 2  && gameEvent->gameBoard[x]->bottomLeft->player == 2) || (gameEvent->gameBoard[x]->topLeft->player == 2 && gameEvent->gameBoard[x]->bottomRight->player == 2) || (gameEvent->gameBoard[x]->left->player == 2 && gameEvent->gameBoard[x]->right->player == 2))
+			return true;
+		return false;
+	}
+	else if(gameEvent->gameBoard[x]->player == 2) {
+		if((gameEvent->gameBoard[x]->topRight->player == 1  && gameEvent->gameBoard[x]->bottomLeft->player == 1) || (gameEvent->gameBoard[x]->topLeft->player == 1 && gameEvent->gameBoard[x]->bottomRight->player == 1) || (gameEvent->gameBoard[x]->left->player == 1 && gameEvent->gameBoard[x]->right->player == 1))
+			return true;
+		return false;
+	}
+	return false;
 }
 
 /*
@@ -135,7 +149,28 @@ bool inVise(int x, int y){
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
  */
 void doVise(){
-    //TODO
+    //Identify All pieces in vise using inVise()
+
+	//for (int i = 0; i < 399; i++) {
+	//	if (inVise(i))
+	//		if (inVise(gameEvent->gameBoard[i]->topRight->index))
+	//			gameEvent->gameBoard[i]->topRight->player = 0;
+	//		if (inVise(gameEvent->gameBoard [i]->topLeft->index))
+	//			gameEvent->gameBoard[i]->topLeft->player = 0;
+	//		if (inVise(gameEvent->gameBoard [i]->right->index))
+	//			gameEvent->gameBoard[i]->right->player = 0;
+	//		if (inVise(gameEvent->gameBoard [i]->left->index))
+	//			gameEvent->gameBoard[i]->left->player = 0;
+	//		if (inVise(gameEvent->gameBoard [i]->bottomRight->index))
+	//			gameEvent->gameBoard[i]->bottomRight->player = 0;
+	//		if (inVise(gameEvent->gameBoard [i]->bottomLeft->index))
+	//			gameEvent->gameBoard[i]->bottomLeft->player = 0;
+	//		gameEvent->gameBoard[i]->player = 0;
+	//}
+
+	//Find the largest connected component and place pieces back into storehouse
+
+	//
 }
 
 //--------------------------------------------------------------
@@ -176,36 +211,89 @@ void drawHex(float x, float y, float sideLen){
  * in determining if the current player can play a new piece in the hex
  * under consideration.
  */
-void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
-    //TODO
+void checkNbrs(int x, int& okayNbrs, int& badNbrs){
+	//check good neighbors
+	if (gameEvent->gameBoard[x]->topRight->player == whoseTurn)
+		okayNbrs += 1;
+	if (gameEvent->gameBoard[x]->topLeft->player == whoseTurn)
+		okayNbrs += 1;
+	if (gameEvent->gameBoard[x]->right->player == whoseTurn)
+		okayNbrs += 1;
+	if (gameEvent->gameBoard[x]->left->player == whoseTurn)
+		okayNbrs += 1;
+	if (gameEvent->gameBoard[x]->bottomRight->player == whoseTurn)
+		okayNbrs += 1;
+	if (gameEvent->gameBoard[x]->bottomLeft->player == whoseTurn)
+		okayNbrs += 1;
+
+	//check bad neighbors
+	if ((gameEvent->gameBoard[x]->topRight->player != whoseTurn) && (gameEvent->gameBoard[x]->topRight->player != 0))
+		badNbrs += 1;
+	if ((gameEvent->gameBoard[x]->topLeft->player != whoseTurn) && (gameEvent->gameBoard[x]->topLeft->player != 0))
+		badNbrs += 1;
+	if ((gameEvent->gameBoard[x]->right->player != whoseTurn) && (gameEvent->gameBoard[x]->right->player != 0))
+		badNbrs += 1;
+	if ((gameEvent->gameBoard[x]->left->player != whoseTurn) && (gameEvent->gameBoard[x]->left->player != 0))
+		badNbrs += 1;
+	if ((gameEvent->gameBoard[x]->bottomRight->player != whoseTurn) && (gameEvent->gameBoard[x]->bottomRight->player != 0))
+		badNbrs += 1;
+	if ((gameEvent->gameBoard[x]->bottomLeft->player != whoseTurn) && (gameEvent->gameBoard[x]->bottomLeft->player != 0))
+		badNbrs += 1;
 }
 
 /*
- * Return true iff the current player can place a new piece
+ * Return true if the current player can place a new piece
  * in row y, column x, without violating the rules. That is,
  * at least 1 neighboring hex must contain one of the player's
  * pieces, and none of the neighboring hex can contain an
  * opposing player's piece
  */
-bool canPlaceNewPiece(int x, int y){
+bool canPlaceNewPiece(int x){
     int okayNbrs=0;
     int badNbrs=0;
-    checkNbrs(x,y,okayNbrs,badNbrs);
+    checkNbrs(x,okayNbrs,badNbrs);
     return(okayNbrs > 0 && badNbrs == 0);
 }
 
-//Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
+//Return true if (x) is neighboring to (selectedPieceX)
 //These inputs are in board coordinates, not screen coordinates
-bool isNeighboringSpace(int x, int y){
-    //TODO
-    return false;
+bool isNeighboringSpace(int x){
+ 
+	if(gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->right->index == x) 
+		return true;
+	else if(gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->left->index == x) 
+		return true;
+	else if(gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->topLeft->index == x) 
+		return true;
+	else if(gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->topRight->index == x) 
+		return true;
+	else if(gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->bottomLeft->index == x) 
+		return true;
+	else if(gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->bottomRight->index == x) 
+		return true;
+	else
+		return false;
+		
 }
 
-//Return true iff (x,y) is one jump to (selectedPieceX,selectedPieceY)
+//Return true if (x) is one jump to (selectedPieceX)
 //These inputs are in board coordinates, not screen coordinates
-bool isJumpSpace(int x, int y){
-    //TODO
-    return false;
+bool isJumpSpace(int x){
+
+	if(gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->topRight->player != 0 && gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->topRight->topRight->index == x) 
+		return true;
+	else if(gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->topLeft->player != 0 && gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->topLeft->topLeft->index == x) 
+		return true;
+	else if(gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->right->player != 0 && gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->right->right->index == x) 
+		return true;
+	else if(gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->left->player != 0 && gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->left->left->index == x) 
+		return true;
+	else if(gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->bottomRight->player != 0 && gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->bottomRight->bottomRight->index == x) 
+		return true;
+	else if(gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->bottomLeft->player != 0 && gameEvent->gameBoard[(selectedPieceY*20) + selectedPieceX]->bottomLeft->bottomLeft->index == x) 
+		return true;
+	else
+		return false;
 }
 
 //Return true if and only if the board currently contains
@@ -216,8 +304,102 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(){
-    //TODO
-    return false;
+	//RETURN TRUE FOR DEMO
+	return true;
+	int* myArray = new int[10];
+	int count = 0;
+	int secondCount = 1; // Since you are starting at the first piece index later
+	// start the count at 1. 
+	int foundPiece = 0;
+	bool found = false;
+	bool connected = false;
+
+	// Count the total number of pieces
+	for (int i = 0; i < 400; i++) {
+		if (gameEvent->gameBoard[i]->player == 2 || gameEvent->gameBoard[i]->player == 1) {
+			count++;
+		}
+	}
+	// Not sure why count is only recording one number and not two. 
+	std::cout << "count: " << count << std::endl;
+	// Find the first piece on the board
+	for (int i = 0; i < 400; i++) {
+		if (gameEvent->gameBoard[i]->player == 2 || gameEvent->gameBoard[i]->player == 1) {
+			foundPiece = i;
+			found = true;
+			myArray[0] = foundPiece;
+			// Break once you find the first piece
+			break;
+		}
+	}
+	// Begin to test and see if the other pieces are connected to that first piece.
+	for (int j = foundPiece; j < 400; j++) {
+		// Set j to the foundPiece since there is no piece prior to it. 
+		if ((gameEvent->gameBoard[j]->right->player == 1) || (gameEvent->gameBoard[j]->right->player == 2)) {
+			for (int i = 0; i < 10; i++) {
+				if (gameEvent->gameBoard[j]->index != myArray[i]) {
+					// Testing to see if the index is already been accounted for if so don't count it again. 
+					connected = true;
+					myArray[secondCount] = gameEvent->gameBoard[j]->right->index;
+					secondCount = secondCount + 1;
+				}
+			}
+		}
+		else if ((gameEvent->gameBoard[j]->bottomLeft->player == 1) || (gameEvent->gameBoard[j]->bottomLeft->player == 2)) {
+			for (int i = 0; i < 10; i++) {
+				if (gameEvent->gameBoard[j]->index != myArray[i]) {
+					connected = true;
+					myArray[secondCount] = gameEvent->gameBoard[j]->bottomLeft->index;
+					secondCount = secondCount + 1;
+				}
+			}
+		}
+		else if ((gameEvent->gameBoard[j]->bottomRight->player == 1) || (gameEvent->gameBoard[j]->bottomRight->player == 2)) {
+			for (int i = 0; i < 10; i++) {
+				if (gameEvent->gameBoard[j]->index != myArray[i]) {
+					connected = true;
+					myArray[secondCount] = gameEvent->gameBoard[j]->bottomRight->index;
+					secondCount = secondCount + 1;
+				}
+			}
+
+		}//****If I comment everything out below this point it will run. Not sure why below this point it won't run. 
+		/*else if ((gameEvent->gameBoard[j]->left->player == 1) || (gameEvent->gameBoard[j]->left->player == 2)) {
+		for(int i = 0; i < 10; i++) {
+		if (gameEvent->gameBoard[j]->index != myArray[i]) {
+		connected = true;
+		myArray[secondCount] = gameEvent->gameBoard[j]->left->index;
+		secondCount = secondCount+1;
+		}
+		}
+
+		} else if ((gameEvent->gameBoard[j]->topLeft->player == 1) || (gameEvent->gameBoard[j]->topLeft->player == 2)) {
+		for(int i = 0; i < 10; i++) {
+		if (gameEvent->gameBoard[j]->index != myArray[i]) {
+		connected = true;
+		myArray[secondCount] = gameEvent->gameBoard[j]->topLeft->index;
+		secondCount = secondCount+1;
+		}
+		}
+		} else if ((gameEvent->gameBoard[j]->topRight->player == 1) || (gameEvent->gameBoard[j]->topRight->player == 2)) {
+		for(int i = 0; i < 10; i++) {
+		if (gameEvent->gameBoard[j]->index != myArray[i]) {
+		connected = true;
+		myArray[secondCount] = gameEvent->gameBoard[j]->topRight->index;
+		secondCount = secondCount+1;
+		}
+		}
+		}
+		*/
+	}
+
+	// If the counts equal one another then the board is connected. 
+	/* At some point we need this just commented it out for testing reasons.
+	if (count == secondCount) {
+	connected = true;
+	}
+	*/
+	return connected;
 }
 
 /* This is used when the player is moving one of her pieces that is
@@ -240,9 +422,15 @@ bool isConnected(){
  * Hint: you may want to use checkNbrs, isNeighboringSpace,
  *       isJumpSpace, and isConnected as subroutines here.
  */
-bool canPlaceOldPiece(int x, int y){
-    //TODO
-    return false;
+bool canPlaceOldPiece(int x){
+	int okayNbrs = 0;
+	int badNbrs  = 0;
+	checkNbrs(x,okayNbrs, badNbrs);
+
+    if( (gameEvent->gameBoard[x]->player == 0) && ((isNeighboringSpace(x)) || (isJumpSpace(x)) && (okayNbrs > 0 || badNbrs > 0)) && (isConnected()))
+		return true;
+	else
+		return false;
 }
 
 /*
@@ -250,9 +438,8 @@ bool canPlaceOldPiece(int x, int y){
  * If no piece, return 0. Otherwise, return the player number of the piece
  * (1 or 2)
  */
-int pieceAt(int x,int y){
-    //TODO
-    return 0;
+int pieceAt(int x){
+    return gameEvent->gameBoard[x]->player;
 }
 
 void drawBoard(){
@@ -266,10 +453,10 @@ void drawBoard(){
             ofSetColor(0, 0, 0);
             drawHex(boardXOffset+x*hexW+offset,boardYOffset+y*hexH,sideLen);
             
-            if(pieceAt(x,y) != 0){
+            if(pieceAt((y*20)+x) != 0){
                 //If there is a playing piece in the current hex,
                 // draw it
-                if(pieceAt(x,y) == 1){
+                if(pieceAt((y*20)+x) == 1){
                     ofSetColor(255,255,255);
                 } else {
                     ofSetColor(0,0,0);
@@ -283,7 +470,7 @@ void drawBoard(){
                     // higlight the space if it is valid to place the piece here
                     ofSetColor(64,192,64); //green highlight
                     
-                    if(canPlaceNewPiece(x, y)){
+                    if(canPlaceNewPiece((y*20)+x)){
                         ofCircle(boardXOffset+x*hexW+offset,boardYOffset+y*hexH,sideLen/2);
                     }
                 } else if(currentAction == 2){
@@ -291,7 +478,7 @@ void drawBoard(){
                     // higlight the space if it is valid to place the piece here
                     ofSetColor(64,192,64); //green
                     
-                    if(canPlaceOldPiece(x, y)){
+                    if(canPlaceOldPiece((y*20)+x)){
                         ofCircle(boardXOffset+x*hexW+offset,boardYOffset+y*hexH,sideLen/2);
                     }
                 }
@@ -356,8 +543,8 @@ void testApp::draw(){
  * Put a piece on the board at position (x,y). 
  * If whichPieces is 0, then it clears that board position.
  */
-void putPieceAt(int x, int y, int whichPiece){
-    //TODO
+void putPieceAt(int x, int whichPiece){
+     gameEvent->gameBoard[x]->player = whichPiece;
 }
 
 //--------------------------------------------------------------
@@ -385,9 +572,9 @@ void testApp::mousePressed(int x, int y, int button){
             int whichRow = (y-boardYOffset+hexH/2)/hexH;
             int whichCol = (x-(boardXOffset+(whichRow%2)*(hexW/2))+hexW/2)/hexW;
             if(whichRow >= 0 && whichRow < boardH && whichCol >= 0 && whichCol < boardW){
-                if(canPlaceNewPiece(whichCol,whichRow)){
+                if(canPlaceNewPiece((whichRow*20)+whichCol)){
                     currentAction = 0;
-                    putPieceAt(whichCol,whichRow,whoseTurn);
+                    putPieceAt((whichRow*20)+whichCol,whoseTurn);
                     whoseTurn = 3 - whoseTurn;
                 }
             }
@@ -396,11 +583,11 @@ void testApp::mousePressed(int x, int y, int button){
             int whichRow = (y-boardYOffset+hexH/2)/hexH;
             int whichCol = (x-(boardXOffset+(whichRow%2)*(hexW/2))+hexW/2)/hexW;
             
-            if(pieceAt(whichCol,whichRow) == whoseTurn){
-                selectedPieceX = whichCol;
+            if(pieceAt((whichRow*20)+whichCol) == whoseTurn){
+                selectedPieceX  = whichCol;
                 selectedPieceY  = whichRow;
                 currentAction = 2;
-                putPieceAt(whichCol,whichRow,0);
+                putPieceAt((whichRow*20)+whichCol,0);
             }
         } else if(currentAction == 2){
             //...placing an old piece back on the board
@@ -408,11 +595,11 @@ void testApp::mousePressed(int x, int y, int button){
             int whichCol = (x-(boardXOffset+(whichRow%2)*(hexW/2))+hexW/2)/hexW;
             if(whichRow == selectedPieceY && whichCol == selectedPieceX){
                 currentAction = 0;
-                putPieceAt(whichCol,whichRow,whoseTurn);
+                putPieceAt((whichRow*20)+whichCol,whoseTurn);
             } else if(whichRow >= 0 && whichRow < boardH && whichCol >= 0 && whichCol < boardW){
-                if(canPlaceOldPiece(whichCol, whichRow)){
+                if(canPlaceOldPiece((whichRow*20)+whichCol)){
                     currentAction = 0;
-                    putPieceAt(whichCol,whichRow,whoseTurn);
+                    putPieceAt((whichRow*20)+whichCol,whoseTurn);
                     whoseTurn = 3 - whoseTurn;
                 }
             }
