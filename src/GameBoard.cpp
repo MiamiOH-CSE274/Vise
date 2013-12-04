@@ -19,12 +19,16 @@ void GameBoard::makeGameBoard() {
         board[i].resize(20);
     }
     assignPointers();
-    addPiece(10,10,1);
+	
+	addPiece(10,9,1);
+	addPiece(11,9,2);
+	
+
     //addPiece(11, 10, 2);
     //addPiece(12, 10, 2);
     //addPiece(10, 11, 1);
     //addPiece(10, 12, 1);
-    addPiece(11,10,2);
+
     p1Spares = 4;
     p2Spares = 4;
     
@@ -101,20 +105,20 @@ void GameBoard::assignPointers() {
                 edit->numIdentifier = idNum;
                 edit->east = &board[1][0];
                 edit->west = &board[19][0];
-                edit->northEast = &board[1][19];
+                edit->northEast = &board[0][19];
                 edit->northWest = &board[19][19];
-                edit->southEast = &board[1][1];
-                edit->southWest = &board[1][0];
+                edit->southEast = &board[0][1];
+                edit->southWest = &board[19][1];
                 idNum++;
-                
+              
 			} else if (i == 0 && k == 19) {
 				GameNode* edit = &board[i][k];
 				edit->numIdentifier = idNum;
                 edit->east = &board[1][19];
                 edit->west = &board[19][19];
-                edit->northEast = &board[0][18];
-                edit->northWest = &board[19][18];
-                edit->southEast = &board[0][1];
+                edit->northEast = &board[1][18];
+                edit->northWest = &board[0][18];
+                edit->southEast = &board[1][0];
                 edit->southWest = &board[0][0];
                 idNum++;
                 
@@ -123,82 +127,87 @@ void GameBoard::assignPointers() {
 				edit->numIdentifier = idNum;
                 edit->east = &board[0][0];
                 edit->west = &board[18][0];
-                edit->northEast = &board[19][0];
+                edit->northEast = &board[19][19];
                 edit->northWest = &board[18][19];
-                edit->southEast = &board[0][1];
-                edit->southWest = &board[0][19];
+                edit->southEast = &board[19][1];
+                edit->southWest = &board[18][1];
                 idNum++;
                 
 			} else if (i == 19 && k == 19) {
 				GameNode* edit = &board[i][k];
 				edit->numIdentifier = idNum;
-                edit->east = &board[19][0];
-                edit->west = &board[19][18];
-                edit->northEast = &board[18][0];
-                edit->northWest = &board[19][19];
-                edit->southEast = &board[19][1];
-                edit->southWest = &board[18][1];
+                edit->east = &board[0][19];
+                edit->west = &board[18][19];
+                edit->northEast = &board[0][18];
+                edit->northWest = &board[19][18];
+                edit->southEast = &board[0][0];
+                edit->southWest = &board[19][0];
                 idNum++;
                 
 			} else if (i == 0) {
 				GameNode* edit = &board[i][k];
 				edit->numIdentifier = idNum;
-                edit->east = &board[i][k];
-                edit->west = &board[i][k-1];
-                edit->northEast = &board[i][19];
-                edit->northWest = &board[i][19];
-                edit->southEast = &board[i+1][1];
-                edit->southWest = &board[i][1];
+				if (k%2 == 0) {
+					edit->east = &board[1][k];
+					edit->west = &board[19][k];
+					edit->northEast = &board[0][k-1];
+					edit->northWest = &board[19][k-1];
+					edit->southEast = &board[0][k+1];
+					edit->southWest = &board[19][k+1];
+				} else {
+					edit->east = &board[1][k];
+					edit->west = &board[19][k];
+					edit->northEast = &board[1][k-1];
+					edit->northWest = &board[0][k-1];
+					edit->southEast = &board[1][k+1];
+					edit->southWest = &board[0][k+1];
+				}
                 idNum++;
                 
 			} else if (i == 19) {
                 GameNode* edit = &board[i][k];
                 edit->numIdentifier = idNum;
-                edit->east = &board[19][k+1];
-                edit->west = &board[19][k-1];
-                edit->northEast = &board[18][k+1];
-                edit->northWest = &board[18][k];
+				if(k%2 == 0) {
+					edit->east = &board[0][k];
+					edit->west= &board[18][k];
+					edit->northEast = &board[19][k-1];
+					edit->northWest = &board[18][k-1];
+					edit->southEast = &board[19][k+1];
+					edit->southWest = &board[18][k+1];
+				} else {
+                edit->east = &board[0][k];
+				edit->west= &board[18][k];
+
+                edit->northEast = &board[0][k-1];
+                edit->northWest = &board[19][k-1];
                 edit->southEast = &board[0][k+1];
-                edit->southWest = &board[0][k];
+                edit->southWest = &board[19][k+1];
+				}
                 idNum++;
                 
 			} else if (k == 0) {
 				GameNode* edit = &board[i][k];
 				edit->numIdentifier = idNum;
-				edit->east = &board[i][1];
-				edit->west = &board[i][19];
-				if (i%2 == 0) {
-					edit->northEast = &board[i-1][0];
-					edit->northWest = &board[i-1][19];
-					edit->southEast = &board[i+1][0];
-					edit->southWest = &board[i+1][19];
-					idNum++;
-				} else {
-					edit->northEast = &board[i-1][k+1];
-					edit->northWest = &board[i-1][k];
-					edit->southEast = &board[i+1][k+1];
-					edit->southWest = &board[i+1][k];
-					idNum++;
-				}
-                
+				edit->east = &board[i+1][k];
+				edit->west = &board[i-1][k];
+				edit->northEast = &board[i][19];
+				edit->northWest = &board[i-1][19];
+				edit->southEast = &board[i][1];
+				edit->southWest = &board[i-1][1];
+				idNum++;
+				
 			}else if (k == 19) {
 				GameNode* edit = &board[i][k];
 				edit->numIdentifier = idNum;
-				edit->east = &board[i][0];
-				edit->west = &board[i][18];
-				if (i%2 == 0) {
-					edit->northEast = &board[i-1][0];
-					edit->northWest = &board[i-1][18];
+				edit->east = &board[i+1][19];
+				edit->west = &board[i-1][19];
+					edit->northEast = &board[i+1][18];
+					edit->northWest = &board[i][18];
 					edit->southEast = &board[i+1][0];
-					edit->southWest = &board[i+1][18];
+					edit->southWest = &board[i][0];
 					idNum++;
-				} else {
-					edit->northEast = &board[i-1][k];
-					edit->northWest = &board[i-1][k-1];
-					edit->southEast = &board[i+1][k];
-					edit->southWest = &board[i+1][k-1];
-					idNum++;
-				}
+				
+				
                 
 			}
 		}
@@ -878,18 +887,18 @@ bool GameBoard::wouldBeCont(int x, int y) {
     return false;
 }
 
-int GameBoard::numPieces(int playerCheckingFor) {
-	GameNode* cur;
-	int count = 0;
-	for (int x = 0; x < 20; x++) {
-		for (int y = 0; y < 20; y++) {
-			cur = &board[x][y];
-			if (cur->pieceOn == playerCheckingFor)
-				count++;
-		}
-	}
-	return count;
-}
+//int GameBoard::numPieces(int playerCheckingFor) {
+//	GameNode* cur;
+//	int count = 0;
+//	for (int x = 0; x < 20; x++) {
+//		for (int y = 0; y < 20; y++) {
+//			cur = &board[x][y];
+//			if (cur->pieceOn == playerCheckingFor)
+//				count++;
+//		}
+//	}
+//	return count;
+//}
 
 bool GameBoard::isMove (int playerCheckingFor) {
 	GameNode* cur;

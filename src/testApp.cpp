@@ -252,9 +252,9 @@ bool isJumpSpace(int x, int y){
 }
 
 int gameOverMan() {
-	/*if (pl1spares + myBoard.numPieces(1) == 1)
-		return 2;*/
-	/*if (pl2spares + myBoard.numPieces(2) == 1)
+	/*if (pl1spares + myBoard.numPieces() == 1)
+		return 2;
+	if (pl2spares + myBoard.numPieces() == 1)
 		return 1;
 	if (myBoard.isMove(1) == false)
 		return 2;
@@ -263,8 +263,8 @@ int gameOverMan() {
 	if (myBoard.countPieces(1) == 0)
 		return 2;
 	if (myBoard.countPieces(2) == 0)
-		return 1;*/
-
+		return 1;
+*/
 	return 3;
 
 }

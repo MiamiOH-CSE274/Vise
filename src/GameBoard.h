@@ -63,12 +63,7 @@ private:
 	bool dijkstraMove(int x, int y);
 	int oldPieceToMoveX;
 	int oldPieceToMoveY;
-<<<<<<< HEAD
-	
-	bool dijkstraMoveRecursive (GameNode* cur, int* visited, int arrSize, int movesLeft);
-=======
 	int dijkstraOldRecursive (GameNode* cur, int* visited, int arrSize, GameNode* orig);
->>>>>>> ca1f4296c37d65441fc297babd2bb749f6449baa
 	GameNode* oldPieceToMove;
     int p1Spares, p2Spares;
 	void dijkstraRecursiveReturn (GameNode* cur, int* visited, int arrSize);
