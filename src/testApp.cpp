@@ -116,8 +116,16 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-    //TODO
-    return false;
+	//int player=board.getPiece(x,y);
+	//int near= board.getNeighbors(x,y);
+	//if(board.adjList.at(board.getClose(x,y,0))
+
+
+
+
+
+
+	return board.inVise(x,y);
 }
 
 /*
@@ -180,9 +188,14 @@ void drawHex(float x, float y, float sideLen){
  * under consideration.
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
-	for(int i=0;i<6;i++)
-		board.isClose(x,y);
-
+	for(int i=0;i<6;i++){
+		int t=board.getClose(x,y, i);
+		if(t!=0)
+			if(t==whoseTurn)
+				okayNbrs++;
+			else 
+				badNbrs++;
+	}
 }
 
 /*
@@ -226,23 +239,34 @@ bool isConnected(){
 		if (board.getPiece((index%boardW), (index/boardH)) != 0)
 			totalPiecesOnBoard++;
 	}
+
 	std::stack<int> open;
-	int tileCount = 0;
+	int filledTileCount = 0;
 	open.push(0);
 	int* tileStatus = new int[totalPiecesOnBoard];
 	for (int statusCount = 0; statusCount < totalPiecesOnBoard; statusCount++)
 		tileStatus[statusCount] = 0;
 	tileStatus[0] = 1;
 	while (open.size() != 0){
-		tileCount++;
 		int visitingNode = open.top();
 		int visitingNodeXCoord = visitingNode%boardW;
 		int visitingNodeYCoord = visitingNode/boardH;
 		open.pop();
 		tileStatus[visitingNode] = 2;
-		for (int neighborCount = 0; neighborCount <   //how to determine the size of the neighbor list?
+		if (board.getPiece(visitingNodeXCoord, visitingNodeYCoord) != 0)
+			filledTileCount++;
+		for (int neighborCount = 0; neighborCount < board.getNeighborListSize(visitingNodeXCoord, visitingNodeYCoord); neighborCount++){
+			int* neighbors = board.getNeighbors(visitingNodeXCoord, visitingNodeYCoord);
+			if (tileStatus[neighbors[neighborCount]] == 0){
+				tileStatus[neighbors[neighborCount]] = 1;
+				open.push(neighbors[neighborCount]);
+			}
+		}
 	}
-    return false;
+
+	if (filledTileCount == totalPiecesOnBoard)
+		return true;
+    else return false;
 }
 
 /* This is used when the player is moving one of her pieces that is
@@ -266,8 +290,12 @@ bool isConnected(){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-    //TODO
-    return false;
+	if(board.getPiece(x,y)!=0)
+		return false;
+
+	if(!canPlaceNewPiece(x,y))	
+		return false;
+	return true;
 }
 
 /*

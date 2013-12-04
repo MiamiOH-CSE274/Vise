@@ -43,11 +43,17 @@ public:
   void Setup();
   //gets the piece number at that position
   int getPiece(int x, int y);
-  //returns an integer list of the neighbors of the tile located at (x,y)
-  int* Graph::getNeighbors(int x, int y);
+  int getPiece(int i);
   void placePiece(int x, int y, int given);
+  int getClose(int x, int y, int hex);
+  int getConnected(int i);
+  //returns an integer list of the neighbors of the tile located at (x,y)
+  int* getNeighbors(int x, int y);
+  int Graph::getNeighborListSize(int x, int y);
+  //void placePiece(int x, int y, int given);
   //int getClose(int x, int y, int hex);
   bool isClose(int x1, int y1, int x2, int y2); 
+  bool inVise(int x, int y);
 
 private:
   std::vector<Node> adjList;	
