@@ -31,7 +31,7 @@ void Graph::Setup(){
 		}
 		if(i-1>0)
 			addEdge(i,i-1);
-		if(i+1%20>20)            
+		if(i+1%20<20)            
 			addEdge(i,i+1);
 		if(i+20<400){
 			if(((i%40)<20) && (i-1>0))
@@ -83,7 +83,17 @@ bool Graph::isClose(int x1, int y1, int x2, int y2){
 	}
 	return false;
 }
-
+void Graph::checkNbrs(int x, int y, int& okayNbrs, int& badNbrs, int whoseTurn){
+	int j=adjList.at(20*y+x).edgeList.size();
+	for(int i=0;i<j;i++){
+		int t=getClose(x,y, i);
+		if(t!=0)
+			if(t==whoseTurn)
+				okayNbrs++;
+			else 
+				badNbrs++;
+	}
+}
 
 bool Graph::inVise(int x, int y){
 	std::vector<int> list;

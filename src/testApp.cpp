@@ -188,14 +188,16 @@ void drawHex(float x, float y, float sideLen){
  * under consideration.
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
-	for(int i=0;i<6;i++){
-		int t=board.getClose(x,y, i);
-		if(t!=0)
-			if(t==whoseTurn)
-				okayNbrs++;
-			else 
-				badNbrs++;
-	}
+
+	//for(int i=0;i<6;i++){
+	//	int t=board.getClose(x,y, i);
+	//	if(t!=0)
+	//		if(t==whoseTurn)
+	//			okayNbrs++;
+	//		else 
+	//			badNbrs++;
+//	}
+	board.checkNbrs(x,y,okayNbrs,badNbrs,whoseTurn);
 }
 
 /*
@@ -282,7 +284,7 @@ bool canPlaceOldPiece(int x, int y){
 	if(board.getPiece(x,y)!=0)
 		return false;
 
-	if(!canPlaceNewpiece())	
+	if(!canPlaceNewPiece(x,y))	
 		return false;
 	return true;
 }
