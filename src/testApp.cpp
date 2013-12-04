@@ -18,7 +18,7 @@ void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
 bool canPlaceNewPiece(int x, int y);
 bool isNeighboringSpace(int x, int y);
 bool isJumpSpace(int x, int y);
-bool isConnected();
+bool isConnected(int &totalPiecesOnBoard, int &filedTileCount);
 bool canPlaceOldPiece(int x, int y);
 int pieceAt(int x,int y);
 void putPieceAt(int x, int y, int whichPiece);
@@ -41,6 +41,9 @@ int boardW = 20;
 int boardH = 20;
 
 //TODO: Make any variables you need for representing your board here
+
+int totalPiecesOnBoard = 0;
+int filledTileCount = 0;
 
 //Number of spare playing pieces left, for each player
 int pl1spares=4;
@@ -152,8 +155,8 @@ void doVise(){
 	board.placePiece(x[i].first, x[i].second,0);
 	delete x;
 
-	while(!isConnected())
-		board.getConnected
+	//while(!isConnected())
+	//	board.getConnected
 
 }
 
@@ -196,6 +199,7 @@ void drawHex(float x, float y, float sideLen){
  * under consideration.
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
+
 
 	//for(int i=0;i<6;i++){
 	//	int t=board.getClose(x,y, i);
@@ -243,8 +247,8 @@ bool isJumpSpace(int x, int y){
 // first search, counting how many pieces I found. If the number found
 // equals the total number on the board, then return true. Otherwise,
 // return false
-bool isConnected(){
-	int totalPiecesOnBoard = 0;
+bool isConnected(int &totalPiecesOnBoard, int &filledTileCount){
+	totalPiecesOnBoard = 0;
 	int firstPiece = 0;
     for (int index = 0; index < (boardH*boardW); index++){
 		if (board.getPiece((index%boardW), (index/boardH)) != 0){
@@ -255,7 +259,7 @@ bool isConnected(){
 	}
 
 	std::stack<int> open;
-	int filledTileCount = 0;
+	filledTileCount = 0;
 	open.push(firstPiece);
 	int* tileStatus = new int[totalPiecesOnBoard];
 	for (int statusCount = 0; statusCount < totalPiecesOnBoard; statusCount++)
@@ -306,9 +310,16 @@ bool isConnected(){
 bool canPlaceOldPiece(int x, int y){
 	if(board.getPiece(x,y)!=0)
 		return false;
-	if(!canPlaceNewPiece(x,y)||!isJumpSpace(x,y)&&!isNeighboringSpace(x,y))	
+	else if(!canPlaceNewPiece(x,y))	
 		return false;
-	return true;
+	else if (!isNeighboringSpace(x,y))
+		return false;
+	else if (!isJumpSpace(x,y))
+		return false;
+	else if (!isConnected())
+		return false;
+	else
+		return true;
 }
 
 /*
