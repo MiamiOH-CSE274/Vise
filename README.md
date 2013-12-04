@@ -32,7 +32,7 @@ Questions
 
 #### 1. Which type of data structure did you choose? Explain, in English, the main ideas behind your data structure.
 
-TODO
+A node based graph. Essentially, every Node, called a hexSpace, points to another, while also holding a value to determine the type of game piece is inside and whether it has been "checked" during a recursive function.
 
 
 Portfolio Video
@@ -49,4 +49,4 @@ The video should certainly be less than 2 minutes long. I (or the grading assist
 
 #### 1. Give the link to your portfolio video on YouTube.
 
-TODO
+https://www.youtube.com/watch?v=7UqgBz8hunI&feature=youtube_gdata_player
