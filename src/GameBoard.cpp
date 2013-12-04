@@ -33,7 +33,6 @@ void GameBoard::makeGameBoard() {
     p1Spares = 4;
     p2Spares = 4;
     
-    
 	
 }
 
@@ -470,7 +469,8 @@ bool GameBoard::playerStillInGame(int player){
     else if(piecesOnBoard + p2Spares==1) return false;
     
     //Now, check that the person has a move on their turn
-    bool canMoveOldPiece, canPlaceNewPiece;
+    bool canMoveOldPiece = false;
+    bool canPlaceNewPiece = false;
     if (player==1 && playerOneTurn) {
         for (int x = 0; x < 20; x++) {
             for (int y = 0; y < 20; y++) {

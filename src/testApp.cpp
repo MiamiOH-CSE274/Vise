@@ -100,10 +100,12 @@ ofColor player1, player2, player1Turn, player2Turn;
 ofColor start, end2, customBlack;
 ofSoundPlayer tada, p1Wins, p2Wins;
 ofSoundPlayer music2;
+ofTrueTypeFont text;
 bool checkedWinDetection = true;
 
 bool colorDirection;
-
+bool p1StillInGame = true;
+bool p2StillInGame = true;
 
 
 
@@ -119,6 +121,7 @@ void testApp::setup(){
     start.set(255, 246, 229);
     customBlack.set(1, 1, 1);
     colorDirection = true;
+    text.loadFont("Arial.ttf", 48);
 
     music2.loadSound("ViseMusic.mp3");
     music2.setLoop(true);
@@ -184,8 +187,8 @@ void doVise(){
 
     }
     if (currentAction==0 && !checkedWinDetection){
-        bool p1StillInGame = myBoard.playerStillInGame(1);
-        bool p2StillInGame = myBoard.playerStillInGame(2);
+         p1StillInGame = myBoard.playerStillInGame(1);
+         p2StillInGame = myBoard.playerStillInGame(2);
         
         if (!p1StillInGame) {
             music2.stop();
@@ -194,6 +197,7 @@ void doVise(){
         
         if (!p2StillInGame) {
             music2.stop();
+            text.drawString("Player 1 Wins!", 350, 384);
             p1Wins.play();
         }
         
@@ -415,6 +419,7 @@ void drawSpares(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+    if (p1StillInGame && p2StillInGame){
     if (currentFrame%1 ==0) {
         if (customBlack==ofColor(1,1,1)) {
             colorDirection = true;
@@ -441,6 +446,17 @@ void testApp::draw(){
     //ofBackground(255, 246, 229);
     drawBoard();
     drawSpares();
+    }
+    else{
+    if (!p1StillInGame) {
+        ofSetColor(player2);
+        text.drawString("Player 2 Wins!", 300, 384);
+    }
+    if (!p2StillInGame) {
+        ofSetColor(player1);
+        text.drawString("Player 1 Wins!", 300, 384);
+    }
+    }
 }
 
 /*
