@@ -13,7 +13,6 @@
 //Functions you might want to use, game logic
 bool inVise(int x, int y);
 void doVise();
-void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
 bool canPlaceNewPiece(int x, int y);
 bool isNeighboringSpace(int x, int y);
 //bool isJumpSpace(int x, int y);
@@ -240,18 +239,6 @@ void drawHex(float x, float y, float sideLen){
 
 
 /*
- * x and y are the input parameters, which are in board coordinates
- * For a given space (x,y), check to see how many of the neighboring spaces
- * contain a piece of the current player (that is okayNbrs) and how many
- * contain a piece of the opposing player (that is badNbrs). This is useful
- * in determining if the current player can play a new piece in the hex
- * under consideration.
- */
-void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
-    myBoard.checkNbrs(x,y,okayNbrs,badNbrs);
-}
-
-/*
  * Return true iff the current player can place a new piece
  * in row y, column x, without violating the rules. That is,
  * at least 1 neighboring hex must contain one of the player's
@@ -261,7 +248,6 @@ void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
 bool canPlaceNewPiece(int x, int y){
     int okayNbrs=0;
     int badNbrs=0;
-    //checkNbrs(x,y,okayNbrs,badNbrs);
 
     return myBoard.canMove(x,y);
 }
