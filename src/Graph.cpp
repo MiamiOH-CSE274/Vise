@@ -29,9 +29,9 @@ void Graph::Setup(){
 			if(((i%40)<20) && (i-1>0))
 				addEdge(i,i-19);
 		}
-		if(i-1>0)
+		if(i>0)
 			addEdge(i,i-1);
-		if(i+1%20>20)            
+		if(i<20)            
 			addEdge(i,i+1);
 		if(i+20<400){
 			if(((i%40)<20) && (i-1>0))
