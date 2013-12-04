@@ -31,7 +31,7 @@ void Graph::Setup(){
 		}
 		if(i-1>0)
 			addEdge(i,i-1);
-		if(i+1%20<20)            
+		if((i+1%20)<20)            
 			addEdge(i,i+1);
 		if(i+20<400){
 			if(((i%40)<20) && (i-1>0))
@@ -59,7 +59,9 @@ int* Graph::getNeighbors(int x, int y){
 void Graph::placePiece(int x, int y, int given){
 	adjList.at((y*20)+x).piece=given;
 }
-
+int Graph::getNeighborListSize(int x, int y){
+	return adjList.at(y*20+x).edgeList.size();
+}
 int Graph::getClose(int x, int y, int hex){
 	if(hex < adjList.at(y*20+x).edgeList.size())//adjList.at(y*20+x) //adjList.at( adjList.at((y*20)+x).edgeList.size()))
 		return adjList.at( adjList.at((y*20)+x).edgeList.at(hex).dest).piece;

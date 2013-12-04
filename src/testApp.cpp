@@ -116,15 +116,6 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-	//int player=board.getPiece(x,y);
-	//int near= board.getNeighbors(x,y);
-	//if(board.adjList.at(board.getClose(x,y,0))
-
-
-
-
-
-
 	return board.inVise(x,y);
 }
 
@@ -146,7 +137,24 @@ bool inVise(int x, int y){
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
  */
 void doVise(){
-    //TODO
+	std::pair<int,int>* x;
+	int iter =0;
+    for(int i=0;i<20;i++){
+		for(int j=0;j<20;j++){
+			if(inVise(i,j)){
+				x[iter].first=i;
+				x[iter].second=j;
+				iter++;
+			}
+		}
+	}
+	for(int i=0;i<iter;i++)
+	board.placePiece(x[i].first, x[i].second,0);
+	delete x;
+
+	while(!isConnected())
+		board.getConnected
+
 }
 
 //--------------------------------------------------------------
@@ -237,27 +245,42 @@ bool isJumpSpace(int x, int y){
 // return false
 bool isConnected(){
 	int totalPiecesOnBoard = 0;
+	int firstPiece = 0;
     for (int index = 0; index < (boardH*boardW); index++){
-		if (board.getPiece((index%boardW), (index/boardH)) != 0)
+		if (board.getPiece((index%boardW), (index/boardH)) != 0){
 			totalPiecesOnBoard++;
+			if (totalPiecesOnBoard == 1)
+				firstPiece = index;
+		}
 	}
+
 	std::stack<int> open;
-	int tileCount = 0;
-	open.push(0);
+	int filledTileCount = 0;
+	open.push(firstPiece);
 	int* tileStatus = new int[totalPiecesOnBoard];
 	for (int statusCount = 0; statusCount < totalPiecesOnBoard; statusCount++)
 		tileStatus[statusCount] = 0;
 	tileStatus[0] = 1;
 	while (open.size() != 0){
-		tileCount++;
 		int visitingNode = open.top();
 		int visitingNodeXCoord = visitingNode%boardW;
 		int visitingNodeYCoord = visitingNode/boardH;
 		open.pop();
 		tileStatus[visitingNode] = 2;
-		//for (int neighborCount = 0; neighborCount <) TODO  //how to determine the size of the neighbor list?
+		if (board.getPiece(visitingNodeXCoord, visitingNodeYCoord) != 0)
+			filledTileCount++;
+		for (int neighborCount = 0; neighborCount < board.getNeighborListSize(visitingNodeXCoord, visitingNodeYCoord); neighborCount++){
+			int* neighbors = board.getNeighbors(visitingNodeXCoord, visitingNodeYCoord);
+			if (tileStatus[neighbors[neighborCount]] == 0){
+				tileStatus[neighbors[neighborCount]] = 1;
+				open.push(neighbors[neighborCount]);
+			}
+		}
 	}
-    return false;
+
+	if (filledTileCount == totalPiecesOnBoard)
+		return true;
+    else return false;
 }
 
 /* This is used when the player is moving one of her pieces that is
@@ -283,8 +306,7 @@ bool isConnected(){
 bool canPlaceOldPiece(int x, int y){
 	if(board.getPiece(x,y)!=0)
 		return false;
-
-	if(!canPlaceNewPiece(x,y))	
+	if(!canPlaceNewPiece(x,y)||!isJumpSpace(x,y)&&!isNeighboringSpace(x,y))	
 		return false;
 	return true;
 }
