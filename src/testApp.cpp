@@ -235,14 +235,18 @@ bool isJumpSpace(int x, int y){
 // return false
 bool isConnected(){
 	int totalPiecesOnBoard = 0;
+	int firstPiece = 0;
     for (int index = 0; index < (boardH*boardW); index++){
-		if (board.getPiece((index%boardW), (index/boardH)) != 0)
+		if (board.getPiece((index%boardW), (index/boardH)) != 0){
 			totalPiecesOnBoard++;
+			if (totalPiecesOnBoard == 1)
+				firstPiece = index;
+		}
 	}
 
 	std::stack<int> open;
 	int filledTileCount = 0;
-	open.push(0);
+	open.push(firstPiece);
 	int* tileStatus = new int[totalPiecesOnBoard];
 	for (int statusCount = 0; statusCount < totalPiecesOnBoard; statusCount++)
 		tileStatus[statusCount] = 0;
