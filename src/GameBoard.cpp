@@ -6,7 +6,6 @@
 #define PLAYER_ONE_PIECE  1
 #define PLAYER_TWO_PIECE  2
 
-//Okay, you can actually commit this.
 
 GameBoard::GameBoard() {
     
@@ -21,8 +20,8 @@ void GameBoard::makeGameBoard() {
     assignPointers();
 
 	
-	addPiece(10,9,1);
-	addPiece(11,9,2);
+	addPiece(10,10,1);
+	addPiece(11,10,2);
 	
 
     //addPiece(11, 10, 2);
