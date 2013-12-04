@@ -52,6 +52,8 @@ public:
     int getP2Spares();
     bool getPlayerOneTurn();
     void setPlayerOneTurn(bool turn);
+	int countPieces (int playerCheckingFor);
+	bool isMove (int playerCheckingFor);
     bool playerStillInGame(int player);
 
 
@@ -78,5 +80,4 @@ private:
 
 
 };
-
 
