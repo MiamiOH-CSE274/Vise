@@ -29,7 +29,7 @@ public:
 	void removePiece();
 	int getPiece(int row, int column);
 	void makeGameBoard();
-	bool canMove(int row, int column, int player);
+	bool canMove(int row, int column);
 	void checkNbrs(int x, int y,int& okayNbrs,int& badNbrs);
 	bool inVise(int x, int y);
 	void resetVise();

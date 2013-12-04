@@ -259,7 +259,7 @@ bool canPlaceNewPiece(int x, int y){
     int badNbrs=0;
     //checkNbrs(x,y,okayNbrs,badNbrs);
 
-    return myBoard.canMove(x,y,whoseTurn);
+    return myBoard.canMove(x,y);
 }
 
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
@@ -277,23 +277,6 @@ bool isJumpSpace(int x, int y){
     return false;
 }
 
-int gameOverMan() {
-	/*if (pl1spares + myBoard.numPieces() == 1)
-		return 2;
-	if (pl2spares + myBoard.numPieces() == 1)
-		return 1;
-	if (myBoard.isMove(1) == false)
-		return 2;
-	if (myBoard.isMove(2) == false)
-		return 1;
-	if (myBoard.countPieces(1) == 0)
-		return 2;
-	if (myBoard.countPieces(2) == 0)
-		return 1;
-*/
-	return 3;
-
-}
 //Return true if and only if the board currently contains
 // only 1 connected component
 //Hint: In my solution I first counted the total number of pieces on the board.
@@ -466,7 +449,6 @@ void testApp::draw(){
  */
 void putPieceAt(int x, int y, int whichPiece){
     myBoard.addPiece(x,y,whichPiece);
-	std::cout<<gameOverMan()<<std::endl;
 }
 
 //--------------------------------------------------------------
