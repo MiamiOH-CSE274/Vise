@@ -1,4 +1,5 @@
 #include "testApp.h"
+#include "GameBoard.h"
 
 #include <set>
 
@@ -12,10 +13,9 @@
 //Functions you might want to use, game logic
 bool inVise(int x, int y);
 void doVise();
-void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
 bool canPlaceNewPiece(int x, int y);
 bool isNeighboringSpace(int x, int y);
-bool isJumpSpace(int x, int y);
+//bool isJumpSpace(int x, int y);
 bool isConnected();
 bool canPlaceOldPiece(int x, int y);
 int pieceAt(int x,int y);
@@ -25,6 +25,7 @@ void putPieceAt(int x, int y, int whichPiece);
 void drawHex(float x, float y, float sideLen);
 void drawBoard();
 void drawSpares();
+
 
 //////////////////
 /*
@@ -93,6 +94,17 @@ float hexW = sideLen*2.0*0.86602540378444;
 float hexH = 1.5*sideLen;
 
 
+GameBoard myBoard;
+ofColor player1, player2, player1Turn, player2Turn;
+ofColor start, end2, customBlack;
+ofSoundPlayer tada, p1Wins, p2Wins;
+ofSoundPlayer music2;
+ofTrueTypeFont text;
+bool checkedWinDetection = true;
+
+bool colorDirection;
+bool p1StillInGame = true;
+bool p2StillInGame = true;
 
 
 
@@ -101,9 +113,27 @@ void testApp::setup(){
     //This is the *maximum* rate. Your program might go slower if your
     // updates or draws are too time conusming.
     ofSetFrameRate(60);
+    player1.set(33,133,197);
+    player1Turn.set(126, 206, 253);
+    player2.set(255,89,89);
+    player2Turn.set(255,143,143);
+    start.set(255, 246, 229);
+    customBlack.set(1, 1, 1);
+    colorDirection = true;
+    text.loadFont("Arial.ttf", 48);
+
+    music2.loadSound("ViseMusic.mp3");
+    music2.setLoop(true);
+    music2.play();
+    
+    tada.loadSound("TaDa.wav");
+    
+    p1Wins.loadSound("p1Wins.mp3");
+    p2Wins.loadSound("p2Wins.mp3");
     
     //TODO: Initialize your "board" data structure here
-
+        //GameBoard myBoard;
+        myBoard.makeGameBoard();
     //TODO: Put 1 piece for each player in the middle of hte board, side by side
     
     startTime = ofGetElapsedTimef();
@@ -113,12 +143,12 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-    //TODO
-    return false;
+	
+	return myBoard.inVise(x,y);;
 }
 
 /*
- * This is the method that updates the board if a player is caught in a vise at the end of the turn.
+ * This is the method that updates the board if a player is caught in a vise at the end2 of the turn.
  * You may want to break this method up into several sub-methods.
  *
  * 1) FIRST, identify all pieces that are caught in a vise Note: If you have 0101, then
@@ -135,7 +165,44 @@ bool inVise(int x, int y){
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
  */
 void doVise(){
-    //TODO
+    bool viseFound = false;
+    for (int i = 0; i < 20; i++) {
+		for (int j = 0; j < 20; j++) {
+			if(myBoard.inVise(i,j)){
+                viseFound = true;
+            }
+		}
+	}
+    /*
+     
+     */
+    if (viseFound) {
+        tada.play();
+        myBoard.removeVises();
+        myBoard.returnDisconnectedPieces();
+        myBoard.resetVise();
+        pl1spares = myBoard.getP1Spares();
+        pl2spares = myBoard.getP2Spares();
+
+    }
+    if (currentAction==0 && !checkedWinDetection){
+         p1StillInGame = myBoard.playerStillInGame(1);
+         p2StillInGame = myBoard.playerStillInGame(2);
+        
+        if (!p1StillInGame) {
+            music2.stop();
+            p2Wins.play();
+        }
+        
+        if (!p2StillInGame) {
+            music2.stop();
+            text.drawString("Player 1 Wins!", 350, 384);
+            p1Wins.play();
+        }
+        
+        checkedWinDetection = true;
+    }
+
 }
 
 //--------------------------------------------------------------
@@ -145,6 +212,9 @@ void testApp::update(){
     
     //Check for vised pieces on every update
     doVise();
+    if(whoseTurn==1)
+        end2.set(player1Turn);
+    else end2.set(player2Turn);
 }
 
 //Draw a single hexagon centered at (x,y).
@@ -169,18 +239,6 @@ void drawHex(float x, float y, float sideLen){
 
 
 /*
- * x and y are the input parameters, which are in board coordinates
- * For a given space (x,y), check to see how many of the neighboring spaces
- * contain a piece of the current player (that is okayNbrs) and how many
- * contain a piece of the opposing player (that is badNbrs). This is useful
- * in determining if the current player can play a new piece in the hex
- * under consideration.
- */
-void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
-    //TODO
-}
-
-/*
  * Return true iff the current player can place a new piece
  * in row y, column x, without violating the rules. That is,
  * at least 1 neighboring hex must contain one of the player's
@@ -190,14 +248,15 @@ void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
 bool canPlaceNewPiece(int x, int y){
     int okayNbrs=0;
     int badNbrs=0;
-    checkNbrs(x,y,okayNbrs,badNbrs);
-    return(okayNbrs > 0 && badNbrs == 0);
+
+    return myBoard.canMove(x,y);
 }
 
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isNeighboringSpace(int x, int y){
-    //TODO
+    if (myBoard.isPlayerOneConnected(x,y) || myBoard.isPlayerTwoConnected(x,y))
+         return true;
     return false;
 }
 
@@ -216,8 +275,7 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(){
-    //TODO
-    return false;
+	return myBoard.isContigious();
 }
 
 /* This is used when the player is moving one of her pieces that is
@@ -233,7 +291,7 @@ bool isConnected(){
  * 1b) Moving to an unoccupied space that is one jump over a neighbor
  * AND
  * 2) The move does not result in disconnected board
- * AND
+ * AN-D
  * 3) Target space is still adjacent to an existing piece (could be our own
  *    piece or an enemy piece, doesn't matter)
  *
@@ -241,8 +299,8 @@ bool isConnected(){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-    //TODO
-    return false;
+    return myBoard.canMoveOld(x,y);
+
 }
 
 /*
@@ -251,8 +309,8 @@ bool canPlaceOldPiece(int x, int y){
  * (1 or 2)
  */
 int pieceAt(int x,int y){
-    //TODO
-    return 0;
+    int piece = myBoard.getPiece(x,y);
+    return piece;
 }
 
 void drawBoard(){
@@ -263,16 +321,16 @@ void drawBoard(){
         for(int x=0;x<boardW;x++){
             //Calculate the center, and draw the border
             float offset = (hexW/2) * (y%2);
-            ofSetColor(0, 0, 0);
+            ofSetColor(0,0,0);
             drawHex(boardXOffset+x*hexW+offset,boardYOffset+y*hexH,sideLen);
             
-            if(pieceAt(x,y) != 0){
+            if(pieceAt(x,y) != -1){
                 //If there is a playing piece in the current hex,
                 // draw it
                 if(pieceAt(x,y) == 1){
-                    ofSetColor(255,255,255);
+                    ofSetColor(player1);
                 } else {
-                    ofSetColor(0,0,0);
+                    ofSetColor(player2);
                 }
                 ofCircle(boardXOffset+x*hexW+offset,boardYOffset+y*hexH,sideLen/2);
             } else {
@@ -303,9 +361,9 @@ void drawBoard(){
         //If placing a new piece, draw the piece that the user is placing
         // at the mouse location
         if(whoseTurn == 1){
-            ofSetColor(255,255,255);
+            ofSetColor(player1);
         } else {
-            ofSetColor(0,0,0);
+            ofSetColor(player2);
         }
         
         ofCircle(ofGetMouseX(),ofGetMouseY(),sideLen/2);
@@ -313,15 +371,15 @@ void drawBoard(){
         //If moving an old piece...
         
         //...show where it is being moved FROM
-        ofSetColor(64,64,192); //blue
+        ofSetColor(192,64,192); //PURPLE, due to color scheme
         float offset = (hexW/2) * (selectedPieceY%2);
         ofCircle(boardXOffset+selectedPieceX*hexW+offset,boardYOffset+selectedPieceY*hexH,sideLen/2);
         
         //...and also show the piece in the player's "hand" being moved
         if(whoseTurn == 1){
-            ofSetColor(255,255,255);
+            ofSetColor(player1);
         } else {
-            ofSetColor(0,0,0);
+            ofSetColor(player2);
         }
         ofCircle(ofGetMouseX(),ofGetMouseY(),sideLen/2);
     }
@@ -334,12 +392,12 @@ void drawBoard(){
 void drawSpares(){
     float xOffset = boardXOffset + (1+boardW)*hexW;
     
-    ofSetColor(255, 255, 255);
+    ofSetColor(player1);
     for(int i=0;i<pl1spares;i++){
         ofCircle(xOffset + i*2*sideLen,2*sideLen,sideLen/2);
     }
     
-    ofSetColor(0, 0, 0);
+    ofSetColor(player2);
     for(int i=0;i<pl2spares;i++){
         ofCircle(xOffset + i*2*sideLen,3.5*sideLen,sideLen/2);
     }
@@ -347,9 +405,44 @@ void drawSpares(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofBackground(128,128,128); //gray
+    if (p1StillInGame && p2StillInGame){
+    if (currentFrame%1 ==0) {
+        if (customBlack==ofColor(1,1,1)) {
+            colorDirection = true;
+        }
+        else if(customBlack==ofColor(255,255,255)){
+            colorDirection = false;
+        }
+        if (colorDirection)
+        customBlack += ofColor(1,1,1);
+        else customBlack -= ofColor(1,1,1);
+    }
+    
+    end2.set(end2 -=customBlack);
+    ofBackgroundGradient(start,end2,OF_GRADIENT_BAR);
+//    for (double i=0.; i<384; i +=.1) {
+//        ofSetColor(player1Turn.lerp(end2, 1));
+//        ofFill();
+//        ofRect(0, i, 1024, 1);
+//    }
+    
+    
+    
+    //ofBackgroundGradient(end2,start,OF_GRADIENT_BAR); //gray
+    //ofBackground(255, 246, 229);
     drawBoard();
     drawSpares();
+    }
+    else{
+    if (!p1StillInGame) {
+        ofSetColor(player2);
+        text.drawString("Player 2 Wins!", 300, 384);
+    }
+    if (!p2StillInGame) {
+        ofSetColor(player1);
+        text.drawString("Player 1 Wins!", 300, 384);
+    }
+    }
 }
 
 /*
@@ -357,7 +450,7 @@ void testApp::draw(){
  * If whichPieces is 0, then it clears that board position.
  */
 void putPieceAt(int x, int y, int whichPiece){
-    //TODO
+    myBoard.addPiece(x,y,whichPiece);
 }
 
 //--------------------------------------------------------------
@@ -368,15 +461,19 @@ void testApp::mousePressed(int x, int y, int button){
         if(whoseTurn == 1 && pl1spares > 0 && currentAction == 0){
             currentAction = 1;
             pl1spares--;
+            myBoard.setP1Spares(pl1spares);
         } else if(whoseTurn == 2 && pl2spares > 0 && currentAction == 0){
             currentAction = 1;
             pl2spares--;
+            myBoard.setP2Spares(pl2spares);
         } else if (whoseTurn == 1 && currentAction == 1){
             currentAction = 0;
             pl1spares++;
+            myBoard.setP1Spares(pl1spares);
         } else if (whoseTurn == 2 && currentAction == 1){
             currentAction = 0;
             pl2spares++;
+            myBoard.setP2Spares(pl2spares);
         }
     } else if(x > boardXOffset && x <= boardXOffset +(boardW)*hexW ) {
         //We are clicking on the board...
@@ -389,18 +486,23 @@ void testApp::mousePressed(int x, int y, int button){
                     currentAction = 0;
                     putPieceAt(whichCol,whichRow,whoseTurn);
                     whoseTurn = 3 - whoseTurn;
+                    checkedWinDetection = false;
+                    if (whoseTurn==2){
+                        myBoard.setPlayerOneTurn(false);
+                    }
+                    else myBoard.setPlayerOneTurn(true);
                 }
             }
         } else if(currentAction == 0){
             //...picking up and old piece
             int whichRow = (y-boardYOffset+hexH/2)/hexH;
             int whichCol = (x-(boardXOffset+(whichRow%2)*(hexW/2))+hexW/2)/hexW;
-            
+            myBoard.setPieceToMove(whichCol,whichRow);
             if(pieceAt(whichCol,whichRow) == whoseTurn){
                 selectedPieceX = whichCol;
                 selectedPieceY  = whichRow;
                 currentAction = 2;
-                putPieceAt(whichCol,whichRow,0);
+                putPieceAt(whichCol,whichRow,-1);
             }
         } else if(currentAction == 2){
             //...placing an old piece back on the board
@@ -414,9 +516,13 @@ void testApp::mousePressed(int x, int y, int button){
                     currentAction = 0;
                     putPieceAt(whichCol,whichRow,whoseTurn);
                     whoseTurn = 3 - whoseTurn;
+                    checkedWinDetection = false;
+                    if (whoseTurn==2){
+                        myBoard.setPlayerOneTurn(false);
+                    }
+                    else myBoard.setPlayerOneTurn(true);
                 }
             }
         }
     }
 }
-

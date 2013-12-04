@@ -32,7 +32,7 @@ Questions
 
 #### 1. Which type of data structure did you choose? Explain, in English, the main ideas behind your data structure.
 
-TODO
+We chose to implement a 2D Vector with Neighbor pointers. The reason why we chose to utilize a vector-based gameboard containing "GameNodes" was to allow for constant time access of any area on the board, and allow for changes within the logic behind the scenes as the development went along. Utilizing a "GameNode" based gameboard allowed for new variables to be created or changed to aid in conceptualizing and implementing various algorithms. Each "GameNode" contains 6 neighbor pointers, corresponding to each boarding piece. The pointers are determined when the board is created, and are used to determine which pieces are neighboring each other piece. This way, we cut down on the amount of complicated math and only have to think about the computation once during initialization, rather than across the entire project. Furthermore, the pointers are used to help conceptualize the more complicated algorithms, such as Dijkstra's Algorithm, and any graph traversal when checking for the pieces to be contiguous. Much of our choice was influenced by what we thought would be easier to code, as the relatively small total number of pieces meant that a less than an extremely efficient algorithm would still take a reasonable amount of time. Utilizing a combination of Neighbor Pointers, Node Objects, and a 2-D Vector, we felt that we had the best of all of the worlds, as we could use different methods to implement algorithms in different ways.
 
 
 Portfolio Video
@@ -49,4 +49,4 @@ The video should certainly be less than 2 minutes long. I (or the grading assist
 
 #### 1. Give the link to your portfolio video on YouTube.
 
-TODO
+http://youtu.be/0vtmGl1UEh4
