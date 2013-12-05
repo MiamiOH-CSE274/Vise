@@ -1,6 +1,8 @@
 #include "testApp.h"
+#include "gameBoard.h"
 
 #include <set>
+
 
 //////////////////
 /* Function declarations
@@ -11,20 +13,25 @@
  */
 //Functions you might want to use, game logic
 bool inVise(int x, int y);
-void doVise();
+void doVise(); 
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
 bool canPlaceNewPiece(int x, int y);
 bool isNeighboringSpace(int x, int y);
 bool isJumpSpace(int x, int y);
 bool isConnected();
+bool stillConnected(int x, int y);
 bool canPlaceOldPiece(int x, int y);
 int pieceAt(int x,int y);
 void putPieceAt(int x, int y, int whichPiece);
+pair <int,int> countCluster(hexSpace* target);
+void removeCluster(hexSpace* target);
+
 
 //Drawing functions
 void drawHex(float x, float y, float sideLen);
-void drawBoard();
+void drawboard();
 void drawSpares();
+
 
 //////////////////
 /*
@@ -34,18 +41,26 @@ void drawSpares();
  * the state of the board and the number of pieces
  */
 
+
 //Width and heigh of the board, in hexes.
 int boardW = 20;
 int boardH = 20;
 
+
 //TODO: Make any variables you need for representing your board here
+std::vector<hexSpace*> board;
+int numBlack;
+int numWhite;
+
 
 //Number of spare playing pieces left, for each player
 int pl1spares=4;
 int pl2spares=4;
 
+
 //Valid values are 1 or 2, to indicate whose turn it is
 int whoseTurn=1;
+
 
 /*
  * What is the current player doing?
@@ -56,9 +71,11 @@ int whoseTurn=1;
  */
 int currentAction=0;
 
-//The coordinates of the selected piece, if the player is moving an existing piece. This is in Board coordinates, not screen coordinates.
+
+//The coordinates of the selected piece, if the player is moving an existing piece. This is in board coordinates, not screen coordinates.
 int selectedPieceX=0;
 int selectedPieceY=0;
+
 
 /////////////////////
 /*
@@ -69,8 +86,10 @@ int selectedPieceY=0;
  */
 int currentFrame = 0;
 
+
 //Time at the start of the program
 float startTime;
+
 
 /////////////////
 /*
@@ -80,17 +99,25 @@ float startTime;
  * program state
  */
 
+
 //The upper-left corner of the board should be at this x,y position
 float boardXOffset = 50;
 float boardYOffset = 50;
 
+
 //The side length of each hex, in pixels
 float sideLen = 20.0;
+
 
 //The width and height of a hex, in pixels. Notice that you shouldn't
 // change these, just change sideLen
 float hexW = sideLen*2.0*0.86602540378444;
 float hexH = 1.5*sideLen;
+
+
+
+
+
 
 
 
@@ -102,23 +129,240 @@ void testApp::setup(){
     // updates or draws are too time conusming.
     ofSetFrameRate(60);
     
-    //TODO: Initialize your "board" data structure here
+    //Initialize your "gameBoard" data structure here
+        board.resize(400);
+        numBlack = 5;
+        numWhite = 5;
 
-    //TODO: Put 1 piece for each player in the middle of hte board, side by side
-    
+
+    //Put 1 piece for each player in the middle of the gameBoard, side by side
+        for(int i=0; i<400; i++)
+                board[i] = new hexSpace();
+        for(int i = 0; i < 400; i++){
+                if(i<19 && i>0){
+                                board[i]->upleft = board[i+379];
+                                board[i]->upright = board[i+380];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i+19];
+                                board[i]->downright = board[i+20];
+                }
+                else if(i<399 && i>380){
+                                board[i]->upleft = board[i-20];
+                                board[i]->upright = board[i-19];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i-380];
+                                board[i]->downright = board[i-379];
+                }
+                else if(i%40==0 && i!=0){
+                                board[i]->upleft = board[i-1];
+                                board[i]->upright = board[i-20];
+                                board[i]->left = board[i+19];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i+39];
+                                board[i]->downright = board[i+20];
+                }
+                else if((i+20)%40==0 && i!=380){
+                                board[i]->upleft = board[i-20];
+                                board[i]->upright = board[i-19];
+                                board[i]->left = board[i+19];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i+20];
+                                board[i]->downright = board[i+21];
+                }
+                else if((i+1)%40==0 && i!=399){
+                                board[i]->upleft = board[i-20];
+                                board[i]->upright = board[i-39];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i-19];
+                                board[i]->downleft = board[i+20];
+                                board[i]->downright = board[i+1];
+                }
+                else if((i+21)%40==0 && i!=19){
+                                board[i]->upleft = board[i-21];
+                                board[i]->upright = board[i-20];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i-19];
+                                board[i]->downleft = board[i+19];
+                                board[i]->downright = board[i+20];
+                }
+                else if(i>380 && i<399){
+                                board[i]->upleft = board[i-20];
+                                board[i]->upright = board[i-19];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i-380];
+                                board[i]->downright = board[i-379];
+                }
+                else if((i>40 && i<59)||(i>80 && i<99)||(i>120 && i<139)||(i>160 && i<179)||(i>200 && i<219)||(i>240 && i<259)||(i>280 && i<299)||(i>320 && i<339)||(i>360 && i<379)){
+                                board[i]->upleft = board[i-21];
+                                board[i]->upright = board[i-20];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i+19];
+                                board[i]->downright = board[i+20];
+                }
+                else if (i!=0 && i!=19 && i!=380 && i!=399){
+                                board[i]->upleft = board[i-20];
+                                board[i]->upright = board[i-19];
+                                board[i]->left = board[i-1];
+                                board[i]->right = board[i+1];
+                                board[i]->downleft = board[i+20];
+                                board[i]->downright = board[i+21];
+                }
+        }
+        board[0]->upleft = board[399];
+        board[0]->upright = board[380];
+        board[0]->left = board[19];
+        board[0]->right = board[1];
+        board[0]->downleft = board[39];
+        board[0]->downright = board[20];
+
+
+        board[19]->upleft = board[398];
+        board[19]->upright = board[399];
+        board[19]->left = board[18];
+        board[19]->right = board[0];
+        board[19]->downleft = board[38];
+        board[19]->downright = board[39];
+
+
+        board[380]->upleft = board[360];
+        board[380]->upright = board[361];
+        board[380]->left = board[399];
+        board[380]->right = board[381];
+        board[380]->downleft = board[0];
+        board[380]->downright = board[1];
+
+
+        board[399]->upleft = board[379];
+        board[399]->upright = board[360];
+        board[399]->left = board[398];
+        board[399]->right = board[380];
+        board[399]->downleft = board[19];
+        board[399]->downright = board[0];
+
+
+        board[209]->type=1;
+        board[210]->type=2;
+
+
     startTime = ofGetElapsedTimef();
 }
 
-//Return true iff there is a piece in board space (x,y), and that piece
-// is caught in a vise. Note that x and y are in board coordinates,
+
+//Return true iff there is a piece in gameBoard space (x,y), and that piece
+// is caught in a vise. Note that x and y are in gameBoard coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-    //TODO
-    return false;
+        int target = 20*y+x;
+		
+		if (board[target]->type != 0){
+			if (((board[target]->left->type != board[target]->type) && (board[target]->right->type == board[target]->left->type) && (board[target]->right->type != 0)) ||
+				((board[target]->upleft->type != board[target]->type) && (board[target]->downright->type == board[target]->upleft->type) && (board[target]->downright->type != 0)) ||
+				((board[target]->downleft->type != board[target]->type) && (board[target]->upright->type == board[target]->downleft->type) && (board[target]->upright->type != 0)))
+					return true;
+		}
+        return false;
 }
 
+
+// This method removes the cluster that is attached to the hexSpace target
+void removeCluster(hexSpace* target){
+	if (target->checked == 1){
+		target->checked = 1; 
+	}	
+	else if ((target->type == 0)){
+		target->checked = 1; 
+	}
+	else if (target->checked == 0){
+		
+		target->checked = 1;
+			
+		removeCluster(target->upleft);
+		removeCluster(target->left);
+		removeCluster(target->downleft);
+		removeCluster(target->downright);
+		removeCluster(target->right);
+		removeCluster(target->upright);
+	}
+	if (target->type == 1){
+		pl1spares++;
+	}
+	else if (target->type == 2){
+		pl2spares++;
+	}
+
+	target->type = 0; 
+	
+
+}
+
+
+// This method counts the number of white and black pieces that 
+// are in one cluster
+std::pair <int,int> countCluster(hexSpace* target){
+	if (target->checked == 1){
+		target->checked = 1;
+		std::pair <int,int> cluster (0,0);
+		return cluster;
+	}	
+	else if ((target->type == 0)){
+
+		target->checked = 1;
+		std::pair <int,int> cluster (0,0);
+
+		return cluster;
+	}
+	else if (target->checked == 0){
+		std::pair <int,int> cluster (0,0);	
+		target->checked = 1;
+		if (target->type == 1){
+			cluster.first = 1;
+			cluster.second = 0;
+		}
+		else if (target->type == 2){
+			cluster.first = 0;
+			cluster.second = 1;
+		}
+		std::pair<int,int> addOn (0,0);
+		
+		addOn=countCluster(target->upleft);
+		cluster.first = cluster.first + addOn.first;
+		cluster.second = cluster.second + addOn.second;
+		
+		addOn = countCluster(target->left);
+		cluster.first = cluster.first + addOn.first;
+		cluster.second = cluster.second + addOn.second;
+
+		addOn=countCluster(target->downleft);
+		cluster.first = cluster.first + addOn.first;
+		cluster.second = cluster.second + addOn.second;
+
+		addOn=countCluster(target->downright);
+		cluster.first = cluster.first + addOn.first;
+		cluster.second = cluster.second + addOn.second;
+
+		addOn=countCluster(target->right);
+		cluster.first = cluster.first + addOn.first;
+		cluster.second = cluster.second + addOn.second;
+
+		addOn=countCluster(target->upright);
+		cluster.first = cluster.first + addOn.first;
+		cluster.second = cluster.second + addOn.second;
+		
+			return cluster;
+	}
+	else {
+		std::pair <int,int> cluster (0,0);
+		return cluster;
+	}
+}
+
+
 /*
- * This is the method that updates the board if a player is caught in a vise at the end of the turn.
+ * This is the method that updates the gameBoard if a player is caught in a vise at the end of the turn.
  * You may want to break this method up into several sub-methods.
  *
  * 1) FIRST, identify all pieces that are caught in a vise Note: If you have 0101, then
@@ -133,9 +377,195 @@ bool inVise(int x, int y){
  *    most recently.
  * 3c) If no such component exists, then select the largest connected component.
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
- */
+*/ 
 void doVise(){
-    //TODO
+
+	int inV = 0;
+	int target = 0;
+	int temp = 0;
+
+	// Intialize an array to hold the pieces that are in vise
+	vector<int> toDelete;
+	toDelete.resize(0);
+
+	// Find all pieces in the vise and add to toDelete
+	for (int i = 0; i < 20; i++){
+		for (int j = 0; j < 20; j++){
+			if (inVise(i,j)){
+				target = 20*j+i;
+				inV = board[20*j+i]->type;
+				toDelete.push_back(target);
+			}
+		}
+	}
+
+
+// if toDelete contains pieces then delete the pieces
+// and check to see if the board is still connected
+
+	if(!toDelete.empty()){
+		for(int i = 0; i != toDelete.size(); i++){
+			if(board[toDelete[i]]->type = 1)
+				numWhite--;
+			else if(board[toDelete[i]]->type = 2)
+				numBlack--;
+			board[toDelete[i]]->type=0;
+		}
+		toDelete.clear();
+	while (!isConnected()){		
+		// Set all pieces checked to 0
+		for (int i = 0; i < 400; i++){
+			board[i]->checked = 0;
+		}
+
+		// While the board is not connected check for the 
+		// clusters and put the pieces in the clusters back
+		// in the bank based on the rules for doVise()
+	
+			// Recursive time!
+			pair <int,int> firstCluster;
+			pair <int,int> secCluster;
+			
+			int firstStart = -1;
+			int secStart = -1;
+	
+			// Find the first piece on the board going from left
+			// to right and up to down
+			for (int i = 0; i < 400; i++){
+				if (board[i]->type != 0 && board[i]->checked != 1){
+					firstStart = i;
+					break;
+				}	
+			}
+			
+			// Run a recursive countCluster method to determine
+			// how many white and black pieces are in the 
+			// first connected cluster
+			firstCluster = countCluster(board[firstStart]);
+		
+			// Since the board is not connected, find the first piece
+			// on the board that has not been checked yet
+			// This will be the starting point for the second Cluster
+			for (int i = 0; i < 400; i++){
+				if (board[i]->type != 0 && board[i]->checked != 1){
+					secStart = i;
+					break;
+				}
+			}
+		
+			// if secStart is not -1, a second cluster has been found
+			// Run the recursive countCluster method on this second Cluster
+			// to find the number of white and black pieces in this Cluster			
+			if (secStart != -1) {
+				secCluster = countCluster(board[secStart]);
+			}
+
+			// Set all the pieces checks back to 0
+			for (int i = 0; i < 400; i++){
+				board[i]->checked = 0;
+			}
+
+			// Determine who played the last piece
+			int lastTurn = 3 - whoseTurn;
+			
+			// Save the cluster values in these variable
+			int firstClusterW = firstCluster.first;
+			int firstClusterB = firstCluster.second;
+			int secClusterW = secCluster.first;
+			int secClusterB = secCluster.second;
+
+			// Compare Clusters
+			if ((secClusterB + secClusterW) > 0){
+			if ((firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW > 0)){
+				if (((firstClusterB + firstClusterW) > (secClusterB + secClusterW))){
+					// First cluster is bigger and contains at least 1 white and 1 black, remove second
+					removeCluster(board[secStart]);
+				}
+				else if (((firstClusterB + firstClusterW) < (secClusterB + secClusterW))){
+					// Second cluster is bigger and contains at least 1 white and 1 black, remove first
+					removeCluster(board[firstStart]);
+				}
+				else if (((firstClusterB + firstClusterW) == (secClusterB + secClusterW)) && (firstClusterB > 0 && firstClusterW > 0) && (secClusterB > 0 && secClusterW > 0)){
+					// TIE
+					// pick one with the most pieces from the recent player
+					if (lastTurn == 1){
+						if (firstClusterW > secClusterW){
+							//First cluster has more whites, remove second
+							removeCluster(board[secStart]);
+						}
+						else if ((firstClusterW < secClusterW)){
+							// Second cluster has more whites, remove first
+							removeCluster(board[firstStart]);
+						}
+					}
+					else if (lastTurn == 2){
+						if (firstClusterB > secClusterB){
+							//First cluster has more blacks, remove second
+							removeCluster(board[secStart]);
+						}
+						else if ((firstClusterB < secClusterB)){
+							// Second cluster has more blacks, remove first
+							removeCluster(board[firstStart]);
+						}
+					}
+				}
+			}
+			else if ((firstClusterB > 0 && firstClusterW > 0) || (secClusterB > 0 && secClusterW > 0)){
+				if (firstClusterB > 0 && firstClusterW > 0){
+					removeCluster(board[secStart]);
+				}
+				else{
+					removeCluster(board[firstStart]);
+				}
+			}
+			else if (firstClusterW == 0 || firstClusterB == 0 || secClusterW == 0 || secClusterB == 0){
+				if (lastTurn == 1){
+					if (firstClusterW > secClusterW){
+						//First cluster has more whites, remove second
+						removeCluster(board[secStart]);
+					}
+					else if ((firstClusterW < secClusterW)){
+						// Second cluster has more whites, remove first
+						removeCluster(board[firstStart]);
+					}
+				}
+				else if (lastTurn == 2){
+					if (firstClusterB > secClusterB){
+						//First cluster has more blacks, remove second
+						removeCluster(board[secStart]);
+					}
+					else if ((firstClusterB < secClusterB)){
+						// Second cluster has more blacks, remove first
+						removeCluster(board[firstStart]);
+					}
+				}
+				else {
+					// Tie pick to remove second cluster
+					removeCluster(board[secStart]);
+				}
+			}
+			else {
+				if ((firstClusterW + firstClusterB) > (secClusterW + secClusterB)){
+					// pick firstCluster and remove second cluster
+					removeCluster(board[secStart]);
+				}			
+				else if ((firstClusterW + firstClusterB) < (secClusterW + secClusterB)){
+					// pick secCluster and remove first cluster
+					removeCluster(board[firstStart]);
+				}
+				else{
+					// Tie pick to remove second cluster
+					removeCluster(board[secStart]);
+				}
+			}
+		}		
+	// Set all the pieces checks back to 0
+			for (int i = 0; i < 400; i++){
+				board[i]->checked = 0;
+			}
+	}
+	
+	}
 }
 
 //--------------------------------------------------------------
@@ -146,6 +576,7 @@ void testApp::update(){
     //Check for vised pieces on every update
     doVise();
 }
+
 
 //Draw a single hexagon centered at (x,y).
 // These are screen coordinates, not board coordinates.
@@ -168,6 +599,8 @@ void drawHex(float x, float y, float sideLen){
 }
 
 
+
+
 /*
  * x and y are the input parameters, which are in board coordinates
  * For a given space (x,y), check to see how many of the neighboring spaces
@@ -177,8 +610,43 @@ void drawHex(float x, float y, float sideLen){
  * under consideration.
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
-    //TODO
+        int target = 20*y+x;
+        if(board[target]->upleft->type!=whoseTurn && board[target]->upleft->type!=0)
+                badNbrs++;
+        else if(board[target]->upleft->type!=0)
+                okayNbrs++;
+
+
+        if(board[target]->upright->type!=whoseTurn && board[target]->upright->type!=0)
+                badNbrs++;
+        else if(board[target]->upright->type!=0)
+                okayNbrs++;
+
+
+        if(board[target]->left->type!=whoseTurn && board[target]->left->type!=0)
+                badNbrs++;
+        else if(board[target]->left->type!=0)
+                okayNbrs++;
+
+
+        if(board[target]->right->type!=whoseTurn && board[target]->right->type!=0)
+                badNbrs++;
+        else if(board[target]->right->type!=0)
+                okayNbrs++;
+
+
+        if(board[target]->downleft->type!=whoseTurn && board[target]->downleft->type!=0)
+                badNbrs++;
+        else if(board[target]->downleft->type!=0)
+                okayNbrs++;
+
+
+        if(board[target]->downright->type!=whoseTurn && board[target]->downright->type!=0)
+                badNbrs++;
+        else if(board[target]->downright->type!=0)
+                okayNbrs++;
 }
+
 
 /*
  * Return true iff the current player can place a new piece
@@ -194,19 +662,40 @@ bool canPlaceNewPiece(int x, int y){
     return(okayNbrs > 0 && badNbrs == 0);
 }
 
+
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isNeighboringSpace(int x, int y){
-    //TODO
-    return false;
+        int selected = selectedPieceY*20+selectedPieceX;
+        int target = 20*y+x;
+        if((board[selected]->upleft == board[target]) ||
+                (board[selected]->upright == board[target]) ||
+                (board[selected]->left == board[target]) ||
+                (board[selected]->right == board[target]) ||
+                (board[selected]->downleft == board[target]) ||
+                (board[selected]->downright == board[target]))
+                return true;
+        return false;
 }
+
 
 //Return true iff (x,y) is one jump to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isJumpSpace(int x, int y){
-    //TODO
+        int selected = selectedPieceY*20+selectedPieceX;
+        int target = 20*y+x;
+
+        if((board[selected]->upleft->upleft == board[target] && board[selected]->upleft->type !=0) ||
+                (board[selected]->upright->upright == board[target] && board[selected]->upright->type !=0) ||
+                (board[selected]->left->left == board[target] && board[selected]->left->type !=0) ||
+                (board[selected]->right->right == board[target] && board[selected]->right->type !=0) ||
+                (board[selected]->downleft->downleft == board[target] && board[selected]->downleft->type !=0) ||
+                (board[selected]->downright->downright == board[target] && board[selected]->downright->type !=0))
+
+                return true;
     return false;
 }
+
 
 //Return true if and only if the board currently contains
 // only 1 connected component
@@ -216,8 +705,43 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(){
-    //TODO
-    return false;
+    for (int i = 0; i < 400; i++)
+		board[i]->checked = 0;
+
+	int start;
+	
+	for(int i = 0; i < 400; i++)
+		if(board[i]->type != 0){
+			start = i;
+			break;
+		}
+		
+		pair<int,int> pairPieces = countCluster(board[start]);
+		int numPieces = pairPieces.first + pairPieces.second;
+	
+		if(numPieces == numWhite - pl1spares + numBlack - pl2spares)
+			return true;
+		return false;
+	
+	for (int i = 0; i < 400; i++){
+		board[i]->checked = 0;
+	}
+}
+
+// This method determines if the x,y coordinates, if filled
+// with a piece will keep the board connected.
+// return true if it will still be connnected and false otherwise
+bool stillConnected(int x, int y){
+	bool stillConnected = false;
+	int target = 20*y+x;
+	int currentSpot = 20*selectedPieceY+selectedPieceX;
+	if(board[target]->type == 0){
+		board[target]->type = whoseTurn;
+		board[currentSpot]->type = 0;
+		stillConnected = isConnected();
+		board[target]->type = 0;
+	}
+	return stillConnected;
 }
 
 /* This is used when the player is moving one of her pieces that is
@@ -241,9 +765,15 @@ bool isConnected(){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-    //TODO
-    return false;
+    int target = 20*y+x;
+
+	if ((board[target]->type == 0) && (isNeighboringSpace(x,y) || isJumpSpace(x,y)))
+		if(stillConnected(x,y))
+			return true;
+    
+	return false;
 }
+
 
 /*
  * Which type of piece is at board position (x,y)?
@@ -251,11 +781,13 @@ bool canPlaceOldPiece(int x, int y){
  * (1 or 2)
  */
 int pieceAt(int x,int y){
-    //TODO
-    return 0;
+	int target = 20*y+x;
+		
+    return board[target]->type;
 }
 
-void drawBoard(){
+
+void drawboard(){
     //NOTE: This will need to be adapted to your board
     // data structure!
     //For each board hex...
@@ -286,6 +818,7 @@ void drawBoard(){
                     if(canPlaceNewPiece(x, y)){
                         ofCircle(boardXOffset+x*hexW+offset,boardYOffset+y*hexH,sideLen/2);
                     }
+                                        
                 } else if(currentAction == 2){
                     //If the user is trying to move an old piece,
                     // higlight the space if it is valid to place the piece here
@@ -328,6 +861,7 @@ void drawBoard(){
     
 }
 
+
 /*
  * Draw the store of remaining pieces on the right side of the screen
  */
@@ -345,20 +879,24 @@ void drawSpares(){
     }
 }
 
+
 //--------------------------------------------------------------
 void testApp::draw(){
     ofBackground(128,128,128); //gray
-    drawBoard();
+    drawboard();
     drawSpares();
 }
+
 
 /*
  * Put a piece on the board at position (x,y). 
  * If whichPieces is 0, then it clears that board position.
  */
 void putPieceAt(int x, int y, int whichPiece){
-    //TODO
+        int target = 20*y+x;
+        board[target]->type = whichPiece;
 }
+
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
@@ -419,4 +957,3 @@ void testApp::mousePressed(int x, int y, int button){
         }
     }
 }
-
