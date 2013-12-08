@@ -51,7 +51,7 @@ int Graph::getPiece(int x, int y){
 	return adjList.at((y*20)+x).piece;
 }
 int* Graph::getNeighbors(int x, int y){
-	int* neighborList = new int[adjList.at((y*20)+x).edgeList.size()];
+	int* neighborList = new int[adjList.at((y*20)+x).edgeList.size()]();
 	for (int edgeCount = 0; edgeCount < adjList.at((y*20)+x).edgeList.size(); edgeCount++)
 		neighborList[edgeCount] = adjList.at((y*20)+x).edgeList.at(edgeCount).dest;
 	return neighborList;

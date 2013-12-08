@@ -18,7 +18,7 @@ void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
 bool canPlaceNewPiece(int x, int y);
 bool isNeighboringSpace(int x, int y);
 bool isJumpSpace(int x, int y);
-bool isConnected(int &totalPiecesOnBoard, int &filedTileCount);
+bool isConnected(int &totalPiecesOnBoard, int &filedTileCount, int* &filledTiles);
 bool canPlaceOldPiece(int x, int y);
 int pieceAt(int x,int y);
 void putPieceAt(int x, int y, int whichPiece);
@@ -44,7 +44,7 @@ int boardH = 20;
 
 int totalPiecesOnBoard = 0;
 int filledTileCount = 0;
-int* filledTiles = new int[10];
+int* filledTiles = new int[10]();
 
 //Number of spare playing pieces left, for each player
 int pl1spares=4;
@@ -161,16 +161,18 @@ void doVise(){
 		if (filledTileCount < (totalPiecesOnBoard/2)){
 			for (int count = 0; count < 10; count++){
 				if (filledTiles[count] != NULL){
-					if (board.getPiece(filledTiles[count]) == 1)
+					if (board.getPiece(filledTiles[count]) == 1){
 						pl1spares++;
-					if (board.getPiece(filledTiles[count]) == 2)
+					}
+					if (board.getPiece(filledTiles[count]) == 2){
 						pl2spares++;
+					}
 					board.placePiece(filledTiles[count]%20, filledTiles[count]/20, 0);
 				}
 			}
 		}
 		delete[] filledTiles;
-		filledTiles = new int[10];
+		filledTiles = new int[10]();
 	}
 	//	board.getConnected(/* place that is a spot in the array. Could technically loop through all spots*/)
 	
@@ -285,10 +287,10 @@ bool isConnected(int &totalPiecesOnBoard, int &filledTileCount, int* &filledTile
 	std::stack<int> open;
 	filledTileCount = 0;
 	open.push(firstPiece);
-	int* tileStatus = new int[totalPiecesOnBoard];
+	int* tileStatus = new int[boardH*boardW]();
 	for (int statusCount = 0; statusCount < totalPiecesOnBoard; statusCount++)
 		tileStatus[statusCount] = 0;
-	tileStatus[0] = 1;
+	tileStatus[firstPiece] = 1;
 	while (open.size() != 0){
 		int visitingNode = open.top();
 		int visitingNodeX = visitingNode%boardW;
@@ -297,8 +299,8 @@ bool isConnected(int &totalPiecesOnBoard, int &filledTileCount, int* &filledTile
 		tileStatus[visitingNode] = 2;
 		if (board.getPiece(visitingNodeX, visitingNodeY) != 0)
 			filledTileCount++;
+		int* neighbors = board.getNeighbors(visitingNodeX, visitingNodeY);
 		for (int neighborCount = 0; neighborCount < board.getNeighborListSize(visitingNodeX, visitingNodeY); neighborCount++){
-			int* neighbors = board.getNeighbors(visitingNodeX, visitingNodeY);
 			if (tileStatus[neighbors[neighborCount]] == 0){
 				tileStatus[neighbors[neighborCount]] = 1;
 				open.push(neighbors[neighborCount]);
