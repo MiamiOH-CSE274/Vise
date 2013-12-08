@@ -23,21 +23,21 @@ void Graph::addEdge(int node1, int node2){
 void Graph::Setup(){
 	for( int i=0;i<400;i++){
 		if(i-20>0){
-			if(((i%40)>=20) && (i+1<20))
-				addEdge(i,i-21);
-			addEdge(i,i-20);
-			if(((i%40)<20) && (i-1>0))
+			if(((i%40)>=20) && ((i+1)%20<20))
 				addEdge(i,i-19);
+			addEdge(i,i-20);
+			if(((i%40)<20) && ((i-1)%20>0))
+				addEdge(i,i-21);
 		}
-		if(i>0)
+		if(i%20>0)
 			addEdge(i,i-1);
-		if(i<20)            
+		if(i%20<20)            
 			addEdge(i,i+1);
 		if(i+20<400){
-			if(((i%40)<20) && (i-1>0))
+			if(((i%40)<20) && ((i-1)%20>0))
 				addEdge(i,i+19);
 			addEdge(i,i+20);
-			if(((i%40)>=20) && (i+1<20))
+			if(((i%40)>=20) && ((i+1)%20<20))
 				addEdge(i,i+21);
 		}
 		adjList.at(i).piece=0;
