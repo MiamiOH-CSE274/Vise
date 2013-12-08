@@ -140,7 +140,7 @@ bool inVise(int x, int y){
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
  */
 void doVise(){
-	std::pair<int,int>* x;
+	std::pair<int,int>* x= new std::pair<int,int>();
 	int iter =0;
     for(int i=0;i<20;i++){
 		for(int j=0;j<20;j++){
@@ -151,13 +151,14 @@ void doVise(){
 			}
 		}
 	}
-	for(int i=0;i<iter;i++)
+	for(int i=0;i<iter;i++){
 	board.placePiece(x[i].first, x[i].second,0);
-	delete x;
+	//delete[] x;
+	}
 
 	//while(!isConnected())
-	//	board.getConnected
-
+	//	board.getConnected(/* place that is a spot in the array. Could technically loop through all spots*/)
+	
 }
 
 //--------------------------------------------------------------
@@ -199,16 +200,6 @@ void drawHex(float x, float y, float sideLen){
  * under consideration.
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
-
-
-	//for(int i=0;i<6;i++){
-	//	int t=board.getClose(x,y, i);
-	//	if(t!=0)
-	//		if(t==whoseTurn)
-	//			okayNbrs++;
-	//		else 
-	//			badNbrs++;
-//	}
 	board.checkNbrs(x,y,okayNbrs,badNbrs,whoseTurn);
 }
 
@@ -323,16 +314,17 @@ bool isConnected(int &totalPiecesOnBoard, int &filledTileCount){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-	if(!canPlaceNewPiece(x,y))	
-		return false;
-	else if (!isNeighboringSpace(x,y))
-		return false;
-	else if (!isJumpSpace(x,y))
-		return false;
-	else if (!isConnected())
-		return false;
-	else
+
+	if(canPlaceNewPiece(x,y))	
 		return true;
+	else if (isNeighboringSpace(x,y))
+		return true;
+	else if (isJumpSpace(x,y))
+		return true;
+	//else if (!isConnected())
+	//	return false;
+	else
+		return false;
 }
 
 /*
@@ -436,7 +428,7 @@ void drawSpares(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofBackground(39,129,20); //gray
+    ofBackground(39,129,20); //green
     drawBoard();
     drawSpares();
 }
