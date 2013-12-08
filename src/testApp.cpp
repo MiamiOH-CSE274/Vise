@@ -119,15 +119,6 @@ void testApp::setup(){
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-	//int player=board.getPiece(x,y);
-	//int near= board.getNeighbors(x,y);
-	//if(board.adjList.at(board.getClose(x,y,0))
-
-
-
-
-
-
 	return board.inVise(x,y);
 }
 
@@ -149,7 +140,24 @@ bool inVise(int x, int y){
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
  */
 void doVise(){
-    //TODO
+	std::pair<int,int>* x;
+	int iter =0;
+    for(int i=0;i<20;i++){
+		for(int j=0;j<20;j++){
+			if(inVise(i,j)){
+				x[iter].first=i;
+				x[iter].second=j;
+				iter++;
+			}
+		}
+	}
+	for(int i=0;i<iter;i++)
+	board.placePiece(x[i].first, x[i].second,0);
+	delete x;
+
+	//while(!isConnected())
+	//	board.getConnected
+
 }
 
 //--------------------------------------------------------------
@@ -191,14 +199,17 @@ void drawHex(float x, float y, float sideLen){
  * under consideration.
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
-	for(int i=0;i<6;i++){
-		int t=board.getClose(x,y, i);
-		if(t!=0)
-			if(t==whoseTurn)
-				okayNbrs++;
-			else 
-				badNbrs++;
-	}
+
+
+	//for(int i=0;i<6;i++){
+	//	int t=board.getClose(x,y, i);
+	//	if(t!=0)
+	//		if(t==whoseTurn)
+	//			okayNbrs++;
+	//		else 
+	//			badNbrs++;
+//	}
+	board.checkNbrs(x,y,okayNbrs,badNbrs,whoseTurn);
 }
 
 /*

@@ -21,7 +21,7 @@ void Graph::addEdge(int node1, int node2){
 
 }
 void Graph::Setup(){
-	for(int i=0;i<400;i++){
+	for( int i=0;i<400;i++){
 		if(i-20>0){
 			if(((i%40)>=20) && (i+1<20))
 				addEdge(i,i-21);
@@ -86,8 +86,17 @@ bool Graph::isClose(int x1, int y1, int x2, int y2){
 	}
 	return false;
 }
-
-
+void Graph::checkNbrs(int x, int y, int& okayNbrs, int& badNbrs, int whoseTurn){
+	int j=adjList.at(20*y+x).edgeList.size();
+	for(int i=0;i<j;i++){
+		int t=getClose(x,y, i);
+		if(t!=0)
+			if(t==whoseTurn)
+				okayNbrs++;
+			else 
+				badNbrs++;
+	}
+}
 bool Graph::inVise(int x, int y){
 	std::vector<int> list;
 	int player=getPiece(x,y);
@@ -96,9 +105,8 @@ bool Graph::inVise(int x, int y){
 			list.push_back(adjList.at(20*y+x).edgeList.at(i).dest);//adjList.at(adjList.at((20*y)+x).edgeList.at(i).dest));
 
 	}
-	for(int i=0;i<list.size();i++){
+	for(int i=0;i<list.size();i++)
 		if(adjList.at(list[i]).piece==adjList.at(list[i]+40).piece)
 			return true;
-	}
 	return false;
 }

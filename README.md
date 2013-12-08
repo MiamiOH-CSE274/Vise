@@ -32,7 +32,7 @@ Questions
 
 #### 1. Which type of data structure did you choose? Explain, in English, the main ideas behind your data structure.
 
-TODO
+We used an adjacency list from the graph lab because it could easily hold the edges between for nearby nodes. The list contains 400 numbers which each are connected through edges to their neighbours.
 
 
 Portfolio Video
