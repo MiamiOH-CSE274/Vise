@@ -44,6 +44,7 @@ int boardH = 20;
 
 int totalPiecesOnBoard = 0;
 int filledTileCount = 0;
+int* filledTiles = new int[10];
 
 //Number of spare playing pieces left, for each player
 int pl1spares=4;
@@ -152,11 +153,25 @@ void doVise(){
 		}
 	}
 	for(int i=0;i<iter;i++){
-	board.placePiece(x[i].first, x[i].second,0);
-	//delete[] x;
+		board.placePiece(x[i].first, x[i].second,0);
+		delete[] x;
 	}
 
-	//while(!isConnected())
+	while(!isConnected(totalPiecesOnBoard, filledTileCount, filledTiles)){
+		if (filledTileCount < (totalPiecesOnBoard/2)){
+			for (int count = 0; count < 10; count++){
+				if (filledTiles[count] != NULL){
+					if (board.getPiece(filledTiles[count]) == 1)
+						pl1spares++;
+					if (board.getPiece(filledTiles[count]) == 2)
+						pl2spares++;
+					board.placePiece(filledTiles[count]%20, filledTiles[count]/20, 0);
+				}
+			}
+		}
+		delete[] filledTiles;
+		filledTiles = new int[10];
+	}
 	//	board.getConnected(/* place that is a spot in the array. Could technically loop through all spots*/)
 	
 }
@@ -253,12 +268,15 @@ bool isJumpSpace(int x, int y){
 // first search, counting how many pieces I found. If the number found
 // equals the total number on the board, then return true. Otherwise,
 // return false
-bool isConnected(int &totalPiecesOnBoard, int &filledTileCount){
+bool isConnected(int &totalPiecesOnBoard, int &filledTileCount, int* &filledTiles){
 	totalPiecesOnBoard = 0;
 	int firstPiece = 0;
+	int count = 0;
     for (int index = 0; index < (boardH*boardW); index++){
 		if (board.getPiece((index%boardW), (index/boardH)) != 0){
 			totalPiecesOnBoard++;
+			filledTiles[count] = index;
+			count++;
 			if (totalPiecesOnBoard == 1)
 				firstPiece = index;
 		}
@@ -273,14 +291,14 @@ bool isConnected(int &totalPiecesOnBoard, int &filledTileCount){
 	tileStatus[0] = 1;
 	while (open.size() != 0){
 		int visitingNode = open.top();
-		int visitingNodeXCoord = visitingNode%boardW;
-		int visitingNodeYCoord = visitingNode/boardH;
+		int visitingNodeX = visitingNode%boardW;
+		int visitingNodeY = visitingNode/boardH;
 		open.pop();
 		tileStatus[visitingNode] = 2;
-		if (board.getPiece(visitingNodeXCoord, visitingNodeYCoord) != 0)
+		if (board.getPiece(visitingNodeX, visitingNodeY) != 0)
 			filledTileCount++;
-		for (int neighborCount = 0; neighborCount < board.getNeighborListSize(visitingNodeXCoord, visitingNodeYCoord); neighborCount++){
-			int* neighbors = board.getNeighbors(visitingNodeXCoord, visitingNodeYCoord);
+		for (int neighborCount = 0; neighborCount < board.getNeighborListSize(visitingNodeX, visitingNodeY); neighborCount++){
+			int* neighbors = board.getNeighbors(visitingNodeX, visitingNodeY);
 			if (tileStatus[neighbors[neighborCount]] == 0){
 				tileStatus[neighbors[neighborCount]] = 1;
 				open.push(neighbors[neighborCount]);
