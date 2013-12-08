@@ -31,16 +31,13 @@ void Graph::Setup(){
 		}
 		if(i%20>0)
 			addEdge(i,i-1);
-		if(i%20<20) 
-			if(i!=399)
-				addEdge(i,i+1);			
+		if(i%20<20)            
+			addEdge(i,i+1);
 		if(i+20<400){
 			if(((i%40)<20) && ((i-1)%20>0))
-				
-					addEdge(i,i+19);
+				addEdge(i,i+19);
 			addEdge(i,i+20);
 			if(((i%40)>=20) && ((i+1)%20<20))
-				if(i!=379)
 				addEdge(i,i+21);
 		}
 		adjList.at(i).piece=0;

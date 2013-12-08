@@ -226,9 +226,24 @@ bool isNeighboringSpace(int x, int y){
 //Return true iff (x,y) is one jump to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isJumpSpace(int x, int y){
-	return ((((20*y)+x) == (((20*selectedPieceY)+selectedPieceX)-41)) || (((20*y)+x) == (((20*selectedPieceY)+selectedPieceX)-39)) ||
-			(((20*y)+x) == (((20*selectedPieceY)+selectedPieceX)-2)) || (((20*y)+x) == (((20*selectedPieceY)+selectedPieceX)+2)) ||
-			(((20*y)+x) == (((20*selectedPieceY)+selectedPieceX)+39)) || (((20*y)+x) == (((20*selectedPieceY)+selectedPieceX)+41)));
+	int destinationTile = (20*y)+x;
+	int originalTile = (20*selectedPieceY)+selectedPieceX;
+	if((originalTile%40)<20)
+		return(((board.getPiece(originalTile-21) != 0) && (destinationTile == (originalTile-41))) ||
+			   ((board.getPiece(originalTile-20) != 0) && (destinationTile == (originalTile-39))) ||
+			   ((board.getPiece(originalTile-1) != 0) && (destinationTile == (originalTile-2))) ||
+		       ((board.getPiece(originalTile+1) != 0) && (destinationTile == (originalTile+2))) ||
+		       ((board.getPiece(originalTile+19) != 0) && (destinationTile == (originalTile+39))) ||
+		       ((board.getPiece(originalTile+20) != 0) && (destinationTile == (originalTile+41))));
+	else if((originalTile%40)>=20)
+		return(((board.getPiece(originalTile-20) != 0) && (destinationTile == (originalTile-41))) ||
+			   ((board.getPiece(originalTile-19) != 0) && (destinationTile == (originalTile-39))) ||
+			   ((board.getPiece(originalTile-1) != 0) && (destinationTile == (originalTile-2))) ||
+		       ((board.getPiece(originalTile+1) != 0) && (destinationTile == (originalTile+2))) ||
+		       ((board.getPiece(originalTile+20) != 0) && (destinationTile == (originalTile+39))) ||
+		       ((board.getPiece(originalTile+21) != 0) && (destinationTile == (originalTile+41))));
+	else
+		return false;
 }
 
 //Return true if and only if the board currently contains
