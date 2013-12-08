@@ -5,13 +5,17 @@
 *.obj
 *.ipch
 *.log
-
+*.exe
+*.exp
 # Compiled Dynamic libraries
 *.so
 *.dylib
 *.dll
-
+*.lib
+*.ilk
 # Compiled Static libraries
 *.lai
 *.la
 *.a
+*.sdf
+*
