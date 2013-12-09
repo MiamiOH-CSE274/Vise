@@ -49,4 +49,6 @@ The video should certainly be less than 2 minutes long. I (or the grading assist
 
 #### 1. Give the link to your portfolio video on YouTube.
 
-TODO
+Below is the link to the youtube video presenting our Vise project:
+
+http:/youtu.be/QqxeVF0mlws
