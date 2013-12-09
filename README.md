@@ -32,7 +32,7 @@ Questions
 
 #### 1. Which type of data structure did you choose? Explain, in English, the main ideas behind your data structure.
 
-We used an adjacency list from the graph lab because it could easily hold the edges between for nearby nodes. The list contains 400 numbers which each are connected through edges to their neighbours.
+We used an adjacency list from the graph lab because it could easily hold the edges between for nearby nodes. The list contains 400 nodes which each are connected through edges to their neighbours. An adjecency list in particular was chosen because we believe it is particularly useful when creating the relationships between the different "game tiles", or nodes, via edges. Being able to use nodes also allowed us to hold multiple data items in each individual game tile, such as what kind of piece was located on any given tile (player 1, player 2, or empty).
 
 
 Portfolio Video
