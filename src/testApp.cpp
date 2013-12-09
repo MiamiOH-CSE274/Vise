@@ -271,47 +271,44 @@ bool isJumpSpace(int x, int y){
 // equals the total number on the board, then return true. Otherwise,
 // return false
 bool isConnected(int &totalPiecesOnBoard, int &filledTileCount, int* &filledTiles){
-	totalPiecesOnBoard = 0;
-	int firstPiece = 0;
-	int count = 0;
+        totalPiecesOnBoard = 0;
+        int firstPiece = 0;
+        int count = 0;
     for (int index = 0; index < (boardH*boardW); index++){
-		if (board.getPiece((index%boardW), (index/boardH)) != 0){
-			totalPiecesOnBoard++;
-			filledTiles[count] = index;
-			count++;
-			if (totalPiecesOnBoard == 1)
-				firstPiece = index;
-		}
-	}
-	std::list<int> open;
-	//int* open= new int[10]();
-	filledTileCount = 0;
-	open.assign(0, firstPiece);
-	std::vector<int> tileStatus;//= new std::vector<int>();
-	//for (int statusCount = 0; statusCount < totalPiecesOnBoard; statusCount++)
-		//tileStatus.at //.at(statusCount) = 0;
-	//tileStatus.at(0) = 1;
-	while (open.size() != 0){
-		int visitingNode = open.front();
-		int visitingNodeX = visitingNode%boardW;
-		int visitingNodeY = visitingNode/boardH;
-		open.pop_front();
-		//open.pop();
-		//tileStatus.at(visitingNode) = 2;
-		tileStatus.push_back(2);
-		if (board.getPiece(visitingNodeX, visitingNodeY) != 0)
-			filledTileCount++;
-		int* neighbors = board.getNeighbors(visitingNodeX, visitingNodeY);
-		for (int neighborCount = 0; neighborCount < board.getNeighborListSize(visitingNodeX, visitingNodeY); neighborCount++){			
-			if (tileStatus.at(neighbors[neighborCount]) == 0){
-				tileStatus.at(neighbors[neighborCount]) = 1;
-				open.push_front(neighbors[neighborCount]);
-				//open.push(neighbors[neighborCount]);
-			}
-		}
-	}
+                if (board.getPiece((index%boardW), (index/boardH)) != 0){
+                        totalPiecesOnBoard++;
+                        filledTiles[count] = index;
+                        count++;
+                        if (totalPiecesOnBoard == 1)
+                                firstPiece = index;
+                }
+        }
 
-	if (filledTileCount == totalPiecesOnBoard)
+        std::stack<int> open;
+        filledTileCount = 0;
+        open.push(firstPiece);
+        int* tileStatus = new int[boardH*boardW];
+        for (int statusCount = 0; statusCount < totalPiecesOnBoard; statusCount++)
+                tileStatus[statusCount] = 0;
+        tileStatus[firstPiece] = 1;
+        while (open.size() != 0){
+                int visitingNode = open.top();
+                int visitingNodeX = visitingNode%boardW;
+                int visitingNodeY = visitingNode/boardH;
+                open.pop();
+                tileStatus[visitingNode] = 2;
+                if (board.getPiece(visitingNodeX, visitingNodeY) != 0)
+                        filledTileCount++;
+                for (int neighborCount = 0; neighborCount < board.getNeighborListSize(visitingNodeX, visitingNodeY); neighborCount++){
+                        int* neighbors = board.getNeighbors(visitingNodeX, visitingNodeY);
+                        if (tileStatus[neighbors[neighborCount]] == 0){
+                                tileStatus[neighbors[neighborCount]] = 1;
+                                open.push(neighbors[neighborCount]);
+            }
+        }
+    }
+
+    if (filledTileCount == totalPiecesOnBoard)
 		return true;
     else return false;
 }
