@@ -3,7 +3,7 @@
 #include <set>
 #include <stack>
 #include <Windows.h>
-
+#include <mmsystem.h>
 
 //////////////////
 /* Function declarations
