@@ -23,22 +23,23 @@ void Graph::addEdge(int node1, int node2){
 void Graph::Setup(){
 	for( int i=0;i<400;i++){
 		if(i-20>0){
-			if(((i%40)>=20) && (i+1<20))
+			if(((i%40)>=20) && ((i+1)%20<19))
 				addEdge(i,i-19);
 			addEdge(i,i-20);
-			if(((i%40)<20) && (i-1>0))
+			if(((i%40)<20) && ((i-1)%20>0))
 				addEdge(i,i-21);
 		}
 		if(i%20>0)
 			addEdge(i,i-1);
-		if(i%20<20)
+		if(i%20<20){
 			if(i!=399)
-			addEdge(i,i+1);
+				addEdge(i,i+1);
+		}
 		if(i+20<400){
 			if(((i%40)<20) && ((i-1)%20>0))
 				addEdge(i,i+19);
 			addEdge(i,i+20);
-			if(((i%40)>=20) && ((i+1)%20<20))
+			if(((i%40)>=20) && ((i+1)%20<19))
 				addEdge(i,i+21);
 		}
 		adjList.at(i).piece=0;
@@ -114,19 +115,24 @@ bool Graph::inVise(int x, int y){
 	//for(int i=0;i<list.size();i++){
 	if(getPiece(x,y)==0)
 	return false;
-	if((y*20+x-19)>0&&(y*20+x+20)<400)
-		if((adjList.at(y*20+x-19).piece==adjList.at(y*20+x+20).piece)&&adjList.at(y*20+x-19).piece!=0)
+	if((y*20+x-19)>0&&(y*20+x+20)<400){
+		if((adjList.at(y*20+x-19).piece==adjList.at(y*20+x+20).piece)&&adjList.at(y*20+x-19).piece!=0){
 			if(adjList.at(y*20+x-19).piece!=adjList.at(y*20+x).piece)
 			return true;
-	if((y*20+x-20)>0&&(y*20+x+21)<400)
-		if((adjList.at(y*20+x-20).piece==adjList.at(y*20+x+21).piece)&&adjList.at(y*20+x-20).piece!=0)
+		}
+	}
+	if((y*20+x-20)>0&&(y*20+x+21)<400){
+		if((adjList.at(y*20+x-20).piece==adjList.at(y*20+x+21).piece)&&adjList.at(y*20+x-20).piece!=0){
 			if(adjList.at(y*20+x-20).piece!=adjList.at(y*20+x).piece)
 			return true;
-	if((y*20+x-1)>0&&(y*20+x+1)<400)
-		if((adjList.at(y*20+x-1).piece==adjList.at(y*20+x+1).piece)&&adjList.at(y*20+x-1).piece!=0)
+		}
+	}
+	if((y*20+x-1)>0&&(y*20+x+1)<400){
+		if((adjList.at(y*20+x-1).piece==adjList.at(y*20+x+1).piece)&&adjList.at(y*20+x-1).piece!=0){
 			if(adjList.at(y*20+x-1).piece!=adjList.at(y*20+x).piece)
 			return true;
-	//}
+		}
+	}
 
 	return false;
 }

@@ -287,8 +287,8 @@ bool isConnected(int &totalPiecesOnBoard, int &filledTileCount, int* &filledTile
         std::stack<int> open;
         filledTileCount = 0;
         open.push(firstPiece);
-        int* tileStatus = new int[boardH*boardW];
-        for (int statusCount = 0; statusCount < totalPiecesOnBoard; statusCount++)
+        int* tileStatus = new int[boardH*boardW]();
+        for (int statusCount = 0; statusCount < (boardH*boardW); statusCount++)
                 tileStatus[statusCount] = 0;
         tileStatus[firstPiece] = 1;
         while (open.size() != 0){
@@ -335,14 +335,11 @@ bool isConnected(int &totalPiecesOnBoard, int &filledTileCount, int* &filledTile
  */
 bool canPlaceOldPiece(int x, int y){
 
-	if(canPlaceNewPiece(x,y))	
+	if ((board.getPiece(x,y) == 0) && ((isNeighboringSpace(x,y)) || (isJumpSpace(x,y)))
+		&& (isConnected(totalPiecesOnBoard, filledTileCount, filledTiles)))
 		return true;
-	else if (isNeighboringSpace(x,y))
-		return true;
-	else if (isJumpSpace(x,y))
-		return true;
-	//else if (!isConnected())
-	//	return false;
+	//if(canPlaceNewPiece(x,y))	
+		//return true;
 	else
 		return false;
 }
