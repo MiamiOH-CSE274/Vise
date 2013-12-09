@@ -31,7 +31,8 @@ void Graph::Setup(){
 		}
 		if(i%20>0)
 			addEdge(i,i-1);
-		if(i%20<20)            
+		if(i%20<20)
+			if(i!=399)
 			addEdge(i,i+1);
 		if(i+20<400){
 			if(((i%40)<20) && ((i-1)%20>0))
