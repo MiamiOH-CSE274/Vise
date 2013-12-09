@@ -2,6 +2,7 @@
 #include "Graph.h"
 #include <set>
 #include <stack>
+#include <Windows.h>
 
 
 //////////////////
@@ -114,6 +115,7 @@ void testApp::setup(){
     //TODO: Put 1 piece for each player in the middle of the board, side by side
     board.Setup();
     startTime = ofGetElapsedTimef();
+	PlaySound(TEXT("..//sounds//Atlas.wav"), NULL, SND_ASYNC|SND_FILENAME|SND_LOOP);
 }
 
 //Return true iff there is a piece in board space (x,y), and that piece
@@ -335,11 +337,14 @@ bool isConnected(int &totalPiecesOnBoard, int &filledTileCount, int* &filledTile
  */
 bool canPlaceOldPiece(int x, int y){
 
-	if ((board.getPiece(x,y) == 0) && ((isNeighboringSpace(x,y)) || (isJumpSpace(x,y)))
+	int tileCount = 0;
+	for (int count = 0; count < board.getNeighborListSize(x,y); count++){
+		if (board.getPiece(board.getNeighbors(x,y)[count]) != 0)
+			tileCount++;
+	}
+	if ((board.getPiece(x,y) == 0) && (((isNeighboringSpace(x,y)) && tileCount > 0) || (isJumpSpace(x,y)))
 		&& (isConnected(totalPiecesOnBoard, filledTileCount, filledTiles)))
 		return true;
-	//if(canPlaceNewPiece(x,y))	
-		//return true;
 	else
 		return false;
 }
