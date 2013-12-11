@@ -1,6 +1,9 @@
 #include "testApp.h"
-
+#include "Graph.h"
 #include <set>
+#include <stack>
+#include <Windows.h>
+#include <mmsystem.h>
 
 //////////////////
 /* Function declarations
@@ -16,7 +19,7 @@ void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs);
 bool canPlaceNewPiece(int x, int y);
 bool isNeighboringSpace(int x, int y);
 bool isJumpSpace(int x, int y);
-bool isConnected();
+bool isConnected(int &totalPiecesOnBoard, int &filedTileCount, int* &filledTiles);
 bool canPlaceOldPiece(int x, int y);
 int pieceAt(int x,int y);
 void putPieceAt(int x, int y, int whichPiece);
@@ -39,6 +42,10 @@ int boardW = 20;
 int boardH = 20;
 
 //TODO: Make any variables you need for representing your board here
+
+int totalPiecesOnBoard = 0;
+int filledTileCount = 0;
+int* filledTiles = new int[10]();
 
 //Number of spare playing pieces left, for each player
 int pl1spares=4;
@@ -91,7 +98,7 @@ float sideLen = 20.0;
 // change these, just change sideLen
 float hexW = sideLen*2.0*0.86602540378444;
 float hexH = 1.5*sideLen;
-
+Graph board(boardH*boardW);
 
 
 
@@ -102,19 +109,20 @@ void testApp::setup(){
     // updates or draws are too time conusming.
     ofSetFrameRate(60);
     
-    //TODO: Initialize your "board" data structure here
-
-    //TODO: Put 1 piece for each player in the middle of hte board, side by side
-    
+    //TODO: Initialize your "board" data structure here'
+	//Graph board(400);
+	
+    //TODO: Put 1 piece for each player in the middle of the board, side by side
+    board.Setup();
     startTime = ofGetElapsedTimef();
+	PlaySound(TEXT("..//sounds//Atlas.wav"), NULL, SND_ASYNC|SND_FILENAME|SND_LOOP);
 }
 
 //Return true iff there is a piece in board space (x,y), and that piece
 // is caught in a vise. Note that x and y are in board coordinates,
 // not screen coordinates
 bool inVise(int x, int y){
-    //TODO
-    return false;
+	return board.inVise(x,y);
 }
 
 /*
@@ -135,7 +143,41 @@ bool inVise(int x, int y){
  * 3d) Tie-breaking: If there is a tie under any of these rules, pick arbitrarily
  */
 void doVise(){
-    //TODO
+	std::pair<int,int>* x= new std::pair<int,int>();
+	int iter =0;
+    for(int i=0;i<20;i++){
+		for(int j=0;j<20;j++){
+			if(inVise(i,j)){
+				x[iter].first=i;
+				x[iter].second=j;
+				iter++;
+			}
+		}
+	}
+	for(int i=0;i<iter;i++){
+		board.placePiece(x[i].first, x[i].second,0);
+		delete[] x;
+	}
+
+	while(!isConnected(totalPiecesOnBoard, filledTileCount, filledTiles)){
+		if (filledTileCount < (totalPiecesOnBoard/2)){
+			for (int count = 0; count < 10; count++){
+				if (filledTiles[count] != NULL){
+					if (board.getPiece(filledTiles[count]) == 1){
+						pl1spares++;
+					}
+					if (board.getPiece(filledTiles[count]) == 2){
+						pl2spares++;
+					}
+					board.placePiece(filledTiles[count]%20, filledTiles[count]/20, 0);
+				}
+			}
+		}
+		delete[] filledTiles;
+		filledTiles = new int[10]();
+	}
+	//	board.getConnected(/* place that is a spot in the array. Could technically loop through all spots*/)
+	
 }
 
 //--------------------------------------------------------------
@@ -177,7 +219,7 @@ void drawHex(float x, float y, float sideLen){
  * under consideration.
  */
 void checkNbrs(int x, int y, int& okayNbrs, int& badNbrs){
-    //TODO
+	board.checkNbrs(x,y,okayNbrs,badNbrs,whoseTurn);
 }
 
 /*
@@ -197,15 +239,30 @@ bool canPlaceNewPiece(int x, int y){
 //Return true iff (x,y) is neighboring to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isNeighboringSpace(int x, int y){
-    //TODO
-    return false;
+    return board.isClose(selectedPieceX, selectedPieceY, x, y);
 }
 
 //Return true iff (x,y) is one jump to (selectedPieceX,selectedPieceY)
 //These inputs are in board coordinates, not screen coordinates
 bool isJumpSpace(int x, int y){
-    //TODO
-    return false;
+	int destinationTile = (20*y)+x;
+	int originalTile = (20*selectedPieceY)+selectedPieceX;
+	if((originalTile%40)<20)
+		return(((board.getPiece(originalTile-21) != 0) && (destinationTile == (originalTile-41))) ||
+			   ((board.getPiece(originalTile-20) != 0) && (destinationTile == (originalTile-39))) ||
+			   ((board.getPiece(originalTile-1) != 0) && (destinationTile == (originalTile-2))) ||
+		       ((board.getPiece(originalTile+1) != 0) && (destinationTile == (originalTile+2))) ||
+		       ((board.getPiece(originalTile+19) != 0) && (destinationTile == (originalTile+39))) ||
+		       ((board.getPiece(originalTile+20) != 0) && (destinationTile == (originalTile+41))));
+	else if((originalTile%40)>=20)
+		return(((board.getPiece(originalTile-20) != 0) && (destinationTile == (originalTile-41))) ||
+			   ((board.getPiece(originalTile-19) != 0) && (destinationTile == (originalTile-39))) ||
+			   ((board.getPiece(originalTile-1) != 0) && (destinationTile == (originalTile-2))) ||
+		       ((board.getPiece(originalTile+1) != 0) && (destinationTile == (originalTile+2))) ||
+		       ((board.getPiece(originalTile+20) != 0) && (destinationTile == (originalTile+39))) ||
+		       ((board.getPiece(originalTile+21) != 0) && (destinationTile == (originalTile+41))));
+	else
+		return false;
 }
 
 //Return true if and only if the board currently contains
@@ -215,9 +272,47 @@ bool isJumpSpace(int x, int y){
 // first search, counting how many pieces I found. If the number found
 // equals the total number on the board, then return true. Otherwise,
 // return false
-bool isConnected(){
-    //TODO
-    return false;
+bool isConnected(int &totalPiecesOnBoard, int &filledTileCount, int* &filledTiles){
+        totalPiecesOnBoard = 0;
+        int firstPiece = 0;
+        int count = 0;
+    for (int index = 0; index < (boardH*boardW); index++){
+                if (board.getPiece((index%boardW), (index/boardH)) != 0){
+                        totalPiecesOnBoard++;
+                        filledTiles[count] = index;
+                        count++;
+                        if (totalPiecesOnBoard == 1)
+                                firstPiece = index;
+                }
+        }
+
+        std::stack<int> open;
+        filledTileCount = 0;
+        open.push(firstPiece);
+        int* tileStatus = new int[boardH*boardW]();
+        for (int statusCount = 0; statusCount < (boardH*boardW); statusCount++)
+                tileStatus[statusCount] = 0;
+        tileStatus[firstPiece] = 1;
+        while (open.size() != 0){
+                int visitingNode = open.top();
+                int visitingNodeX = visitingNode%boardW;
+                int visitingNodeY = visitingNode/boardH;
+                open.pop();
+                tileStatus[visitingNode] = 2;
+                if (board.getPiece(visitingNodeX, visitingNodeY) != 0)
+                        filledTileCount++;
+                for (int neighborCount = 0; neighborCount < board.getNeighborListSize(visitingNodeX, visitingNodeY); neighborCount++){
+                        int* neighbors = board.getNeighbors(visitingNodeX, visitingNodeY);
+                        if (tileStatus[neighbors[neighborCount]] == 0){
+                                tileStatus[neighbors[neighborCount]] = 1;
+                                open.push(neighbors[neighborCount]);
+            }
+        }
+    }
+
+    if (filledTileCount == totalPiecesOnBoard)
+		return true;
+    else return false;
 }
 
 /* This is used when the player is moving one of her pieces that is
@@ -241,8 +336,17 @@ bool isConnected(){
  *       isJumpSpace, and isConnected as subroutines here.
  */
 bool canPlaceOldPiece(int x, int y){
-    //TODO
-    return false;
+
+	int tileCount = 0;
+	for (int count = 0; count < board.getNeighborListSize(x,y); count++){
+		if (board.getPiece(board.getNeighbors(x,y)[count]) != 0)
+			tileCount++;
+	}
+	if ((board.getPiece(x,y) == 0) && (((isNeighboringSpace(x,y)) && tileCount > 0) || (isJumpSpace(x,y)))
+		&& (isConnected(totalPiecesOnBoard, filledTileCount, filledTiles)))
+		return true;
+	else
+		return false;
 }
 
 /*
@@ -251,8 +355,7 @@ bool canPlaceOldPiece(int x, int y){
  * (1 or 2)
  */
 int pieceAt(int x,int y){
-    //TODO
-    return 0;
+    return board.getPiece(x,y);
 }
 
 void drawBoard(){
@@ -347,7 +450,7 @@ void drawSpares(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
-    ofBackground(128,128,128); //gray
+    ofBackground(39,129,20); //green
     drawBoard();
     drawSpares();
 }
@@ -357,7 +460,7 @@ void testApp::draw(){
  * If whichPieces is 0, then it clears that board position.
  */
 void putPieceAt(int x, int y, int whichPiece){
-    //TODO
+    board.placePiece(x,y,whichPiece);
 }
 
 //--------------------------------------------------------------
