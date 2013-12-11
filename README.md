@@ -32,7 +32,7 @@ Questions
 
 #### 1. Which type of data structure did you choose? Explain, in English, the main ideas behind your data structure.
 
-A node based graph. Essentially, every Node, called a hexSpace, points to another, while also holding a value to determine the type of game piece is inside and whether it has been "checked" during a recursive function.
+A vector of ojects containing pointers. Essentially, every object, called a hexSpace, points to another, while also holding a value to determine the type of game piece is inside and whether it has been "checked" during a recursive function.
 
 
 Portfolio Video
