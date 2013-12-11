@@ -32,7 +32,7 @@ Questions
 
 #### 1. Which type of data structure did you choose? Explain, in English, the main ideas behind your data structure.
 
-We choose an array of pointers to nodes, so a linked list essentially. The main idea behind our structure was to make everything run in constant time after the board was initialized the first time. We thought that through using pointer manipulation during the initialization of our board we could avoid doing computations for locating indexes in the board during the game. 
+We choose an array of pointers to nodes, so an adjacency list. The main idea behind our structure was to make everything run in constant time after the board was initialized the first time. We thought that through using pointer manipulation during the initialization of our board we could avoid doing computations for locating indexes in the board during the game. 
 
 
 Portfolio Video
